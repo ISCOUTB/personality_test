@@ -1,0 +1,203 @@
+#page-blocks-personality_test-view .content_personality_test {
+  width: 100%;
+  max-width: 350px;
+  min-width: 220px;
+  margin: 30px auto;
+  box-sizing: border-box;
+}
+
+#page-blocks-personality_test-view .title_personality_test {
+  text-align: left;
+  color: #005B9A;
+  font-weight: 600;
+}
+
+#page-blocks-personality_test-view .content-accept {
+  text-align: left;
+}
+
+#page-blocks-personality_test-view .personality_test_item {
+  height: auto;
+  min-height: 2.2em;
+  font-size: 1em;
+  border-bottom: 1px solid rgba(0, 91, 154, 0.1);
+  padding: 8px 0;
+  word-break: break-word;
+}
+
+#page-blocks-personality_test-view .content-accept label {
+  line-height: 16px;
+}
+
+#page-blocks-personality_test-view .content-accept input[type="checkbox"] {
+  margin: 0 0 0 10px;
+}
+
+#page-blocks-personality_test-view .content-accept input[type="submit"] {
+  margin: 10px 0;
+  background-color: #005B9A;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+#page-blocks-personality_test-view .content-accept input[type="submit"]:hover {
+  background-color: #00B5E2;
+}
+
+#page-blocks-personality_test-view .content-accept .error {
+  color: #AA182C;
+  font-weight: 500;
+}
+
+.block_personality_test {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 91, 154, 0.2);
+  padding: 15px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 350px;
+  min-width: 220px;
+  margin: 0 auto;
+}
+
+.block_personality_test .header .title {
+  color: #005B9A;
+  font-weight: 600;
+}
+
+.block_personality_test img {
+  float: left;
+  margin: 0 3px 3px 0;
+}
+
+.block_personality_test .chart-container,
+#page-blocks-personality_test-view .chart-container {
+  margin: 15px 0;
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.block_personality_test canvas,
+#page-blocks-personality_test-view canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.block_personality_test .alert,
+#page-blocks-personality_test-view .alert {
+  border-radius: 4px;
+  border-color: rgba(0, 91, 154, 0.3);
+  background-color: rgba(0, 91, 154, 0.1);
+  color: #005B9A;
+  font-size: 0.95em;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.block_personality_test .alert-info,
+#page-blocks-personality_test-view .alert-info {
+  color: #005B9A;
+}
+
+/* The container must be positioned relative: */
+.custom-select {
+  font-family: Arial;
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+h2 {
+  color: #005B9A;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element: */
+}
+  
+.select-selected {
+  background-color: #005B9A;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+  
+/* Style the arrow inside the select element: */
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 18px;
+  right: 15px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+  
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 10px;
+}
+  
+/* style the items (options), including the selected item: */
+.select-items div, .select-selected {
+  color: #ffffff;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+  
+/* Style items (options): */
+.select-items {
+  position: absolute;
+  background-color: #00B5E2;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+  
+/* Hide the items when the select box is closed: */
+.select-hide {
+  display: none;
+}
+  
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 43, 73, 0.2);
+}
+
+/* Ajustes para botones de descarga */
+.block_personality_test .download-btn,
+#page-blocks-personality_test-view .download-btn {
+  width: 100%;
+  margin-bottom: 8px;
+  font-size: 1em;
+  padding: 10px 0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Ajustes para textos largos */
+.block_personality_test,
+#page-blocks-personality_test-view {
+  word-break: break-word;
+}
