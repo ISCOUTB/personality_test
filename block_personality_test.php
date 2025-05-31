@@ -347,22 +347,100 @@ class block_personality_test extends block_base
                     $mbti_score .= ($scores["thinking"] >= $scores["feeling"]) ? "T" : "F";
                     $mbti_score .= ($scores["judging"] > $scores["perceptive"]) ? "J" : "P";
 
-                    // --- CORRECCIÓN APLICADA AQUÍ ---
-                    // Mostrar el resultado principal usando html_writer::tag
+                    // Datos correspondientes a cada tipo MBTI, ordenados según las 8 dimensiones
+                    
+                    $mbti_data = [
+                        'INTP' => [9,9,3,3,1,1,7,7],
+                        'ESFJ' => [1,2,7,8,9,2,3,8],
+                        'ISTJ' => [9,8,8,9,1,2,2,1],
+                        'ISFJ' => [9,3,8,9,1,7,2,1],
+                        'INFJ' => [9,5,2,9,1,5,8,1],
+                        'INTJ' => [9,9,2,9,1,1,8,1],
+                        'ISTP' => [9,8,7,2,1,2,3,8],
+                        'ISFP' => [9,2,7,2,1,8,3,8],
+                        'INFP' => [9,2,3,3,1,8,7,7],
+                        'ESTP' => [1,8,8,2,9,2,8,8],
+                        'ESFP' => [1,2,8,2,9,8,2,8],
+                        'ENFP' => [1,2,3,3,9,8,7,7],
+                        'ENTP' => [1,8,3,3,9,2,7,7],
+                        'ESTJ' => [1,9,8,9,1,1,2,1],
+                        'ENFJ' => [1,3,2,9,1,7,8,1],
+                        'ENTJ' => [1,9,2,9,1,1,8,1],
+                    ];
+
+
+                    // Verificamos si el tipo MBTI del usuario tiene explicación definida
                     if (isset($mbti_explanations[$mbti_score])) {
-                        // Construir el contenido del párrafo
-                        $paragraph_content = "De acuerdo con el modelo de Myers Briggs todos tendemos a inclinarnos por cuatro facetas de personalidades predominantes.<br>";
-                        $paragraph_content .= "En tu caso podemos concluir que eres una persona " . html_writer::tag('strong', $mbti_explanations[$mbti_score] . " (" . $mbti_score . ")");
 
-                        // Usar html_writer::tag para crear el párrafo completo
-                        $this->content->text .= html_writer::tag('p', $paragraph_content, ['class' => '']); // Puedes añadir clases CSS aquí si lo necesitas
+                        // Creamos el texto explicativo que se mostrará antes del gráfico
+                        $paragraph_content = "De acuerdo con el modelo de Myers-Briggs, todos tendemos a inclinarnos por cuatro facetas de personalidad predominantes.<br>";
+                        $paragraph_content .= "En tu caso podemos concluir que eres una persona " .
+                            html_writer::tag('strong', $mbti_explanations[$mbti_score] . " (" . $mbti_score . ")");
 
+                        // Añadimos el párrafo generado al contenido del bloque
+                        $this->content->text .= html_writer::tag('p', $paragraph_content);
+
+                        // Definimos las etiquetas de las dimensiones para el gráfico
+                        //$mbti_labels = ['Introvertido','Extrovertido','Sensación','Intuición','Pensamiento','Sentimiento','Juicio','Percepción'];
+
+                        $mbti_labels = ['Introvertido','Sentimiento','Sensación','Percepción','Extrovertido','Pensamiento','Intuición','Juicio'];
+
+
+                        // Obtenemos los valores de datos para el tipo MBTI actual
+                        $user_data = $mbti_data[$mbti_score];
+
+                        // Creamos un ID único para el canvas del gráfico usando el ID del usuario
+                        $chart_id = 'graficoRadar_' . $USER->id;
+
+                        // Insertamos el <canvas> donde se dibujará el gráfico radar
+                        $this->content->text .= html_writer::start_tag('canvas', [
+                            'id' => $chart_id,
+                            'width' => '400',
+                            'height' => '400'
+                        ]);
+                        $this->content->text .= html_writer::end_tag('canvas');
+
+                        // Agregamos el script JavaScript que dibuja el gráfico usando Chart.js
+                        $this->content->text .= '
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script>
+                    // Obtenemos el contexto del canvas del gráfico
+                    const ctx = document.getElementById("' . $chart_id . '").getContext("2d");
+
+                    // Creamos un nuevo gráfico radar con los datos del usuario
+                    const radarChart = new Chart(ctx, {
+                        type: "radar",
+                        data: {
+                            labels: ' . json_encode($mbti_labels) . ', // Dimensiones del MBTI
+                            datasets: [{
+                                label: "Perfil MBTI: ' . $mbti_score . '",
+                                data: ' . json_encode($user_data) . ', // Valores del tipo MBTI del usuario
+                                backgroundColor: "rgba(54, 162, 235, 0.2)",
+                                borderColor: "rgba(54, 162, 235, 1)",
+                                pointBackgroundColor: "rgba(54, 162, 235, 1)",
+                                pointBorderColor: "#fff",
+                                pointHoverBackgroundColor: "#fff",
+                                pointHoverBorderColor: "rgba(54, 162, 235, 1)"
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                r: {
+                                    beginAtZero: true,
+                                    min: 0,
+                                    max: 10 // Escala máxima para las dimensiones
+                                }
+                            }
+                        }
+                    });
+                    </script>';
                     } else {
-                         $this->content->text .= get_string('error_puntuacion_invalida', 'block_personality_test') . " ($mbti_score)";
+                        // Si no se encuentra el tipo MBTI del usuario, mostramos un mensaje de error
+                        $this->content->text .= html_writer::tag('p', 'No se encontró información de perfil MBTI.');
                     }
-                    // --- FIN DE LA CORRECCIÓN ---
 
-                    // Las interpretaciones detalladas están comentadas en tu código original, se mantienen así.
+                    // Retornamos el contenido del bloque
+                    return $this->content;
                  } // Fin else (datos de entry existen)
             } // Fin else (entry existe)
         } else {
