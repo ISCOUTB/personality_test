@@ -289,9 +289,42 @@ $html4 = crearTablaAspectoHTML(
     $total_students_processed
 );
 $pdf->writeHTML($html4, true, false, true, false, '');
-// $pdf->Ln($margen_vertical); // No es necesario Ln después de la última tabla
 
-// --- FIN DE LA SECCIÓN MODIFICADA ---
+
+// Descripción Tipos de MBTI
+$descripcion_html = '
+<h2>Descripción de tipos de personalidad</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr style="background-color:#eeeeee; font-weight:bold;">
+            <th>Tipo</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+  <tr><td>ISTJ</td><td>Introvertido, Sensitivo, Pensamiento, Juicio</td></tr>
+  <tr><td>ISFJ</td><td>Introvertido, Sensitivo, Sentimiento, Juicio</td></tr>
+  <tr><td>INFJ</td><td>Introvertido, Intuitivo, Sentimiento, Juicio</td></tr>
+  <tr><td>INTJ</td><td>Introvertido, Intuitivo, Pensamiento, Juicio</td></tr>
+  <tr><td>ISTP</td><td>Introvertido, Sensitivo, Pensamiento, Percepción</td></tr>
+  <tr><td>ISFP</td><td>Introvertido, Sensitivo, Sentimiento, Percepción</td></tr>
+  <tr><td>INFP</td><td>Introvertido, Intuitivo, Sentimiento, Percepción</td></tr>
+  <tr><td>INTP</td><td>Introvertido, Intuitivo, Pensamiento, Percepción</td></tr>
+  <tr><td>ESTP</td><td>Extrovertido, Sensitivo, Pensamiento, Percepción</td></tr>
+  <tr><td>ESFP</td><td>Extrovertido, Sensitivo, Sentimiento, Percepción</td></tr>
+  <tr><td>ENFP</td><td>Extrovertido, Intuitivo, Sentimiento, Percepción</td></tr>
+  <tr><td>ENTP</td><td>Extrovertido, Intuitivo, Pensamiento, Percepción</td></tr>
+  <tr><td>ESTJ</td><td>Extrovertido, Sensitivo, Pensamiento, Juicio</td></tr>
+  <tr><td>ESFJ</td><td>Extrovertido, Sensitivo, Sentimiento, Juicio</td></tr>
+  <tr><td>ENFJ</td><td>Extrovertido, Intuitivo, Sentimiento, Juicio</td></tr>
+  <tr><td>ENTJ</td><td>Extrovertido, Intuitivo, Pensamiento, Juicio</td></tr>
+</tbody>
+
+</table>
+';
+
+$pdf->Ln(10); 
+$pdf->writeHTML($descripcion_html, true, false, true, false, '');
 
 // --- SALIDA DEL PDF ---
 @ob_end_clean();
