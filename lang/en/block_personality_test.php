@@ -9,6 +9,7 @@ $string['required_message'] = 'Please complete the personality assessment to con
 $string['personality_test_actived'] = 'Personality test activated';
 $string['personality_test_configempty'] = 'Please configure this block';
 $string['submit_text'] = 'Continue and go to course';
+$string['num_estudiantes'] = 'Students';
 
 $string["personality_test_content"] = "Content text";
 
