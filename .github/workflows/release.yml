@@ -22,17 +22,9 @@ jobs:
     - name: Get version from version.php
       id: get_version
       run: |
-        # Extract version from version.php
-        VERSION=$(grep -o "version = [0-9]*" version.php | grep -o "[0-9]*")
-        RELEASE=$(grep -o "release.*=.*'[^']*'" version.php | grep -o "'[^']*'" | tr -d "'")
-        COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
-        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        VERSION=$(grep "plugin->release" version.php | sed -n "s/.*'\([^']*\)'.*/\1/p")
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "release=$RELEASE" >> $GITHUB_OUTPUT
-        echo "commit_short=$COMMIT_SHORT" >> $GITHUB_OUTPUT
-        echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
-        echo "tag=v$RELEASE" >> $GITHUB_OUTPUT
-        echo "auto_tag=v$RELEASE-auto-$COMMIT_SHORT" >> $GITHUB_OUTPUT
+        echo "Version detected: $VERSION"
         
     - name: Create release directory
       run: |
