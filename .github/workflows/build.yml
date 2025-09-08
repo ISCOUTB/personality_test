@@ -77,14 +77,12 @@ jobs:
         cd build
         zip -r "${{ steps.version_info.outputs.package_name }}.zip" block_personality_test/
         
-    - name: Upload build artifact
+    - name: Upload development artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.version_info.outputs.package_name }}
-        path: build/${{ steps.version_info.outputs.package_name }}.zip
-        retention-days: 30
-        
-    - name: Upload to release (if tag)
+        name: personality-test-dev-${{ steps.get_info.outputs.branch }}-${{ steps.get_info.outputs.commit }}
+        path: personality_test_dev_${{ steps.get_info.outputs.branch }}_${{ steps.get_info.outputs.commit }}.zip
+        retention-days: 30    - name: Upload to release (if tag)
       if: startsWith(github.ref, 'refs/tags/')
       run: |
         echo "This is a tagged release, the main release workflow will handle this."

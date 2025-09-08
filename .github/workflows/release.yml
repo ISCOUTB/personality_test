@@ -71,47 +71,57 @@ jobs:
         git tag ${{ steps.get_version.outputs.tag }}
         git push origin ${{ steps.get_version.outputs.tag }}
         
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.get_version.outputs.tag }}
-        name: Personality Test Block v${{ steps.get_version.outputs.release }}
-        body: |
-          ## Personality Test Block Release v${{ steps.get_version.outputs.release }}
-          
-          ### 📦 Installation
-          1. Download the ZIP file below
-          2. Extract it to your Moodle `blocks/` directory
-          3. Visit your Moodle admin page to complete the installation
-          
-          ### 📋 Version Details
-          - **Plugin Version**: ${{ steps.get_version.outputs.version }}
-          - **Release Version**: ${{ steps.get_version.outputs.release }}
-          - **Commit**: ${{ github.sha }}
-          - **Build Date**: ${{ steps.get_version.outputs.timestamp }}
-          
-          ### 🚀 What's Included
-          - Complete Personality Test block for Moodle
-          - MBTI personality type assessment
-          - Multi-language support (English/Spanish)
-          - CSV and PDF export functionality
-          - Teacher dashboard with statistics
-          - Interactive charts and visualizations
-          - Database installation scripts
-          
-          ### 🎯 Features
-          - **Student Assessment**: 72-question personality test based on MBTI
-          - **Results Visualization**: Interactive radar charts showing personality profile
-          - **Teacher Tools**: Export student results in CSV and PDF formats
-          - **Analytics Dashboard**: View class-wide personality distribution
-          - **Multi-language**: Full Spanish and English support
-          
-          ### 📝 Changelog
-          See commit history for detailed changes since last release.
-        files: |
-          release/block_personality_test_v${{ steps.get_version.outputs.release }}.zip
-        draft: false
-        prerelease: false
-        make_latest: true
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: Personality Test Block v${{ steps.get_version.outputs.version }}
+        body: |
+          ## Personality Test Block v${{ steps.get_version.outputs.version }}
+          
+          ### 🧠 **Bloque de Test de Personalidad MBTI para Moodle**
+          
+          Este bloque permite evaluar y visualizar los tipos de personalidad de los estudiantes basado en el modelo Myers-Briggs Type Indicator (MBTI).
+          
+          ### ✨ **Características Principales**
+          - **Test MBTI Completo** con 70 preguntas
+          - **Visualizaciones Interactivas** con Chart.js
+          - **Exportación PDF** de resultados detallados
+          - **Dashboard de Análisis** para profesores
+          - **Responsive Design** adaptado a dispositivos móviles
+          
+          ### � **Dimensiones MBTI Evaluadas**
+          - **Extroversión/Introversión** - Orientación de energía
+          - **Sensación/Intuición** - Procesamiento de información
+          - **Pensamiento/Sentimiento** - Toma de decisiones
+          - **Juicio/Percepción** - Estilo de vida
+          
+          ### 🔧 **Instalación**
+          1. Descargar el archivo ZIP adjunto
+          2. Extraer en `/blocks/personality_test/` en tu instalación de Moodle
+          3. Visitar la página de administración para completar la instalación
+          4. Agregar el bloque a los cursos deseados
+          
+          ### 📊 **Funcionalidades para Profesores**
+          - Visualización de distribución de tipos MBTI
+          - Gráficos por aspectos de personalidad
+          - Exportación de datos en PDF
+          - Análisis estadístico del curso
+          
+          ### �️ **Seguridad y Permisos**
+          - Control de acceso basado en capacidades de Moodle
+          - Verificación de sesión para todas las acciones
+          - Protección de datos de personalidad
+          
+          ---
+          
+          **Versión:** ${{ steps.get_version.outputs.version }}  
+          **Compatibilidad:** Moodle 2.5+  
+          **Desarrollado por:** SAVIO UTB  
+          **Licencia:** GPL v3  
+          
+        draft: false
+        prerelease: false
+        files: personality_test_v${{ steps.get_version.outputs.version }}.zip
