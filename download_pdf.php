@@ -56,7 +56,7 @@ $aspect_counts = array_fill_keys($aspect_keys, 0);
 // Procesamiento de datos de estudiantes
 foreach ($students as $entry) {
     if (!isset($entry->extraversion, $entry->introversion, $entry->sensing, $entry->intuition, $entry->thinking, $entry->feeling, $entry->judging, $entry->perceptive)) {
-        debugging("Omitiendo registro de estudiante ID {$entry->id} por falta de datos.", DEBUG_DEVELOPER);
+        // Omitir registros de estudiantes sin datos.
         continue;
     }
 

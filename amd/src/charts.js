@@ -1,10 +1,6 @@
 define(['core/chartjs'], function(Chart) {
     return {
         init: function(mbtiData, aspectData, strings) {
-            // Debug de datos
-            console.log('MBTI Data:', mbtiData);
-            console.log('Aspect Data:', aspectData);
-            console.log('Strings:', strings);
             
             // Paleta de colores SAVIO UTB
             const colorPalette = {
@@ -170,8 +166,6 @@ define(['core/chartjs'], function(Chart) {
                 var ctx = document.getElementById(elementId);
                 if (ctx) {
                     ctx = ctx.getContext('2d');
-                    
-                    console.log('Creating bar chart', elementId, title, labels, data, colors);
                     
                     // Verificar si tenemos datos, pero no usar datos de ejemplo si no hay
                     if (!data || !data.length || (data[0] === 0 && data[1] === 0)) {

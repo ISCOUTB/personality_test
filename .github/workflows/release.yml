@@ -1,0 +1,117 @@
+name: Create Release Package
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      create_github_release:
+        description: 'Create GitHub Release'
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Get version from version.php
+      id: get_version
+      run: |
+        # Extract version from version.php
+        VERSION=$(grep -o "version = [0-9]*" version.php | grep -o "[0-9]*")
+        RELEASE=$(grep -o "release.*=.*'[^']*'" version.php | grep -o "'[^']*'" | tr -d "'")
+        COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "release=$RELEASE" >> $GITHUB_OUTPUT
+        echo "commit_short=$COMMIT_SHORT" >> $GITHUB_OUTPUT
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+        echo "tag=v$RELEASE" >> $GITHUB_OUTPUT
+        echo "auto_tag=v$RELEASE-auto-$COMMIT_SHORT" >> $GITHUB_OUTPUT
+        
+    - name: Create release directory
+      run: |
+        mkdir -p release/block_personality_test
+        
+    - name: Copy files to release directory
+      run: |
+        # Copy all files except .git and .github
+        rsync -av --exclude='.git' --exclude='.github' --exclude='release' --exclude='build' . release/block_personality_test/
+        
+    - name: Create ZIP package
+      run: |
+        cd release
+        zip -r "block_personality_test_v${{ steps.get_version.outputs.release }}.zip" block_personality_test/
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: block_personality_test_v${{ steps.get_version.outputs.release }}
+        path: release/block_personality_test_v${{ steps.get_version.outputs.release }}.zip
+        
+    - name: Check if tag exists
+      id: check_tag
+      run: |
+        if git rev-parse "refs/tags/${{ steps.get_version.outputs.tag }}" >/dev/null 2>&1; then
+          echo "tag_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "tag_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create tag if not exists
+      if: steps.check_tag.outputs.tag_exists == 'false'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag ${{ steps.get_version.outputs.tag }}
+        git push origin ${{ steps.get_version.outputs.tag }}
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_version.outputs.tag }}
+        name: Personality Test Block v${{ steps.get_version.outputs.release }}
+        body: |
+          ## Personality Test Block Release v${{ steps.get_version.outputs.release }}
+          
+          ### 📦 Installation
+          1. Download the ZIP file below
+          2. Extract it to your Moodle `blocks/` directory
+          3. Visit your Moodle admin page to complete the installation
+          
+          ### 📋 Version Details
+          - **Plugin Version**: ${{ steps.get_version.outputs.version }}
+          - **Release Version**: ${{ steps.get_version.outputs.release }}
+          - **Commit**: ${{ github.sha }}
+          - **Build Date**: ${{ steps.get_version.outputs.timestamp }}
+          
+          ### 🚀 What's Included
+          - Complete Personality Test block for Moodle
+          - MBTI personality type assessment
+          - Multi-language support (English/Spanish)
+          - CSV and PDF export functionality
+          - Teacher dashboard with statistics
+          - Interactive charts and visualizations
+          - Database installation scripts
+          
+          ### 🎯 Features
+          - **Student Assessment**: 72-question personality test based on MBTI
+          - **Results Visualization**: Interactive radar charts showing personality profile
+          - **Teacher Tools**: Export student results in CSV and PDF formats
+          - **Analytics Dashboard**: View class-wide personality distribution
+          - **Multi-language**: Full Spanish and English support
+          
+          ### 📝 Changelog
+          See commit history for detailed changes since last release.
+        files: |
+          release/block_personality_test_v${{ steps.get_version.outputs.release }}.zip
+        draft: false
+        prerelease: false
+        make_latest: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,90 @@
+name: Build Development Package
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Get version and commit info
+      id: version_info
+      run: |
+        # Extract version from version.php
+        VERSION=$(grep -o "version = [0-9]*" version.php | grep -o "[0-9]*")
+        RELEASE=$(grep -o "release.*=.*'[^']*'" version.php | grep -o "'[^']*'" | tr -d "'")
+        COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "release=$RELEASE" >> $GITHUB_OUTPUT
+        echo "commit_short=$COMMIT_SHORT" >> $GITHUB_OUTPUT
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+        echo "package_name=block_personality_test_${RELEASE}_${COMMIT_SHORT}" >> $GITHUB_OUTPUT
+        
+    - name: Create build directory
+      run: |
+        mkdir -p build/block_personality_test
+        
+    - name: Copy files to build directory
+      run: |
+        # Copy all files except .git, .github, node_modules, and other development files
+        rsync -av \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='build' \
+          --exclude='node_modules' \
+          --exclude='.DS_Store' \
+          --exclude='*.log' \
+          --exclude='*.tmp' \
+          --exclude='Thumbs.db' \
+          . build/block_personality_test/
+          
+    - name: Create development info file
+      run: |
+        cat > build/block_personality_test/BUILD_INFO.txt << EOF
+        Personality Test Block - Development Build
+        =========================================
+        
+        Build Information:
+        - Version: ${{ steps.version_info.outputs.version }}
+        - Release: ${{ steps.version_info.outputs.release }}
+        - Commit: ${{ github.sha }}
+        - Short Commit: ${{ steps.version_info.outputs.commit_short }}
+        - Branch: ${{ github.ref_name }}
+        - Build Date: $(date -u)
+        - Build Timestamp: ${{ steps.version_info.outputs.timestamp }}
+        
+        This is a development build and should not be used in production.
+        
+        Features included in this build:
+        - MBTI Personality Assessment (72 questions)
+        - CSV and PDF Export functionality
+        - Teacher dashboard with analytics
+        - Interactive charts and visualizations
+        - Multi-language support (EN/ES)
+        - Database installation scripts
+        EOF
+        
+    - name: Create ZIP package
+      run: |
+        cd build
+        zip -r "${{ steps.version_info.outputs.package_name }}.zip" block_personality_test/
+        
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.version_info.outputs.package_name }}
+        path: build/${{ steps.version_info.outputs.package_name }}.zip
+        retention-days: 30
+        
+    - name: Upload to release (if tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo "This is a tagged release, the main release workflow will handle this."

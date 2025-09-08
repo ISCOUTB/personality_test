@@ -1,8 +1,26 @@
 # Bloque Personality Test para Moodle
 
+[![Build Status](https://github.com/ISCOUTB/personality_test/actions/workflows/build.yml/badge.svg)](https://github.com/ISCOUTB/personality_test/actions)
+[![Latest Release](https://img.shields.io/github/v/release/ISCOUTB/personality_test)](https://github.com/ISCOUTB/personality_test/releases/latest)
+
 ## Descripción General
 
 El bloque `personality_test` permite a los estudiantes de un curso realizar un test de personalidad tipo MBTI y visualizar sus resultados, mientras que los profesores pueden ver estadísticas agregadas y exportar los datos en formatos CSV y PDF. El bloque es completamente internacionalizable, responsivo y sigue las buenas prácticas de desarrollo para Moodle.
+
+## 🚀 Instalación Rápida
+
+### Desde GitHub Releases (Recomendado)
+1. Ve a [Releases](https://github.com/ISCOUTB/personality_test/releases/latest)
+2. Descarga el archivo `block_personality_test_vX.X.X.zip`
+3. Extrae el contenido en tu directorio `blocks/` de Moodle
+4. Visita la página de administración de Moodle para completar la instalación
+
+### Desde Código Fuente
+```bash
+cd /path/to/moodle/blocks/
+git clone https://github.com/ISCOUTB/personality_test.git
+# Luego visita la página de administración de Moodle
+```
 
 ---
 
@@ -127,6 +145,32 @@ personality_test/
 
 ---
 
+## 🔄 Desarrollo y Releases
+
+### Sistema de Releases Automatizado
+Este proyecto utiliza GitHub Actions para generar releases automáticamente:
+
+- **Releases Oficiales**: Se crean cuando se actualiza la versión en `version.php` y se hace push a `main`
+- **Builds de Desarrollo**: Se generan automáticamente en cada push para testing
+- **Packages**: Cada release incluye un ZIP listo para instalar en Moodle
+
+Ver [RELEASES.md](RELEASES.md) para más detalles sobre el sistema de releases.
+
+### Contribuir al Proyecto
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
+
+### Versionado
+Seguimos [Semantic Versioning](https://semver.org/):
+- **MAJOR**: Cambios incompatibles
+- **MINOR**: Nueva funcionalidad compatible
+- **PATCH**: Bug fixes compatibles
+
+---
+
 ## Recomendaciones Futuras
 
 - Si el bloque crece mucho, migrar la fachada a un archivo/clase independiente.
@@ -136,6 +180,23 @@ personality_test/
 
 ---
 
-## Créditos y Contacto
+## 📄 Licencia
+
+Este proyecto está licenciado bajo los términos de la licencia GPL v3. Ver el archivo LICENSE para más detalles.
+
+## 👥 Créditos y Contacto
 
 Desarrollado para la plataforma SAVIO UTB, siguiendo estándares de calidad y buenas prácticas de Moodle.
+
+- **Organización**: [ISCOUTB](https://github.com/ISCOUTB)
+- **Repositorio**: [personality_test](https://github.com/ISCOUTB/personality_test)
+- **Issues**: [Reportar problemas](https://github.com/ISCOUTB/personality_test/issues)
+
+---
+
+## 📊 Stats
+
+![GitHub release](https://img.shields.io/github/v/release/ISCOUTB/personality_test)
+![GitHub issues](https://img.shields.io/github/issues/ISCOUTB/personality_test)
+![GitHub stars](https://img.shields.io/github/stars/ISCOUTB/personality_test)
+![GitHub forks](https://img.shields.io/github/forks/ISCOUTB/personality_test)

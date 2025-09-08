@@ -122,7 +122,7 @@ class block_personality_test extends block_base
 
 
         // ---- INICIO TEST DEBUG ----
-        debugging("TEST get_string: " . get_string('titulo_distribucion_mbti', 'block_personality_test'), DEBUG_DEVELOPER);
+        // Título de distribución MBTI verificado
         // ---- FIN TEST DEBUG ----
         // Inicializar el objeto de contenido para esta función
         $content = new stdClass();
@@ -133,7 +133,7 @@ class block_personality_test extends block_base
         $students = $DB->get_records('personality_test', ['course' => $COURSE->id]);
 
         // Depuración: Mostrar número de estudiantes encontrados
-        debugging('Número de estudiantes encontrados: ' . count($students), DEBUG_DEVELOPER);
+        // Estudiantes encontrados para el curso
 
         if(empty($students)) {
             $content->text = get_string('sin_datos_estudiantes', 'block_personality_test');
@@ -151,14 +151,6 @@ class block_personality_test extends block_base
         ];
 
         foreach ($students as $entry) {
-            // Depuración: Mostrar datos de cada estudiante
-            debugging('Procesando estudiante - ID: ' . $entry->id . 
-                     ' E/I: ' . $entry->extraversion . '/' . $entry->introversion .
-                     ' S/N: ' . $entry->sensing . '/' . $entry->intuition .
-                     ' T/F: ' . $entry->thinking . '/' . $entry->feeling .
-                     ' J/P: ' . $entry->judging . '/' . $entry->perceptive, 
-                     DEBUG_DEVELOPER);
-
             if (!isset($entry->extraversion, $entry->introversion, $entry->sensing, $entry->intuition, $entry->thinking, $entry->feeling, $entry->judging, $entry->perceptive)) {
                 continue;
             }
