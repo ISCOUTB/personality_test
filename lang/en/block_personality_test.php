@@ -1,5 +1,5 @@
 <?php
-$string['pluginname'] = 'Personality Test';
+$string['pluginname'] = 'Personality Exploration';
 $string['code_honor_text'] = '<p>Please read the instructions carefully before starting the test.</p>';
 $string['accept_code_honor_text'] = 'Accept';
 $string['redirect_accept_success'] = 'Thank you, you will now be redirected to the course page.';
