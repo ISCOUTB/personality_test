@@ -1,18 +1,12 @@
-name: Create Release Package
+name: Create Release
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      create_github_release:
-        description: 'Create GitHub Release'
-        required: true
-        default: true
-        type: boolean
+    tags:
+      - 'v*'
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
     
     steps:
@@ -26,42 +20,25 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Version detected: $VERSION"
         
-    - name: Create release directory
-      run: |
-        mkdir -p release/block_personality_test
-        
-    - name: Copy files to release directory
-      run: |
-        # Copy all files except .git and .github
-        rsync -av --exclude='.git' --exclude='.github' --exclude='release' --exclude='build' . release/block_personality_test/
-        
     - name: Create ZIP package
       run: |
-        cd release
-        zip -r "block_personality_test_v${{ steps.get_version.outputs.release }}.zip" block_personality_test/
+        # Create a clean directory structure for the package
+        mkdir -p package_temp/personality_test
         
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: block_personality_test_v${{ steps.get_version.outputs.release }}
-        path: release/block_personality_test_v${{ steps.get_version.outputs.release }}.zip
+        # Copy all files except .git, .github, and other development files
+        rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' \
+               --exclude='test_*' --exclude='*.log' --exclude='RELEASES.md' \
+               --exclude='.gitignore' \
+               ./ package_temp/personality_test/
         
-    - name: Check if tag exists
-      id: check_tag
-      run: |
-        if git rev-parse "refs/tags/${{ steps.get_version.outputs.tag }}" >/dev/null 2>&1; then
-          echo "tag_exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "tag_exists=false" >> $GITHUB_OUTPUT
-        fi
+        # Create the ZIP file with proper directory structure
+        cd package_temp
+        zip -r ../personality_test_v${{ steps.get_version.outputs.version }}.zip personality_test/
+        cd ..
         
-    - name: Create tag if not exists
-      if: steps.check_tag.outputs.tag_exists == 'false'
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git tag ${{ steps.get_version.outputs.tag }}
-        git push origin ${{ steps.get_version.outputs.tag }}
+        # Verify ZIP contents
+        echo "ZIP file contents:"
+        unzip -l personality_test_v${{ steps.get_version.outputs.version }}.zip | head -20
         
     - name: Create Release
       uses: softprops/action-gh-release@v2
@@ -83,29 +60,6 @@ jobs:
           - **Exportación PDF** de resultados detallados
           - **Dashboard de Análisis** para profesores
           - **Responsive Design** adaptado a dispositivos móviles
-          
-          ### � **Dimensiones MBTI Evaluadas**
-          - **Extroversión/Introversión** - Orientación de energía
-          - **Sensación/Intuición** - Procesamiento de información
-          - **Pensamiento/Sentimiento** - Toma de decisiones
-          - **Juicio/Percepción** - Estilo de vida
-          
-          ### 🔧 **Instalación**
-          1. Descargar el archivo ZIP adjunto
-          2. Extraer en `/blocks/personality_test/` en tu instalación de Moodle
-          3. Visitar la página de administración para completar la instalación
-          4. Agregar el bloque a los cursos deseados
-          
-          ### 📊 **Funcionalidades para Profesores**
-          - Visualización de distribución de tipos MBTI
-          - Gráficos por aspectos de personalidad
-          - Exportación de datos en PDF
-          - Análisis estadístico del curso
-          
-          ### �️ **Seguridad y Permisos**
-          - Control de acceso basado en capacidades de Moodle
-          - Verificación de sesión para todas las acciones
-          - Protección de datos de personalidad
           
           ---
           
