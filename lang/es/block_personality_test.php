@@ -18,7 +18,7 @@ $string["personality_test:q1"] = "Se enorgullece de su objetividad, a pesar de q
 $string["personality_test:q1_a"] = "si.";
 $string["personality_test:q1_b"] = "no.";
 
-$string["personality_test:q2"] = "Necesita recargar energías solo, despueés de reuniones, llamadas telefónicas o socializacioón; cuanto más intenso es el encuentro más agotado se siente posteriormente.";
+$string["personality_test:q2"] = "Necesita recargar energías solo, después de reuniones, llamadas telefónicas o socialización; cuanto más intenso es el encuentro más agotado se siente posteriormente.";
 $string["personality_test:q2_a"] = "si.";
 $string["personality_test:q2_b"] = "no.";
 
@@ -30,7 +30,7 @@ $string["personality_test:q4"] = "No le importa realizar decisiones difíciles y
 $string["personality_test:q4_a"] = "si.";
 $string["personality_test:q4_b"] = "no.";
 
-$string["personality_test:q5"] = "Tiende a hablar primero y pensar despueés; con frecuencia se reganña a sí mismo con cosas como '¿aprendereé alguna vez a mantener mi boca cerrada?'";
+$string["personality_test:q5"] = "Tiende a hablar primero y pensar después; con frecuencia se reganña a sí mismo con cosas como '¿aprenderé alguna vez a mantener mi boca cerrada?'";
 $string["personality_test:q5_a"] = "si.";
 $string["personality_test:q5_b"] = "no.";
 
@@ -46,11 +46,11 @@ $string["personality_test:q8"] = "Considera como una buena decisión la que toma
 $string["personality_test:q8_a"] = "si.";
 $string["personality_test:q8_b"] = "no.";
 
-$string["personality_test:q9"] = "Ensaya las cosas antes de decirlas; a menudo contesta con 'lo tendreé que pensar o le contesto más tarde'";
+$string["personality_test:q9"] = "Ensaya las cosas antes de decirlas; a menudo contesta con 'lo tendré que pensar o le contesto más tarde'";
 $string["personality_test:q9_a"] = "si.";
 $string["personality_test:q9_b"] = "no.";
 
-$string["personality_test:q10"] = "No le importa leer o tener una conversacioón mientras se desarrolla otra actividad (como una conversacioón, la TV, Radio, etc.); en realidad puede permanecer indiferente a esta distracción.";
+$string["personality_test:q10"] = "No le importa leer o tener una conversación mientras se desarrolla otra actividad (como una conversación, la TV, Radio, etc.); en realidad puede permanecer indiferente a esta distracción.";
 $string["personality_test:q10_a"] = "si.";
 $string["personality_test:q10_b"] = "no.";
 
@@ -62,19 +62,19 @@ $string["personality_test:q12"] = "No le gusta que le obliguen a tomar decisione
 $string["personality_test:q12_a"] = "si.";
 $string["personality_test:q12_b"] = "no.";
 
-$string["personality_test:q13"] = "Es accesible y traba conversacioón fácilmente con amigos, companñeros del trabajo y extranños teniendo quizaás un papel dominante en la conversacioón.	";
+$string["personality_test:q13"] = "Es accesible y traba conversación fácilmente con amigos, companñeros del trabajo y extranños teniendo quizás un papel dominante en la conversación.	";
 $string["personality_test:q13_a"] = "si.";
 $string["personality_test:q13_b"] = "no.";
 
-$string["personality_test:q14"] = "Prefiere la armonía a la claridad; el conflicto lo abruma y trata de evitarlo (cambiemos de tema, o deémonos las manos y seamos todos amigos).";
+$string["personality_test:q14"] = "Prefiere la armonía a la claridad; el conflicto lo abruma y trata de evitarlo (cambiemos de tema, o démonos las manos y seamos todos amigos).";
 $string["personality_test:q14_a"] = "si.";
 $string["personality_test:q14_b"] = "no.";
 
-$string["personality_test:q15"] = "Se siente frustrado cuando las personas le dan instrucciones poco claras o cuando alguien le dice 'este es el plan general, nos ocuparemos de los detalles despueés'";
+$string["personality_test:q15"] = "Se siente frustrado cuando las personas le dan instrucciones poco claras o cuando alguien le dice 'este es el plan general, nos ocuparemos de los detalles después'";
 $string["personality_test:q15_a"] = "si.";
 $string["personality_test:q15_b"] = "no.";
 
-$string["personality_test:q16"] = "En una conversacioón cambia a menudo de tema; el nuevo tema puede ser algo que le viene a la mente o que atrae su atención en ese momento.";
+$string["personality_test:q16"] = "En una conversación cambia a menudo de tema; el nuevo tema puede ser algo que le viene a la mente o que atrae su atención en ese momento.";
 $string["personality_test:q16_a"] = "si.";
 $string["personality_test:q16_b"] = "no.";
 
@@ -86,7 +86,7 @@ $string["personality_test:q18"] = " Considera más importante tener razón que c
 $string["personality_test:q18_a"] = "si.";
 $string["personality_test:q18_b"] = "no.";
 
-$string["personality_test:q19"] = "No le gustan las sorpresas y esto se lo hace saber a los demaás.";
+$string["personality_test:q19"] = "No le gustan las sorpresas y esto se lo hace saber a los demás.";
 $string["personality_test:q19_a"] = "si.";
 $string["personality_test:q19_b"] = "no.";
 
@@ -98,11 +98,11 @@ $string["personality_test:q21"] = " Hace listas y las utiliza; si hace algo que 
 $string["personality_test:q21_a"] = "si.";
 $string["personality_test:q21_b"] = "no.";
 
-$string["personality_test:q22"] = "Convierte todo trabajo en una diversioón; si un trabajo no puede ser algo entretenido probablemente no sea digno de hacerse.";
+$string["personality_test:q22"] = "Convierte todo trabajo en una diversión; si un trabajo no puede ser algo entretenido probablemente no sea digno de hacerse.";
 $string["personality_test:q22_a"] = "si.";
 $string["personality_test:q22_b"] = "no.";
 
-$string["personality_test:q23"] = "Encuentra que escuchar es más difícil que hablar; le gusta ser la estrella de la conversacioón, y se aburre cuando no puede participar activamente en ella.";
+$string["personality_test:q23"] = "Encuentra que escuchar es más difícil que hablar; le gusta ser la estrella de la conversación, y se aburre cuando no puede participar activamente en ella.";
 $string["personality_test:q23_a"] = "si.";
 $string["personality_test:q23_b"] = "no.";
 
@@ -134,7 +134,7 @@ $string["personality_test:q30"] = "Adora explorar lo desconocido, aun cuando sea
 $string["personality_test:q30_a"] = "si.";
 $string["personality_test:q30_b"] = "no.";
 
-$string["personality_test:q31"] = "Se extralimita tratando de satisfacer las necesidades de otros; haraá casi cualquier cosa para acomodar a otros incluso a expensas de su propio confort.";
+$string["personality_test:q31"] = "Se extralimita tratando de satisfacer las necesidades de otros; hará casi cualquier cosa para acomodar a otros incluso a expensas de su propio confort.";
 $string["personality_test:q31_a"] = "si.";
 $string["personality_test:q31_b"] = "no.";
 
@@ -142,7 +142,7 @@ $string["personality_test:q32"] = "No planifica una tarea hasta ver que es lo qu
 $string["personality_test:q32_a"] = "si.";
 $string["personality_test:q32_b"] = "no.";
 
-$string["personality_test:q33"] = "Se pone en el lugar de los demaás; Ud. es quien en una reunioón probablemente pregunta cómo afectara esto a la gente involucrada.";
+$string["personality_test:q33"] = "Se pone en el lugar de los demás; Ud. es quien en una reunión probablemente pregunta cómo afectara esto a la gente involucrada.";
 $string["personality_test:q33_a"] = "si.";
 $string["personality_test:q33_b"] = "no.";
 
@@ -186,7 +186,7 @@ $string["personality_test:q43"] = "Ud. es de la idea que hay que ver para creer;
 $string["personality_test:q43_a"] = "si.";
 $string["personality_test:q43_b"] = "no.";
 
-$string["personality_test:q44"] = "Cree que el tiempo es relativo; no importa la hora a menos que la reunioón, cena o evento haya comenzado sin Ud.";
+$string["personality_test:q44"] = "Cree que el tiempo es relativo; no importa la hora a menos que la reunión, cena o evento haya comenzado sin Ud.";
 $string["personality_test:q44_a"] = "si.";
 $string["personality_test:q44_b"] = "no.";
 
@@ -254,7 +254,7 @@ $string["personality_test:q60"] = "No cree que la prolijidad sea importante, aun
 $string["personality_test:q60_a"] = "si.";
 $string["personality_test:q60_b"] = "no.";
 
-$string["personality_test:q61"] = "Necesita aprobación de los colegas superiores y subordinados acerca de quién es Ud., de lo que hace, cómo luce y casi sobre todo lo demaás; puede pensar que hace un buen trabajo pero hasta que no escuche a alguien deciérselo, no lo creerá realmente";
+$string["personality_test:q61"] = "Necesita aprobación de los colegas superiores y subordinados acerca de quién es Ud., de lo que hace, cómo luce y casi sobre todo lo demás; puede pensar que hace un buen trabajo pero hasta que no escuche a alguien deciérselo, no lo creerá realmente";
 $string["personality_test:q61_a"] = "si.";
 $string["personality_test:q61_b"] = "no.";
 
@@ -274,7 +274,7 @@ $string["personality_test:q65"] = " Es percibido como un gran escucha pero sient
 $string["personality_test:q65_a"] = "si.";
 $string["personality_test:q65_b"] = "no.";
 
-$string["personality_test:q66"] = "Piensa que la fantasió es una mala palabra; duda de la gente que parece dedicar demasiado tiempo a jugar con su imaginacioón.";
+$string["personality_test:q66"] = "Piensa que la fantasió es una mala palabra; duda de la gente que parece dedicar demasiado tiempo a jugar con su imaginación.";
 $string["personality_test:q66_a"] = "si.";
 $string["personality_test:q66_b"] = "no.";
 
@@ -286,7 +286,7 @@ $string["personality_test:q68"] = "Considera que las llamadas telefónicas son i
 $string["personality_test:q68_a"] = "si.";
 $string["personality_test:q68_b"] = "no.";
 
-$string["personality_test:q69"] = "Le gusta compartir ocasiones especiales sólo con alguna otra persona o quizaás con algunos amigos íntimos.";
+$string["personality_test:q69"] = "Le gusta compartir ocasiones especiales sólo con alguna otra persona o quizás con algunos amigos íntimos.";
 $string["personality_test:q69_a"] = "si.";
 $string["personality_test:q69_b"] = "no.";
 
