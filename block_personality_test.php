@@ -446,6 +446,16 @@ class block_personality_test extends block_base
                 $teacher_content = $this->_get_teacher_content($DB, $COURSE);
                 $this->content->text = $teacher_content->text;
                 $this->content->footer = $teacher_content->footer;
+                
+                // Agregar enlace a la vista administrativa
+                $admin_url = new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $COURSE->id));
+                $this->content->footer .= html_writer::div(
+                    html_writer::link($admin_url, 
+                        '<i class="fa fa-cog"></i> ' . get_string('admin_manage_title', 'block_personality_test'),
+                        array('class' => 'btn btn-primary btn-sm mt-2', 'target' => '_blank')
+                    ),
+                    'text-center'
+                );
             } else {
                 // -- OTROS ROLES (Ni estudiante detectado, ni profesor con capacidad) --
                 // Mantener la lógica original para estos casos: mostrar mensajes de configuración.

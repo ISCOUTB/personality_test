@@ -390,5 +390,52 @@ $string['Percepcion'] = 'Percepción'; // O 'Perceiving' - Asegúrate que la cla
 // Errores (si los usas en el código)
 
 $string['error_recuperando_resultados'] = 'Error al recuperar los resultados del test.';
+$string['error_puntuacion_invalida'] = 'Error: Puntuación MBTI inválida calculada.';
 
-$string['error_puntuacion_invalida'] = 'Error: Puntuación MBTI inválida calculada.'; 
+// Sección administrativa
+$string['admin_manage_title'] = 'Gestión de Test de Personalidad';
+$string['no_admin_access'] = 'No tienes acceso administrativo a este curso.';
+$string['total_participants'] = 'Total de Participantes';
+$string['no_participants'] = 'Sin Participantes';
+$string['no_participants_message'] = 'Ningún estudiante ha completado el test de personalidad en este curso aún.';
+$string['participants_list'] = 'Lista de Participantes';
+$string['search_participant'] = 'Buscar participante...';
+$string['export_csv'] = 'Exportar CSV';
+$string['export_pdf'] = 'Exportar PDF';
+$string['student_name'] = 'Nombre del Estudiante';
+$string['email'] = 'Correo Electrónico';
+$string['mbti_type'] = 'Tipo MBTI';
+$string['test_date'] = 'Fecha del Test';
+$string['actions'] = 'Acciones';
+$string['view'] = 'Ver';
+$string['delete'] = 'Eliminar';
+$string['view_results'] = 'Ver Resultados';
+$string['delete_participation'] = 'Eliminar Participación';
+$string['back_to_course'] = 'Volver al Curso';
+$string['confirm_delete'] = 'Confirmar Eliminación';
+$string['confirm_delete_message'] = '¿Estás seguro de que quieres eliminar los resultados del test para {$a}? Esta acción no se puede deshacer.';
+$string['confirm_delete_yes'] = 'Sí, Eliminar';
+$string['cancel'] = 'Cancelar';
+$string['participation_deleted'] = 'La participación ha sido eliminada exitosamente.';
+
+// Página de resultados individuales
+$string['individual_results'] = 'Resultados Individuales';
+$string['no_test_results'] = 'No se encontraron resultados del test para este estudiante.';
+$string['back_to_admin'] = 'Volver a Administración';
+$string['personality_dimensions'] = 'Dimensiones de Personalidad';
+$string['summary_actions'] = 'Resumen y Acciones';
+$string['download_pdf'] = 'Descargar PDF';
+$string['delete_results'] = 'Eliminar Resultados';
+$string['confirm_delete_individual'] = '¿Estás seguro de que quieres eliminar estos resultados del test?';
+$string['detailed_scores'] = 'Puntuaciones Detalladas';
+$string['dimension'] = 'Dimensión';
+$string['score'] = 'Puntuación';
+$string['preference'] = 'Preferencia';
+$string['extraversion'] = 'Extraversión';
+$string['introversion'] = 'Introversión';
+$string['sensing'] = 'Sensación';
+$string['intuition'] = 'Intuición';
+$string['thinking'] = 'Pensamiento';
+$string['feeling'] = 'Sentimiento';
+$string['judging'] = 'Juicio';
+$string['perceptive'] = 'Percepción'; 

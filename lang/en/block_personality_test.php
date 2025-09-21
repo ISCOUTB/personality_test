@@ -393,5 +393,52 @@ $string['Percepcion'] = 'Perceiving'; // Ensure key matches PHP (e.g., no accent
 // Errors (if used in code)
 
 $string['error_recuperando_resultados'] = 'Error retrieving test results.';
-
 $string['error_puntuacion_invalida'] = 'Error: Invalid MBTI score calculated.';
+
+// Administrative section
+$string['admin_manage_title'] = 'Personality Test Management';
+$string['no_admin_access'] = 'You do not have administrative access to this course.';
+$string['total_participants'] = 'Total Participants';
+$string['no_participants'] = 'No Participants';
+$string['no_participants_message'] = 'No students have completed the personality test in this course yet.';
+$string['participants_list'] = 'Participants List';
+$string['search_participant'] = 'Search participant...';
+$string['export_csv'] = 'Export CSV';
+$string['export_pdf'] = 'Export PDF';
+$string['student_name'] = 'Student Name';
+$string['email'] = 'Email';
+$string['mbti_type'] = 'MBTI Type';
+$string['test_date'] = 'Test Date';
+$string['actions'] = 'Actions';
+$string['view'] = 'View';
+$string['delete'] = 'Delete';
+$string['view_results'] = 'View Results';
+$string['delete_participation'] = 'Delete Participation';
+$string['back_to_course'] = 'Back to Course';
+$string['confirm_delete'] = 'Confirm Deletion';
+$string['confirm_delete_message'] = 'Are you sure you want to delete the test results for {$a}? This action cannot be undone.';
+$string['confirm_delete_yes'] = 'Yes, Delete';
+$string['cancel'] = 'Cancel';
+$string['participation_deleted'] = 'Participation has been successfully deleted.';
+
+// Individual results page
+$string['individual_results'] = 'Individual Results';
+$string['no_test_results'] = 'No test results found for this student.';
+$string['back_to_admin'] = 'Back to Administration';
+$string['personality_dimensions'] = 'Personality Dimensions';
+$string['summary_actions'] = 'Summary & Actions';
+$string['download_pdf'] = 'Download PDF';
+$string['delete_results'] = 'Delete Results';
+$string['confirm_delete_individual'] = 'Are you sure you want to delete these test results?';
+$string['detailed_scores'] = 'Detailed Scores';
+$string['dimension'] = 'Dimension';
+$string['score'] = 'Score';
+$string['preference'] = 'Preference';
+$string['extraversion'] = 'Extraversion';
+$string['introversion'] = 'Introversion';
+$string['sensing'] = 'Sensing';
+$string['intuition'] = 'Intuition';
+$string['thinking'] = 'Thinking';
+$string['feeling'] = 'Feeling';
+$string['judging'] = 'Judging';
+$string['perceptive'] = 'Perceptive';
