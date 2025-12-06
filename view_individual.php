@@ -176,7 +176,7 @@ echo "<p class='text-muted' style='font-size: 0.9em;'>(" . get_string($mbti_dime
 echo "<p class='text-muted' style='text-align: justify;'>" . get_string($mbti_key, 'block_personality_test') . "</p>";
 echo "</div>";
 
-echo "<div class='d-grid gap-2'>";
+echo "<div class='d-flex justify-content-center gap-2'>";
 echo "<a href='" . new moodle_url('/blocks/personality_test/download_pdf.php', 
         array('userid' => $userid, 'cid' => $courseid)) . 
         "' class='btn btn-success'>";
