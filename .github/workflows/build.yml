@@ -38,9 +38,9 @@ jobs:
         mkdir -p personality_test_dev_package
         
         # Copy all files except development artifacts
-        rsync -av --exclude='.git' --exclude='.github' 
-               --exclude='*.md' --exclude='test_*' 
-               --exclude='*.log' --exclude='node_modules' 
+        rsync -av --exclude='.git' --exclude='.github' \
+               --exclude='*.md' --exclude='test_*' \
+               --exclude='*.log' --exclude='node_modules' \
                ./ personality_test_dev_package/
         
         # Create development ZIP
