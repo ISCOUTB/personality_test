@@ -452,7 +452,7 @@ class block_personality_test extends block_base
                 $this->content->footer .= html_writer::div(
                     html_writer::link($admin_url, 
                         '<i class="fa fa-cog"></i> ' . get_string('admin_manage_title', 'block_personality_test'),
-                        array('class' => 'btn btn-primary btn-sm mt-2', 'target' => '_blank')
+                        array('class' => 'btn btn-primary btn-sm mt-2')
                     ),
                     'text-center'
                 );
