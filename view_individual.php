@@ -166,32 +166,17 @@ echo "<h5 class='mb-0'><i class='fa fa-info-circle'></i> " . get_string('summary
 echo "</div>";
 echo "<div class='card-body'>";
 
-// Mostrar tipo MBTI con descripción
-$mbti_explanations = [
-    "ISTJ" => "práctica y centrada en los hechos, cuya fiabilidad no puede ser cuestionada.",
-    "ISFJ" => "protectora muy dedicada y cálida, siempre lista para defender a sus seres queridos.",
-    "INFJ" => "tranquila y mística, pero muy inspiradora e incansable idealista.",
-    "INTJ" => "visionaria, pensadora estratégica y resolvente de problemas lógicos.",
-    "ISTP" => "experimentadora audaz y práctica, maestra de todo tipo de herramientas.",
-    "ISFP" => "artística flexible y encantadora, siempre dispuesta a explorar y experimentar algo nuevo.",
-    "INFP" => "poética, amable y altruista, siempre dispuesta por ayudar a una buena causa.",
-    "INTP" => "creativa e innovadora con una sed insaciable de conocimiento.",
-    "ESTP" => "inteligente, enérgica y muy perceptiva, que realmente disfruta viviendo al límite.",
-    "ESFP" => "espontánea, enérgica y entusiasta.",
-    "ENFP" => "de espíritu libre, entusiasta, creativa y sociable, que siempre pueden encontrar una razón para sonreír.",
-    "ENTP" => "pensadora, inteligente y curiosa, que no puede resistirse a un desafío intelectual.",
-    "ESTJ" => "práctica y centrada en los hechos, cuya fiabilidad no puede ser cuestionada.",
-    "ESFJ" => "extraordinariamente cariñosa, sociable y popular, siempre dispuesta a ayudar.",
-    "ENFJ" => "líder, carismática e inspiradora, capaz de cautivar a su audiencia.",
-    "ENTJ" => "líder, audaz, imaginativa y de voluntad fuerte, siempre encontrando una forma, o creándola."
-];
+// Usar cadenas de idioma para las descripciones MBTI
+$mbti_key = 'mbti_' . strtolower($mbti);
+$mbti_dimensions_key = 'mbti_dimensions_' . strtolower($mbti);
 
 echo "<div class='text-center mb-4'>";
-echo "<h2 class='text-primary'>" . $mbti . "</h2>";
-echo "<p class='text-muted'>" . ($mbti_explanations[$mbti] ?? '') . "</p>";
+echo "<h2 class='text-primary mb-2'>" . $mbti . "</h2>";
+echo "<p class='text-muted' style='font-size: 0.9em;'>(" . get_string($mbti_dimensions_key, 'block_personality_test') . ")</p>";
+echo "<p class='text-muted' style='text-align: justify;'>" . get_string($mbti_key, 'block_personality_test') . "</p>";
 echo "</div>";
 
-echo "<div class='d-grid gap-2'>";
+echo "<div class='d-flex justify-content-center gap-2'>";
 echo "<a href='" . new moodle_url('/blocks/personality_test/download_pdf.php', 
         array('userid' => $userid, 'cid' => $courseid)) . 
         "' class='btn btn-success'>";

@@ -22,14 +22,17 @@ jobs:
         BRANCH=${GITHUB_REF#refs/heads/}
         COMMIT=${GITHUB_SHA:0:7}
         
+        # Sanitize branch name for file naming
+        SAFE_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+        
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-        echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+        echo "branch=$SAFE_BRANCH" >> $GITHUB_OUTPUT
         echo "commit=$COMMIT" >> $GITHUB_OUTPUT
         
         echo "Building version: $VERSION"
         echo "Build number: $BUILD_NUMBER"
-        echo "Branch: $BRANCH"
+        echo "Branch: $BRANCH (safe: $SAFE_BRANCH)"
         echo "Commit: $COMMIT"
         
     - name: Create development package
@@ -38,9 +41,9 @@ jobs:
         mkdir -p personality_test_dev_package
         
         # Copy all files except development artifacts
-        rsync -av --exclude='.git' --exclude='.github' 
-               --exclude='*.md' --exclude='test_*' 
-               --exclude='*.log' --exclude='node_modules' 
+        rsync -av --exclude='.git' --exclude='.github' \
+               --exclude='*.md' --exclude='test_*' \
+               --exclude='*.log' --exclude='node_modules' \
                ./ personality_test_dev_package/
         
         # Create development ZIP
