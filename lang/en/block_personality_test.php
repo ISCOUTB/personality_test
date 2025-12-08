@@ -478,3 +478,23 @@ $string['mbti_dimensions_estj'] = 'Extraversion - Sensing - Thinking - Judging';
 $string['mbti_dimensions_esfj'] = 'Extraversion - Sensing - Feeling - Judging';
 $string['mbti_dimensions_enfj'] = 'Extraversion - Intuition - Feeling - Judging';
 $string['mbti_dimensions_entj'] = 'Extraversion - Intuition - Thinking - Judging';
+
+// Test invitation
+$string['test_title'] = 'Personality Test';
+$string['discover_your_personality'] = 'Discover your personality type';
+$string['what_is_mbti'] = 'What is the Myers-Briggs Test?';
+$string['test_description'] = 'Identifies your personality type based on 4 dimensions: Extraversion/Introversion, Sensing/Intuition, Thinking/Feeling, and Judging/Perceiving.';
+$string['feature_70_questions'] = '70 quick questions';
+$string['feature_16_types'] = '16 unique personality types';
+$string['feature_instant_results'] = 'Instant results with detailed profile';
+$string['start_test'] = 'Start Test';
+$string['test_completed'] = 'Test Completed';
+$string['your_personality_type'] = 'Your Personality Type';
+
+// Test page strings
+$string['test_page_title'] = 'Discover Your Personality Type';
+$string['test_intro_p1'] = 'This test will help you identify your personality type based on the Myers-Briggs model, which analyzes four key dimensions: Extraversion/Introversion, Sensing/Intuition, Thinking/Feeling, and Judging/Perceiving.';
+$string['test_intro_p2'] = 'Understanding your personality type will allow you to better know yourself, recognize your strengths, and understand how you interact with the world around you.';
+$string['test_benefit_note'] = 'Note:';
+$string['test_benefit_required'] = 'All questions are mandatory';
+$string['select_option'] = 'Select';
