@@ -186,7 +186,7 @@ class block_personality_test extends block_base
         $str_juicio_percepcion = json_encode(get_string('juicio_percepcion', 'block_personality_test'));
 
         $content->text .= html_writer::tag('h6',get_string('titulo_resultados_estudiantes', 'block_personality_test'),['style' => 'text-align: center;']);
-        $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' => 'max-width: 100%; height: auto;']);
+        $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' => 'max-width: 100%; max-height: 350px; height: auto;']);
         $content->text .= html_writer::tag('h6', get_string('titulo_distribucion_rasgos', 'block_personality_test'), ['style' => 'text-align: center; margin-top: 20px;']);
 
         $content->text .= html_writer::start_div('d-flex flex-wrap justify-content-around');
@@ -452,7 +452,7 @@ class block_personality_test extends block_base
                 $this->content->footer .= html_writer::div(
                     html_writer::link($admin_url, 
                         '<i class="fa fa-cog"></i> ' . get_string('admin_manage_title', 'block_personality_test'),
-                        array('class' => 'btn btn-primary btn-sm mt-2', 'target' => '_blank')
+                        array('class' => 'btn btn-primary btn-sm mt-2')
                     ),
                     'text-center'
                 );
