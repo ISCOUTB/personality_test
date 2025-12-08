@@ -39,11 +39,28 @@ comprenderá mejor tus necesidades, preferencias e intereses, reflejandose en un
 personalización de los recursos de aprendizaje en las próximas semanas.
 </div>
 <br>
+<div style='background-color: #e3f2fd; border-left: 4px solid #2196F3; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;'>
+    <strong>Nota:</strong> Todas las preguntas son obligatorias (<span style='color: #d32f2f;'>*</span>)
+</div>
 ";
 $action_form = new moodle_url('/blocks/personality_test/save.php');
 ?>
 
-<form method="POST" action="<?php echo $action_form ?>" >
+<style>
+    /* Estilo para campos obligatorios no completados solo después de intentar enviar */
+    form.attempted select:invalid {
+        border: 2px solid #d32f2f !important;
+        background-color: #ffebee !important;
+    }
+    
+    /* Mensaje visual al hacer focus en campo inválido */
+    form.attempted select:invalid:focus {
+        outline: 2px solid #d32f2f;
+        box-shadow: 0 0 8px rgba(211, 47, 47, 0.3);
+    }
+</style>
+
+<form method="POST" action="<?php echo $action_form ?>" id="personalityTestForm">
     <div class="content-accept <?php echo ($error)?"error":"" ?>">
         <?php if($error): ?>
             <p class="error"><?php echo get_string('required_message', 'block_personality_test') ?></p>
@@ -62,7 +79,7 @@ $action_form = new moodle_url('/blocks/personality_test/save.php');
         <?php } ?>
         </ol>
         <div class="clearfix"></div>
-        <input class="btn" type="submit" value="<?php echo get_string('submit_text', 'block_personality_test') ?>" >
+        <input class="btn" type="submit" id="submitBtn" value="<?php echo get_string('submit_text', 'block_personality_test') ?>" >
     
     </div>
     
@@ -70,6 +87,18 @@ $action_form = new moodle_url('/blocks/personality_test/save.php');
     <div class="clearfix"></div>
     
 </form>
+
+<script>
+// Marcar formulario cuando se haga clic en enviar
+document.getElementById('submitBtn').addEventListener('click', function() {
+    document.getElementById('personalityTestForm').classList.add('attempted');
+});
+
+// Mantener la clase attempted si hay error
+<?php if($error): ?>
+document.getElementById('personalityTestForm').classList.add('attempted');
+<?php endif; ?>
+</script>
 
 <?php
 
