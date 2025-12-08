@@ -186,8 +186,7 @@ class block_personality_test extends block_base
         $str_juicio_percepcion = json_encode(get_string('juicio_percepcion', 'block_personality_test'));
 
         $content->text .= html_writer::tag('h6',get_string('titulo_resultados_estudiantes', 'block_personality_test'),['style' => 'text-align: center;']);
-        $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' => 'max-width: 100%; max-height: 350px; height: auto;']);
-        $content->text .= html_writer::tag('h6', get_string('titulo_distribucion_rasgos', 'block_personality_test'), ['style' => 'text-align: center; margin-top: 20px;']);
+$content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' => 'max-width: 100%; max-height: 350px; height: auto;']);        $content->text .= html_writer::tag('h6', get_string('titulo_distribucion_rasgos', 'block_personality_test'), ['style' => 'text-align: center; margin-top: 20px;']);
 
         $content->text .= html_writer::start_div('d-flex flex-wrap justify-content-around');
         $chart_style = "width: 100%; max-width: 350px; margin: 10px; box-sizing: border-box;";
@@ -237,6 +236,78 @@ class block_personality_test extends block_base
         $content->text .= $download_links;
         $content->footer = '';
         return $content;
+    }
+
+    /**
+     * Método para mostrar la invitación al test de personalidad
+     */
+    private function get_test_invitation() {
+        global $COURSE;
+        
+        $output = '';
+        $output .= '<div class="personality-invitation-block">';
+        
+        // Header with user icon
+        $output .= '<div class="personality-header text-center mb-3">';
+        $output .= '<i class="fa fa-user-circle text-info" style="font-size: 1.8em;"></i>';
+        $output .= '<h6 class="mt-2 mb-1">' . get_string('test_title', 'block_personality_test') . '</h6>';
+        $output .= '<small class="text-muted">' . get_string('discover_your_personality', 'block_personality_test') . '</small>';
+        $output .= '</div>';
+        
+        // Test description card
+        $output .= '<div class="personality-description mb-3">';
+        $output .= '<div class="card border-info">';
+        $output .= '<div class="card-body p-3">';
+        $output .= '<h6 class="card-title">';
+        $output .= '<i class="fa fa-info-circle text-info"></i> ';
+        $output .= get_string('what_is_mbti', 'block_personality_test');
+        $output .= '</h6>';
+        $output .= '<p class="card-text small mb-2">' . get_string('test_description', 'block_personality_test') . '</p>';
+        $output .= '<ul class="list-unstyled small mb-0">';
+        $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_70_questions', 'block_personality_test') . '</li>';
+        $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_16_types', 'block_personality_test') . '</li>';
+        $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_instant_results', 'block_personality_test') . '</li>';
+        $output .= '</ul>';
+        $output .= '</div>';
+        $output .= '</div>';
+        $output .= '</div>';
+        
+        // Action button
+        $output .= '<div class="personality-actions text-center">';
+        $url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $COURSE->id));
+        $output .= '<a href="' . $url . '" class="btn btn-info btn-block">';
+        $output .= '<i class="fa fa-rocket"></i> <span>' . get_string('start_test', 'block_personality_test') . '</span>';
+        $output .= '</a>';
+        $output .= '</div>';
+        
+        $output .= '</div>';
+        
+        // Add custom CSS for invitation
+        $output .= '<style>
+        .personality-invitation-block {
+            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .personality-header i {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .personality-description .card {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .personality-actions .btn {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .personality-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        </style>';
+        
+        return $output;
     }
     
     //  Función para la vista del Profesor
@@ -298,9 +369,8 @@ class block_personality_test extends block_base
             $entry = $DB->get_record('personality_test', array('user' => $USER->id, 'course' => $COURSE->id));
 
             if (!$entry) {
-                // El estudiante NO ha realizado el test todavía - REDIRIGIR SIEMPRE
-            		$redirect_url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $COURSE->id));
-            		redirect($redirect_url);
+                // El estudiante NO ha realizado el test todavía - Mostrar invitación
+                $this->content->text = $this->get_test_invitation();
             } else {
                 // El estudiante YA HA realizado el test - Mostrar sus resultados
 
@@ -364,6 +434,14 @@ class block_personality_test extends block_base
                     // Verificamos si el tipo MBTI del usuario tiene explicación definida
                     if (isset($mbti_explanations[$mbti_score])) {
 
+                        // Header con icono de éxito
+                        $this->content->text .= '<div class="personality-results-block" style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #dee2e6;">';
+                        $this->content->text .= '<div class="personality-header text-center mb-3">';
+                        $this->content->text .= '<i class="fa fa-check-circle text-success" style="font-size: 1.5em; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"></i>';
+                        $this->content->text .= '<h6 class="mt-2 mb-1">' . get_string('test_completed', 'block_personality_test') . '</h6>';
+                        $this->content->text .= '<small class="text-muted">' . get_string('your_personality_type', 'block_personality_test') . '</small>';
+                        $this->content->text .= '</div>';
+
                         // Creamos el texto explicativo que se mostrará antes del gráfico
                         $paragraph_content = "De acuerdo con el modelo de Myers-Briggs, todos tendemos a inclinarnos por cuatro facetas de personalidad predominantes.<br>";
                         $paragraph_content .= "En tu caso podemos concluir que eres una persona " .
@@ -426,6 +504,9 @@ class block_personality_test extends block_base
                         }
                     });
                     </script>';
+                    
+                    // Cerrar div de resultados
+                    $this->content->text .= '</div>';
                     } else {
                         // Si no se encuentra el tipo MBTI del usuario, mostramos un mensaje de error
                         $this->content->text .= html_writer::tag('p', 'No se encontró información de perfil MBTI.');

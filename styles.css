@@ -56,10 +56,10 @@
 }
 
 .block_personality_test {
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0, 91, 154, 0.2);
-  padding: 15px;
+  border-radius: 0;
+  box-shadow: none;
+  border: 0;
+  padding: 0;
   box-sizing: border-box;
   width: 100%;
   margin: 0 auto;
