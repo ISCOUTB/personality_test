@@ -475,3 +475,23 @@ $string['mbti_dimensions_estj'] = 'Extraversión - Sensación - Pensamiento - Ju
 $string['mbti_dimensions_esfj'] = 'Extraversión - Sensación - Sentimiento - Juicio';
 $string['mbti_dimensions_enfj'] = 'Extraversión - Intuición - Sentimiento - Juicio';
 $string['mbti_dimensions_entj'] = 'Extraversión - Intuición - Pensamiento - Juicio'; 
+
+// Invitación al test
+$string['test_title'] = 'Test de Personalidad';
+$string['discover_your_personality'] = 'Descubre tu tipo de personalidad';
+$string['what_is_mbti'] = '¿Qué es el Test de Myers-Briggs?';
+$string['test_description'] = 'Identifica tu tipo de personalidad basado en 4 dimensiones: Extraversión/Introversión, Sensación/Intuición, Pensamiento/Sentimiento y Juicio/Percepción.';
+$string['feature_70_questions'] = '70 preguntas rápidas';
+$string['feature_16_types'] = '16 tipos únicos de personalidad';
+$string['feature_instant_results'] = 'Resultados instantáneos con perfil detallado';
+$string['start_test'] = 'Iniciar Test';
+$string['test_completed'] = 'Test Completado';
+$string['your_personality_type'] = 'Tu Tipo de Personalidad';
+
+// Strings de página de test
+$string['test_page_title'] = 'Descubre Tu Tipo de Personalidad';
+$string['test_intro_p1'] = 'Este test te ayudará a identificar tu tipo de personalidad según el modelo Myers-Briggs, que analiza cuatro dimensiones clave: Extraversión/Introversión, Sensación/Intuición, Pensamiento/Sentimiento y Juicio/Percepción.';
+$string['test_intro_p2'] = 'Comprender tu tipo de personalidad te permitirá conocerte mejor, reconocer tus fortalezas y entender cómo interactúas con el mundo que te rodea.';
+$string['test_benefit_note'] = 'Nota:';
+$string['test_benefit_required'] = 'Todas las preguntas son obligatorias';
+$string['select_option'] = 'Selecciona'; 
