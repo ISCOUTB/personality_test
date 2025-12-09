@@ -494,4 +494,16 @@ $string['test_intro_p1'] = 'Este test te ayudará a identificar tu tipo de perso
 $string['test_intro_p2'] = 'Comprender tu tipo de personalidad te permitirá conocerte mejor, reconocer tus fortalezas y entender cómo interactúas con el mundo que te rodea.';
 $string['test_benefit_note'] = 'Nota:';
 $string['test_benefit_required'] = 'Todas las preguntas son obligatorias';
-$string['select_option'] = 'Selecciona'; 
+$string['select_option'] = 'Selecciona';
+$string['participation_stats'] = 'Participación';
+$string['students_completed_test'] = '{$a->completed} de {$a->total} estudiantes han completado el test ({$a->percentage}%)';
+
+// CSV Export Headers
+$string['csv_header_userid'] = 'ID Estudiante';
+$string['csv_header_fullname'] = 'Nombre Completo';
+$string['csv_header_mbti_type'] = 'Tipo MBTI';
+$string['csv_header_date'] = 'Fecha';
+$string['num_estudiantes_header'] = 'Número de Estudiantes';
+
+// Nombres de archivos exportables
+$string['export_filename'] = 'Test_Personalidad_MBTI';
