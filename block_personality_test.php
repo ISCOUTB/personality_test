@@ -217,8 +217,8 @@ class block_personality_test extends block_base
         $participation_data->total = $total_enrolled;
         $participation_data->percentage = $completion_percentage;
         
-        $content->text .= html_writer::start_div('alert alert-info', ['style' => 'margin-bottom: 15px; padding: 10px;']);
-        $content->text .= html_writer::tag('strong', '📊 ' . get_string('participation_stats', 'block_personality_test') . ': ');
+        $content->text .= html_writer::start_div('alert alert-info', ['style' => 'margin-bottom: 15px; padding: 10px; text-align: center;']);
+        $content->text .= html_writer::tag('strong', get_string('participation_stats', 'block_personality_test') . ': ');
         $content->text .= html_writer::tag('span', get_string('students_completed_test', 'block_personality_test', $participation_data));
         $content->text .= html_writer::end_div();
 
