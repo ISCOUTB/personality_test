@@ -26,7 +26,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="block_personality_test_user_idc" UNIQUE="false" FIELDS="user"/>
+        <INDEX NAME="user_unique" UNIQUE="true" FIELDS="user"/>
       </INDEXES>
 
     </TABLE>
