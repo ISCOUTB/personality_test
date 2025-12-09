@@ -503,7 +503,6 @@ $string['csv_header_userid'] = 'ID Estudiante';
 $string['csv_header_fullname'] = 'Nombre Completo';
 $string['csv_header_mbti_type'] = 'Tipo MBTI';
 $string['csv_header_date'] = 'Fecha';
-$string['num_estudiantes_header'] = 'Número de Estudiantes';
 
 // Nombres de archivos exportables
 $string['export_filename'] = 'Test_Personalidad_MBTI';
