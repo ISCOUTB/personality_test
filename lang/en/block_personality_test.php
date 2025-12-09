@@ -496,5 +496,17 @@ $string['test_page_title'] = 'Discover Your Personality Type';
 $string['test_intro_p1'] = 'This test will help you identify your personality type based on the Myers-Briggs model, which analyzes four key dimensions: Extraversion/Introversion, Sensing/Intuition, Thinking/Feeling, and Judging/Perceiving.';
 $string['test_intro_p2'] = 'Understanding your personality type will allow you to better know yourself, recognize your strengths, and understand how you interact with the world around you.';
 $string['test_benefit_note'] = 'Note:';
-$string['test_benefit_required'] = 'All questions are mandatory';
+$string['test_benefit_required'] = 'All questions are required';
 $string['select_option'] = 'Select';
+$string['participation_stats'] = 'Participation';
+$string['students_completed_test'] = '{$a->completed} of {$a->total} students have completed the test ({$a->percentage}%)';
+
+// CSV Export Headers
+$string['csv_header_userid'] = 'Student ID';
+$string['csv_header_fullname'] = 'Full Name';
+$string['csv_header_mbti_type'] = 'MBTI Type';
+$string['csv_header_date'] = 'Date';
+$string['num_estudiantes_header'] = 'Number of Students';
+
+// Export filenames
+$string['export_filename'] = 'Personality_Test_MBTI';
