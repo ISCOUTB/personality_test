@@ -13,28 +13,44 @@ require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/tcpdf/tcpdf.php');
 
 // --- PARÁMETROS Y SEGURIDAD ---
-$courseid = required_param('courseid', PARAM_INT);
-$sesskey = required_param('sesskey', PARAM_ALPHANUM);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$cid = optional_param('cid', 0, PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
+$sesskey = optional_param('sesskey', '', PARAM_ALPHANUM);
+
+// Determine course ID from either parameter
+$courseid = $courseid ?: $cid;
+
+if (!$courseid) {
+    print_error('missingparam', '', '', 'courseid or cid');
+}
 
 // Moodle globals
-global $DB, $USER, $COURSE, $PAGE, $OUTPUT, $CFG; // Añadido $CFG globalmente para usar en Header
+global $DB, $USER, $COURSE, $PAGE, $OUTPUT, $CFG;
 
-// Verifica la clave de sesión
-require_sesskey($sesskey);
+// Verifica la clave de sesión si se proporciona
+if ($sesskey) {
+    require_sesskey($sesskey);
+}
 
 // Obtiene el curso y el contexto. Termina si no existen.
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
-// Requiere inicio de sesión y capacidad para ver secciones ocultas (típico de profesor/editor)
+// Requiere inicio de sesión
 require_login($course, false);
-require_capability('moodle/course:viewhiddensections', $context);
 
 // Define el nombre del plugin para usar en get_string
 define('BLOCK_PT_LANG', 'block_personality_test');
 
 // --- OBTENCIÓN Y PROCESAMIENTO DE DATOS ---
-$students = $DB->get_records('personality_test', ['course' => $course->id]);
+// If userid is provided, get only that user's data (individual report)
+if ($userid) {
+    $students = $DB->get_records('personality_test', ['user' => $userid]);
+} else {
+    // Otherwise get all students in the course (aggregated report)
+    $students = $DB->get_records('personality_test', ['course' => $course->id]);
+}
 
 if (empty($students)) {
     redirect(new moodle_url('/course/view.php', ['id' => $course->id]), get_string('sin_datos_estudiantes_pdf', BLOCK_PT_LANG), 5);
@@ -83,6 +99,23 @@ foreach ($students as $entry) {
 }
 
 $mbti_count_filtered = $mbti_count;
+
+// Check if this is an individual report
+$is_individual_report = ($userid && count($students) == 1);
+$student_data = null;
+$student_user = null;
+$student_mbti = '';
+
+if ($is_individual_report) {
+    $student_data = reset($students);
+    $student_user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname, email, idnumber');
+    // Calculate MBTI for individual
+    $student_mbti = '';
+    $student_mbti .= ($student_data->extraversion >= $student_data->introversion) ? 'E' : 'I';
+    $student_mbti .= ($student_data->sensing > $student_data->intuition) ? 'S' : 'N';
+    $student_mbti .= ($student_data->thinking >= $student_data->feeling) ? 'T' : 'F';
+    $student_mbti .= ($student_data->judging > $student_data->perceptive) ? 'J' : 'P';
+}
 
 // --- CLASE PDF PERSONALIZADA (ENCABEZADO/PIE CON LOGO) ---
 class PersonalityReportPDF extends TCPDF {
@@ -176,12 +209,98 @@ $pdf->SetFont('helvetica', '', 10);
 
 // --- GENERACIÓN DEL CONTENIDO DEL PDF ---
 
-// Sección Resumen
-$pdf->SetFont('helvetica', 'B', 11);
-$pdf->Cell(0, 10, get_string('summary_information', 'block_personality_test'), 0, 1, 'L');
-$pdf->SetFont('helvetica', '', 10);
-$pdf->Cell(0, 6, get_string('total_students_processed', 'block_personality_test', $total_students_processed), 0, 1, 'L');
-$pdf->Ln(5);
+if ($is_individual_report) {
+    // ============ REPORTE INDIVIDUAL ============
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->Cell(0, 10, get_string('individual_results', 'block_personality_test'), 0, 1, 'C');
+    $pdf->Ln(5);
+    
+    // Información del estudiante
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, get_string('student_name', 'block_personality_test') . ':', 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(0, 6, fullname($student_user), 0, 1, 'L');
+    $pdf->Ln(2);
+    
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, get_string('email', 'block_personality_test') . ':', 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(0, 6, $student_user->email, 0, 1, 'L');
+    $pdf->Ln(2);
+    
+    if (!empty($student_user->idnumber)) {
+        $pdf->SetFont('helvetica', 'B', 11);
+        $pdf->Cell(0, 8, 'ID:', 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->Cell(0, 6, $student_user->idnumber, 0, 1, 'L');
+        $pdf->Ln(2);
+    }
+    
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, get_string('test_date', 'block_personality_test') . ':', 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(0, 6, userdate($student_data->created_at, get_string('strftimedatetimeshort', 'langconfig')), 0, 1, 'L');
+    $pdf->Ln(5);
+    
+    // Tipo MBTI
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->Cell(0, 10, get_string('mbti_type', 'block_personality_test') . ': ' . $student_mbti, 0, 1, 'C');
+    $pdf->SetFont('helvetica', 'I', 9);
+    $mbti_dimensions_key = 'mbti_dimensions_' . strtolower($student_mbti);
+    $pdf->Cell(0, 6, '(' . get_string($mbti_dimensions_key, 'block_personality_test') . ')', 0, 1, 'C');
+    $pdf->Ln(8);
+    
+    // Descripción del tipo MBTI
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, get_string('personality_dimensions', 'block_personality_test'), 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    $mbti_key = 'mbti_' . strtolower($student_mbti);
+    $pdf->MultiCell(0, 5, get_string($mbti_key, 'block_personality_test'), 0, 'J');
+    $pdf->Ln(8);
+    
+    // Tabla de puntuaciones detalladas
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, get_string('detailed_scores', 'block_personality_test'), 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    
+    $html_scores = '<table border="1" cellpadding="4" cellspacing="0">';
+    $html_scores .= '<thead><tr style="background-color:#eeeeee; font-weight:bold;">';
+    $html_scores .= '<th width="30%" align="center">' . get_string('dimension', 'block_personality_test') . '</th>';
+    $html_scores .= '<th width="40%" align="center">' . get_string('score', 'block_personality_test') . '</th>';
+    $html_scores .= '<th width="30%" align="center">' . get_string('preference', 'block_personality_test') . '</th>';
+    $html_scores .= '</tr></thead><tbody>';
+    
+    $dimensions = [
+        ['E/I', $student_data->extraversion, $student_data->introversion, 
+         get_string('extraversion', 'block_personality_test'), get_string('introversion', 'block_personality_test')],
+        ['S/N', $student_data->sensing, $student_data->intuition,
+         get_string('sensing', 'block_personality_test'), get_string('intuition', 'block_personality_test')],
+        ['T/F', $student_data->thinking, $student_data->feeling,
+         get_string('thinking', 'block_personality_test'), get_string('feeling', 'block_personality_test')],
+        ['J/P', $student_data->judging, $student_data->perceptive,
+         get_string('judging', 'block_personality_test'), get_string('perceptive', 'block_personality_test')]
+    ];
+    
+    foreach ($dimensions as $dim) {
+        $dominant = $dim[1] >= $dim[2] ? $dim[3] : $dim[4];
+        $html_scores .= '<tr>';
+        $html_scores .= '<td width="30%" align="center"><strong>' . $dim[0] . '</strong></td>';
+        $html_scores .= '<td width="40%" align="center">' . $dim[1] . ' / ' . $dim[2] . '</td>';
+        $html_scores .= '<td width="30%" align="center">' . $dominant . '</td>';
+        $html_scores .= '</tr>';
+    }
+    
+    $html_scores .= '</tbody></table>';
+    $pdf->writeHTML($html_scores, true, false, true, false, '');
+    
+} else {
+    // ============ REPORTE AGREGADO (ORIGINAL) ============
+    // Sección Resumen
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 10, get_string('summary_information', 'block_personality_test'), 0, 1, 'L');
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(0, 6, get_string('total_students_processed', 'block_personality_test', $total_students_processed), 0, 1, 'L');
+    $pdf->Ln(5);
 
 // Sección Tabla MBTI
 $pdf->SetFont('helvetica', 'B', 11);
@@ -289,9 +408,10 @@ $html4 = crearTablaAspectoHTML(
     $total_students_processed
 );
 $pdf->writeHTML($html4, true, false, true, false, '');
+} // End of aggregated report
 
 
-// Descripción Tipos de MBTI
+// Descripción Tipos de MBTI (común para ambos tipos de reporte)
 $descripcion_html = '
 <h2>Descripción de tipos de personalidad</h2>
 <table border="1" cellpadding="5" cellspacing="0">
@@ -329,7 +449,17 @@ $pdf->writeHTML($descripcion_html, true, false, true, false, '');
 // --- SALIDA DEL PDF ---
 @ob_end_clean();
 
-$filename = 'resultados_personalidad_' . preg_replace('/[^a-z0-9]/i', '_', $course->shortname) . '_' . date('Ymd') . '.pdf';
+if ($is_individual_report && $student_user) {
+    // Nombre personalizado para reporte individual usando string de idioma
+    $student_name = preg_replace('/[^a-z0-9]/i', '_', strtolower(fullname($student_user)));
+    $date_str = date('Y-m-d');
+    $filename = get_string('export_filename', 'block_personality_test') . '_' . $student_name . '_' . $student_mbti . '_' . $date_str . '.pdf';
+} else {
+    // Nombre para reporte agregado usando string de idioma
+    $course_name = preg_replace('/[^a-z0-9]/i', '_', strtolower($course->shortname));
+    $date_str = date('Y-m-d');
+    $filename = get_string('export_filename', 'block_personality_test') . '_' . $course_name . '_' . $date_str . '.pdf';
+}
 $filename = clean_filename($filename);
 
 $pdf->Output($filename, 'D');

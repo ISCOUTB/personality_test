@@ -29,7 +29,7 @@ if (!$isadmin && (!isset($COURSE_ROLED_AS_TEACHER->id) || !$COURSE_ROLED_AS_TEAC
 // Obtener datos del usuario y test
 $userfields = \core_user\fields::for_name()->with_userpic()->get_sql('', false, '', '', false)->selects;
 $user = $DB->get_record('user', array('id' => $userid), $userfields, MUST_EXIST);
-$test_result = $DB->get_record('personality_test', array('user' => $userid, 'course' => $courseid));
+$test_result = $DB->get_record('personality_test', array('user' => $userid));
 
 if (!$test_result) {
     redirect(new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)), 

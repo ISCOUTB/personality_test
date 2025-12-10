@@ -130,7 +130,29 @@ class block_personality_test extends block_base
         $content->footer = '';
 
         // --- Vista del Profesor ---
-        $students = $DB->get_records('personality_test', ['course' => $COURSE->id]);
+        // Obtener estudiantes inscritos en el curso
+        $context = context_course::instance($COURSE->id);
+        $enrolled_students = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        
+        // Filtrar solo estudiantes (rol 5)
+        $student_ids = array();
+        foreach ($enrolled_students as $user) {
+            $roles = get_user_roles($context, $user->id);
+            foreach ($roles as $role) {
+                if ($role->roleid == 5) { // 5 = student
+                    $student_ids[] = $user->id;
+                    break;
+                }
+            }
+        }
+        
+        // Obtener respuestas solo de estudiantes inscritos
+        $students = array();
+        if (!empty($student_ids)) {
+            list($insql, $params) = $DB->get_in_or_equal($student_ids, SQL_PARAMS_NAMED, 'user');
+            $sql = "SELECT * FROM {personality_test} WHERE user $insql";
+            $students = $DB->get_records_sql($sql, $params);
+        }
 
         // Depuración: Mostrar número de estudiantes encontrados
         // Estudiantes encontrados para el curso
@@ -184,6 +206,21 @@ class block_personality_test extends block_base
         $str_sensacion_intuicion = json_encode(get_string('sensacion_intuicion', 'block_personality_test'));
         $str_pensamiento_sentimiento = json_encode(get_string('pensamiento_sentimiento', 'block_personality_test'));
         $str_juicio_percepcion = json_encode(get_string('juicio_percepcion', 'block_personality_test'));
+
+        // Mostrar estadísticas de participación
+        $total_enrolled = count($student_ids);
+        $total_completed = count($students);
+        $completion_percentage = $total_enrolled > 0 ? round(($total_completed / $total_enrolled) * 100, 1) : 0;
+        
+        $participation_data = new stdClass();
+        $participation_data->completed = $total_completed;
+        $participation_data->total = $total_enrolled;
+        $participation_data->percentage = $completion_percentage;
+        
+        $content->text .= html_writer::start_div('alert alert-info', ['style' => 'margin-bottom: 15px; padding: 10px; text-align: center;']);
+        $content->text .= html_writer::tag('strong', get_string('participation_stats', 'block_personality_test') . ': ');
+        $content->text .= html_writer::tag('span', get_string('students_completed_test', 'block_personality_test', $participation_data));
+        $content->text .= html_writer::end_div();
 
         $content->text .= html_writer::tag('h6',get_string('titulo_resultados_estudiantes', 'block_personality_test'),['style' => 'text-align: center;']);
 $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' => 'max-width: 100%; max-height: 350px; height: auto;']);        $content->text .= html_writer::tag('h6', get_string('titulo_distribucion_rasgos', 'block_personality_test'), ['style' => 'text-align: center; margin-top: 20px;']);
@@ -365,8 +402,8 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
         if ($COURSE_ROLED_AS_STUDENT && $COURSE_ROLED_AS_STUDENT->id) {
             // --- LÓGICA PARA EL ESTUDIANTE ---
 
-            // Verificar si el estudiante ya tiene una entrada en la tabla para este curso
-            $entry = $DB->get_record('personality_test', array('user' => $USER->id, 'course' => $COURSE->id));
+            // Verificar si el estudiante ya tiene una entrada en la tabla (en cualquier curso)
+            $entry = $DB->get_record('personality_test', array('user' => $USER->id));
 
             if (!$entry) {
                 // El estudiante NO ha realizado el test todavía - Mostrar invitación

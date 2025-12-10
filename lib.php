@@ -4,7 +4,8 @@ require_once(dirname(__FILE__) . '/../../config.php');
 
 function save_personality_test($course,$extra_res,$intra_res,$sensi_res,$intui_res,$ratio_res,$emoti_res,$estru_res,$perce_res) {
     GLOBAL $DB, $USER, $CFG;
-    if (!$entry = $DB->get_record('personality_test', array('user' => $USER->id, 'course' => $course))) {
+    // Check if user already has a personality test record (in any course)
+    if (!$entry = $DB->get_record('personality_test', array('user' => $USER->id))) {
         $entry = new stdClass();
         $entry->user = $USER->id;
         $entry->course = $course;
@@ -25,4 +26,3 @@ function save_personality_test($course,$extra_res,$intra_res,$sensi_res,$intui_r
         return false;
     }
 }
-

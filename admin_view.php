@@ -37,8 +37,8 @@ $userid = optional_param('userid', 0, PARAM_INT);
 if ($action === 'delete' && $userid && confirm_sesskey()) {
     $confirm = optional_param('confirm', 0, PARAM_INT);
     if ($confirm) {
-        // Eliminar registro del test
-        $DB->delete_records('personality_test', array('user' => $userid, 'course' => $courseid));
+        // Eliminar registro global del test del usuario
+        $DB->delete_records('personality_test', array('user' => $userid));
         redirect(new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)), 
                  get_string('participation_deleted', 'block_personality_test'));
     }
@@ -76,7 +76,16 @@ if ($action === 'delete' && $userid) {
     }
 } else {
     // Obtener estadísticas
-    $total_participants = $DB->count_records('personality_test', array('course' => $courseid));
+    // Get enrolled students in this course
+    $enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
+    $enrolled_ids = array_keys($enrolled_students);
+    
+    // Count participants who are enrolled in this course
+    $total_participants = 0;
+    if (!empty($enrolled_ids)) {
+        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
+        $total_participants = $DB->count_records_select('personality_test', "user $insql", $params);
+    }
     
     echo "<div class='row mb-4'>";
     echo "<div class='col-md-6'>";
@@ -91,13 +100,17 @@ if ($action === 'delete' && $userid) {
 
     // Obtener participantes con información del usuario
     $userfields = \core_user\fields::for_name()->with_userpic()->get_sql('u', false, '', '', false)->selects;
-    $sql = "SELECT pt.*, {$userfields}
-            FROM {personality_test} pt
-            JOIN {user} u ON pt.user = u.id
-            WHERE pt.course = :courseid
-            ORDER BY pt.created_at DESC";
-    
-    $participants = $DB->get_records_sql($sql, array('courseid' => $courseid));
+    $participants = array();
+    if (!empty($enrolled_ids)) {
+        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
+        $sql = "SELECT pt.*, {$userfields}
+                FROM {personality_test} pt
+                JOIN {user} u ON pt.user = u.id
+                WHERE pt.user $insql
+                ORDER BY pt.created_at DESC";
+        
+        $participants = $DB->get_records_sql($sql, $params);
+    }
 
     if (empty($participants)) {
         echo "<div class='alert alert-info'>";
@@ -213,9 +226,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para exportar datos
     window.exportData = function(format) {
-        const url = '" . $CFG->wwwroot . "/blocks/personality_test/download_' + format + '.php';
-        const fullUrl = url + '?cid=" . $courseid . "';
-        window.location.href = fullUrl;
+        if (format === 'csv') {
+            window.location.href = '" . $CFG->wwwroot . "/blocks/personality_test/download_csv.php?cid=" . $courseid . "';
+        } else if (format === 'pdf') {
+            window.location.href = '" . $CFG->wwwroot . "/blocks/personality_test/download_pdf.php?cid=" . $courseid . "';
+        }
     };
 });
 </script>";

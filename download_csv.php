@@ -8,25 +8,42 @@
 require_once(__DIR__ . '/../../config.php');
 
 // Parámetros y Seguridad
-$courseid = required_param('courseid', PARAM_INT);
-$sesskey = required_param('sesskey', PARAM_ALPHANUM);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$cid = optional_param('cid', 0, PARAM_INT);
+$sesskey = optional_param('sesskey', '', PARAM_ALPHANUM);
+
+// Determine course ID from either parameter
+$courseid = $courseid ?: $cid;
+
+if (!$courseid) {
+    print_error('missingparam', '', '', 'courseid or cid');
+}
 
 // Globales de Moodle
 global $DB, $USER, $COURSE, $PAGE, $OUTPUT, $CFG;
 
-// Verificar clave de sesión
-require_sesskey($sesskey);
+// Verificar clave de sesión si se proporciona
+if ($sesskey) {
+    require_sesskey($sesskey);
+}
 
 // Obtener curso y contexto
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
-// Requerir inicio de sesión y capacidad de profesor
+// Requerir inicio de sesión
 require_login($course, false);
-require_capability('moodle/course:viewhiddensections', $context);
 
-// Obtener datos de los estudiantes para este curso
-$students = $DB->get_records('personality_test', ['course' => $course->id]);
+// Get enrolled students in this course
+$enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
+$enrolled_ids = array_keys($enrolled_students);
+
+// Obtener datos de los estudiantes inscritos que han completado el test
+$students = array();
+if (!empty($enrolled_ids)) {
+    list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
+    $students = $DB->get_records_select('personality_test', "user $insql", $params);
+}
 
 if (empty($students)) {
     // Redirigir si no hay datos, con un mensaje
@@ -80,8 +97,10 @@ foreach ($students as $entry) {
 
 // --- GENERACIÓN DEL CSV ---
 
-// Nombre del archivo
-$filename = 'Reporte_Personalidad_' . preg_replace('/[^a-z0-9]/i', '_', $course->shortname) . '_' . date('Y-m-d_His') . '.csv';
+// Generar nombre elegante del archivo usando string de idioma
+$course_name = preg_replace('/[^a-z0-9]/i', '_', strtolower($course->shortname));
+$date_str = date('Y-m-d');
+$filename = get_string('export_filename', 'block_personality_test') . '_' . $course_name . '_' . $date_str . '.csv';
 $filename = clean_filename($filename);
 
 // Cabeceras HTTP para forzar la descarga
@@ -169,7 +188,7 @@ foreach ($students as $entry) {
     }
     
     // Obtener información del usuario
-    $student_user = $DB->get_record('user', ['id' => $entry->user], 'id, firstname, lastname');
+    $student_user = $DB->get_record('user', ['id' => $entry->user], 'id, firstname, lastname, idnumber');
     $fullname = fullname($student_user);
 
     // Calcular tipo MBTI
@@ -181,7 +200,7 @@ foreach ($students as $entry) {
 
     // Escribir fila en el CSV
     fputcsv($output, [
-        $entry->user,
+        $student_user->idnumber,
         $fullname,
         $mbti_score,
         $entry->extraversion,
