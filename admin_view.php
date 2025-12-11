@@ -54,9 +54,67 @@ echo $OUTPUT->header();
 
 // CSS personalizado
 echo "<link rel='stylesheet' href='" . $CFG->wwwroot . "/blocks/personality_test/styles.css'>";
+echo "<style>
+    .block_personality_test_container h1 {
+        color: #17a2b8;
+        border-bottom: 3px solid #17a2b8;
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+    .card {
+        border: 1px solid #e3f2fd;
+        box-shadow: 0 2px 4px rgba(23, 162, 184, 0.1);
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(23, 162, 184, 0.2);
+        transform: translateY(-2px);
+    }
+    .card-header {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+        border-bottom: 2px solid #17a2b8;
+    }
+    .card-header h5 {
+        color: #17a2b8;
+    }
+    .card-title {
+        color: #5a6268;
+        font-weight: 500;
+    }
+    .table thead th {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+        border: none;
+    }
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        border: none;
+    }
+    .btn-info:hover {
+        background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        border: none;
+    }
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        border: none;
+    }
+    .badge.bg-primary {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+    }
+    .text-primary {
+        color: #17a2b8 !important;
+    }
+    .alert-info {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+        border-left: 4px solid #17a2b8;
+    }
+</style>";
 echo "<div class='block_personality_test_container'>";
 
-echo "<h1 class='mb-4'>" . get_string('admin_manage_title', 'block_personality_test') . "</h1>";
+echo "<h1 class='mb-4'><i class='fa fa-users'></i> " . get_string('admin_manage_title', 'block_personality_test') . "</h1>";
 
 // Confirmación de eliminación
 if ($action === 'delete' && $userid) {
@@ -76,26 +134,65 @@ if ($action === 'delete' && $userid) {
     }
 } else {
     // Obtener estadísticas
-    // Get enrolled students in this course
-    $enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
+    // Get enrolled students in this course (only students, roleid = 5)
+    $enrolled_students = get_role_users(5, $context, false, 'u.id, u.firstname, u.lastname');
     $enrolled_ids = array_keys($enrolled_students);
     
+    // Total students in course
+    $total_students = count($enrolled_students);
+    
     // Count participants who are enrolled in this course
-    $total_participants = 0;
+    $completed_tests = 0;
+    $in_progress_tests = 0;
     if (!empty($enrolled_ids)) {
         list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-        $total_participants = $DB->count_records_select('personality_test', "user $insql", $params);
+        
+        // Count completed tests
+        $params_completed = $params;
+        $params_completed['completed'] = 1;
+        $completed_tests = $DB->count_records_select('personality_test', "user $insql AND is_completed = :completed", $params_completed);
+        
+        // Count in-progress tests
+        $params_progress = $params;
+        $params_progress['completed'] = 0;
+        $in_progress_tests = $DB->count_records_select('personality_test', "user $insql AND is_completed = :completed", $params_progress);
     }
     
     echo "<div class='row mb-4'>";
-    echo "<div class='col-md-6'>";
-    echo "<div class='card'>";
+    
+    // Total students card
+    echo "<div class='col-md-4'>";
+    echo "<div class='card border-info'>";
     echo "<div class='card-body text-center'>";
-    echo "<h5 class='card-title'>" . get_string('total_participants', 'block_personality_test') . "</h5>";
-    echo "<h2 class='text-primary'>" . $total_participants . "</h2>";
+    echo "<i class='fa fa-users text-info' style='font-size: 2em; margin-bottom: 10px;'></i>";
+    echo "<h5 class='card-title'>" . get_string('total_students', 'block_personality_test') . "</h5>";
+    echo "<h2 class='text-info'>" . $total_students . "</h2>";
     echo "</div>";
     echo "</div>";
     echo "</div>";
+    
+    // Completed tests card
+    echo "<div class='col-md-4'>";
+    echo "<div class='card border-success'>";
+    echo "<div class='card-body text-center'>";
+    echo "<i class='fa fa-check-circle text-success' style='font-size: 2em; margin-bottom: 10px;'></i>";
+    echo "<h5 class='card-title'>" . get_string('completed_tests', 'block_personality_test') . "</h5>";
+    echo "<h2 class='text-success'>" . $completed_tests . "</h2>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+    
+    // In progress tests card
+    echo "<div class='col-md-4'>";
+    echo "<div class='card border-warning'>";
+    echo "<div class='card-body text-center'>";
+    echo "<i class='fa fa-clock-o text-warning' style='font-size: 2em; margin-bottom: 10px;'></i>";
+    echo "<h5 class='card-title'>" . get_string('in_progress_tests', 'block_personality_test') . "</h5>";
+    echo "<h2 class='text-warning'>" . $in_progress_tests . "</h2>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+    
     echo "</div>";
 
     // Obtener participantes con información del usuario
@@ -114,13 +211,14 @@ if ($action === 'delete' && $userid) {
 
     if (empty($participants)) {
         echo "<div class='alert alert-info'>";
+        echo "<i class='fa fa-info-circle'></i> ";
         echo "<h5>" . get_string('no_participants', 'block_personality_test') . "</h5>";
         echo "<p>" . get_string('no_participants_message', 'block_personality_test') . "</p>";
         echo "</div>";
     } else {
         echo "<div class='card'>";
         echo "<div class='card-header'>";
-        echo "<h5 class='mb-0'>" . get_string('participants_list', 'block_personality_test') . "</h5>";
+        echo "<h5 class='mb-0 d-inline'>" . get_string('participants_list', 'block_personality_test') . "</h5>";
         echo "</div>";
         echo "<div class='card-body'>";
         
@@ -145,6 +243,7 @@ if ($action === 'delete' && $userid) {
         echo "<tr>";
         echo "<th>" . get_string('student_name', 'block_personality_test') . "</th>";
         echo "<th>" . get_string('email', 'block_personality_test') . "</th>";
+        echo "<th>" . get_string('status', 'block_personality_test') . "</th>";
         echo "<th>" . get_string('mbti_type', 'block_personality_test') . "</th>";
         echo "<th>" . get_string('test_date', 'block_personality_test') . "</th>";
         echo "<th>" . get_string('actions', 'block_personality_test') . "</th>";
@@ -153,13 +252,6 @@ if ($action === 'delete' && $userid) {
         echo "<tbody>";
 
         foreach ($participants as $participant) {
-            // Calcular tipo MBTI
-            $mbti = '';
-            $mbti .= ($participant->extraversion >= $participant->introversion) ? 'E' : 'I';
-            $mbti .= ($participant->sensing > $participant->intuition) ? 'S' : 'N';
-            $mbti .= ($participant->thinking >= $participant->feeling) ? 'T' : 'F';
-            $mbti .= ($participant->judging > $participant->perceptive) ? 'J' : 'P';
-
             echo "<tr class='participant-row'>";
             echo "<td>";
             echo "<div class='d-flex align-items-center'>";
@@ -170,7 +262,39 @@ if ($action === 'delete' && $userid) {
             echo "</div>";
             echo "</td>";
             echo "<td>" . $participant->email . "</td>";
-            echo "<td><span class='badge bg-primary'>" . $mbti . "</span></td>";
+            
+            // Estado y Progreso
+            echo "<td>";
+            if ($participant->is_completed == 1) {
+                echo "<span class='badge bg-success'>" . get_string('completed_status', 'block_personality_test') . "</span>";
+            } else {
+                // Calcular progreso - contar respuestas no nulas
+                $answered = 0;
+                for ($i = 1; $i <= 72; $i++) {
+                    $field = 'q' . $i;
+                    if (isset($participant->$field) && $participant->$field !== null && $participant->$field !== '') {
+                        $answered++;
+                    }
+                }
+                echo "<span class='badge bg-warning text-dark'>" . get_string('in_progress_status', 'block_personality_test') . "</span>";
+                echo "<br><small class='text-muted'>" . get_string('of_72_questions', 'block_personality_test', $answered) . "</small>";
+            }
+            echo "</td>";
+            
+            // Tipo MBTI (solo si está completado)
+            echo "<td>";
+            if ($participant->is_completed == 1) {
+                $mbti = '';
+                $mbti .= ($participant->extraversion >= $participant->introversion) ? 'E' : 'I';
+                $mbti .= ($participant->sensing > $participant->intuition) ? 'S' : 'N';
+                $mbti .= ($participant->thinking >= $participant->feeling) ? 'T' : 'F';
+                $mbti .= ($participant->judging > $participant->perceptive) ? 'J' : 'P';
+                echo "<span class='badge bg-primary'>" . $mbti . "</span>";
+            } else {
+                echo "<span class='text-muted'>-</span>";
+            }
+            echo "</td>";
+            
             echo "<td>" . date('d/m/Y H:i', $participant->created_at) . "</td>";
             echo "<td>";
             echo "<a href='" . new moodle_url('/blocks/personality_test/view_individual.php', 
