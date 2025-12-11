@@ -5,6 +5,93 @@ require_once(dirname(__FILE__) . '/lib.php');
 require_login();
 require_sesskey();
 
+/**
+ * Merge existing answers from database record into data object
+ * @param stdClass $data The data object to merge into
+ * @param stdClass|null $existing_record The existing database record
+ * @return stdClass The merged data object
+ */
+function merge_existing_answers($data, $existing_record) {
+    if ($existing_record) {
+        $data->id = $existing_record->id;
+        $data->created_at = $existing_record->created_at;
+        
+        // Copy all existing answers from q1 to q72
+        for ($i = 1; $i <= 72; $i++) {
+            $field = "q{$i}";
+            if (!isset($data->$field) && isset($existing_record->$field) && $existing_record->$field !== null) {
+                $data->$field = $existing_record->$field;
+            }
+        }
+    }
+    return $data;
+}
+
+/**
+ * Save or update personality test progress with race condition handling
+ * @param stdClass $data The data to save
+ * @param int $userid User ID
+ * @return bool Success status
+ * @throws Exception
+ */
+function save_test_progress($data, $userid) {
+    global $DB;
+    
+    $current_record = $DB->get_record('personality_test', array('user' => $userid));
+    
+    if ($current_record) {
+        $data = merge_existing_answers($data, $current_record);
+        $DB->update_record('personality_test', $data);
+    } else {
+        try {
+            $DB->insert_record('personality_test', $data);
+        } catch (dml_exception $e) {
+            // Race condition: another request inserted the record
+            $current_record = $DB->get_record('personality_test', array('user' => $userid));
+            if ($current_record) {
+                $data = merge_existing_answers($data, $current_record);
+                $DB->update_record('personality_test', $data);
+            } else {
+                throw $e;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * Prepare base data object for saving
+ * @param int $userid User ID
+ * @param int $courseid Course ID
+ * @param stdClass|null $existing_response Existing response if any
+ * @return stdClass
+ */
+function prepare_data_object($userid, $courseid, $existing_response) {
+    $data = new stdClass();
+    $data->user = $userid;
+    $data->course = $courseid;
+    $data->state = 1;
+    $data->is_completed = 0;
+    $data->updated_at = time();
+    
+    if ($existing_response) {
+        $data->id = $existing_response->id;
+        $data->created_at = $existing_response->created_at;
+        
+        // Copy all existing answers
+        for ($i = 1; $i <= 72; $i++) {
+            $field = "q{$i}";
+            if (isset($existing_response->$field) && $existing_response->$field !== null) {
+                $data->$field = $existing_response->$field;
+            }
+        }
+    } else {
+        $data->created_at = time();
+    }
+    
+    return $data;
+}
+
 $courseid = required_param('cid', PARAM_INT);
 $action = optional_param('action', 'finish', PARAM_ALPHA); // 'autosave', 'previous', 'next', 'finish'
 $page = optional_param('page', 1, PARAM_INT);
@@ -49,74 +136,15 @@ for ($i = 1; $i <= 72; $i++) {
 
 // For autosave, allow partial data
 if ($action === 'autosave') {
-    // Save partial progress
-    $data = new stdClass();
-    $data->user = $USER->id;
-    $data->course = $courseid;
-    $data->state = 1;
-    $data->is_completed = 0;
-    $data->updated_at = time();
+    $data = prepare_data_object($USER->id, $courseid, $existing_response);
     
-    // If existing response, preserve all previous answers
-    if ($existing_response) {
-        $data->id = $existing_response->id;
-        $data->created_at = $existing_response->created_at;
-        
-        // Copy all existing answers from q1 to q72
-        for ($i = 1; $i <= 72; $i++) {
-            $field = "q{$i}";
-            if (isset($existing_response->$field) && $existing_response->$field !== null) {
-                $data->$field = $existing_response->$field;
-            }
-        }
-    } else {
-        $data->created_at = time();
-    }
-    
-    // Add/Update only answered questions from current page (overwrite existing)
+    // Add/Update only answered questions from current page
     foreach ($responses as $field => $value) {
         $data->$field = $value;
     }
     
     try {
-        // Check again if record exists to avoid race conditions
-        $current_record = $DB->get_record('personality_test', array('user' => $USER->id));
-        
-        if ($current_record) {
-            $data->id = $current_record->id;
-            $data->created_at = $current_record->created_at;
-            // Preserve existing answers from DB if we didn't have them initially
-            // (This handles the case where another request inserted the record while we were processing)
-            for ($i = 1; $i <= 72; $i++) {
-                $field = "q{$i}";
-                if (!isset($data->$field) && isset($current_record->$field) && $current_record->$field !== null) {
-                    $data->$field = $current_record->$field;
-                }
-            }
-            $DB->update_record('personality_test', $data);
-        } else {
-            try {
-                $DB->insert_record('personality_test', $data);
-            } catch (dml_exception $e) {
-                // If insert fails, it might be a race condition (record created by another request)
-                // Try to update instead
-                $current_record = $DB->get_record('personality_test', array('user' => $USER->id));
-                if ($current_record) {
-                    $data->id = $current_record->id;
-                    $data->created_at = $current_record->created_at;
-                    // Preserve existing answers
-                    for ($i = 1; $i <= 72; $i++) {
-                        $field = "q{$i}";
-                        if (!isset($data->$field) && isset($current_record->$field) && $current_record->$field !== null) {
-                            $data->$field = $current_record->$field;
-                        }
-                    }
-                    $DB->update_record('personality_test', $data);
-                } else {
-                    throw $e; // Re-throw if it wasn't a race condition
-                }
-            }
-        }
+        save_test_progress($data, $USER->id);
         echo json_encode(['success' => true, 'answered' => count($responses)]);
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -126,29 +154,7 @@ if ($action === 'autosave') {
 
 // For navigation (previous/next), save progress and redirect
 if ($action === 'previous' || $action === 'next') {
-    // Save current page data
-    $data = new stdClass();
-    $data->user = $USER->id;
-    $data->course = $courseid;
-    $data->state = 1;
-    $data->is_completed = 0;
-    $data->updated_at = time();
-    
-    // If existing response, keep all previous data
-    if ($existing_response) {
-        $data->id = $existing_response->id;
-        $data->created_at = $existing_response->created_at;
-        
-        // Copy all existing answers
-        for ($i = 1; $i <= 72; $i++) {
-            $field = "q{$i}";
-            if (isset($existing_response->$field) && $existing_response->$field !== null) {
-                $data->$field = $existing_response->$field;
-            }
-        }
-    } else {
-        $data->created_at = time();
-    }
+    $data = prepare_data_object($USER->id, $courseid, $existing_response);
     
     // Update with new answers from current page
     foreach ($responses as $field => $value) {
@@ -156,41 +162,7 @@ if ($action === 'previous' || $action === 'next') {
     }
     
     try {
-        // Check again if record exists to avoid race conditions
-        $current_record = $DB->get_record('personality_test', array('user' => $USER->id));
-        
-        if ($current_record) {
-            $data->id = $current_record->id;
-            $data->created_at = $current_record->created_at;
-            // Preserve existing answers from DB if we didn't have them initially
-            for ($i = 1; $i <= 72; $i++) {
-                $field = "q{$i}";
-                if (!isset($data->$field) && isset($current_record->$field) && $current_record->$field !== null) {
-                    $data->$field = $current_record->$field;
-                }
-            }
-            $DB->update_record('personality_test', $data);
-        } else {
-            try {
-                $DB->insert_record('personality_test', $data);
-            } catch (dml_exception $e) {
-                // If insert fails, it might be a race condition
-                $current_record = $DB->get_record('personality_test', array('user' => $USER->id));
-                if ($current_record) {
-                    $data->id = $current_record->id;
-                    $data->created_at = $current_record->created_at;
-                    for ($i = 1; $i <= 72; $i++) {
-                        $field = "q{$i}";
-                        if (!isset($data->$field) && isset($current_record->$field) && $current_record->$field !== null) {
-                            $data->$field = $current_record->$field;
-                        }
-                    }
-                    $DB->update_record('personality_test', $data);
-                } else {
-                    throw $e;
-                }
-            }
-        }
+        save_test_progress($data, $USER->id);
         
         // Calculate new page
         $new_page = ($action === 'previous') ? $page - 1 : $page + 1;
@@ -206,57 +178,41 @@ if ($action === 'previous' || $action === 'next') {
 // For finish, validate all questions are answered and calculate results
 // SECURITY: Always validate ALL 72 questions are answered before finishing
 if ($action === 'finish') {
-    $truly_all_answered = true;
-    
     // Double check: validate from DB + current submission
     $existing = $DB->get_record('personality_test', array('user' => $USER->id));
     
+    // Merge all answers (DB + current submission)
     for ($i = 1; $i <= 72; $i++) {
         $field = "q{$i}";
-        $has_answer = false;
         
-        // Check in current submission
-        if (isset($responses[$field]) && $responses[$field] !== null) {
-            $has_answer = true;
+        // Use current submission if available
+        if (!isset($responses[$field]) || $responses[$field] === null) {
+            // Otherwise, try from DB
+            if ($existing && isset($existing->$field) && $existing->$field !== null) {
+                $responses[$field] = $existing->$field;
+                $personality_test_a[$i] = $existing->$field;
+            }
         }
-        // Check in existing record
-        else if ($existing && isset($existing->$field) && $existing->$field !== null) {
-            $has_answer = true;
-            // Add to responses to calculate results
-            $responses[$field] = $existing->$field;
-            $personality_test_a[$i] = $existing->$field;
-        }
-        
-        if (!$has_answer) {
-            $truly_all_answered = false;
+    }
+    
+    // Find first unanswered question
+    $first_unanswered = null;
+    for ($i = 1; $i <= 72; $i++) {
+        $field = "q{$i}";
+        if (!isset($responses[$field]) || $responses[$field] === null) {
+            $first_unanswered = $i;
             break;
         }
     }
     
-    if (!$truly_all_answered) {
-        // Calculate which page has the first unanswered question
-        $first_unanswered = null;
-        for ($i = 1; $i <= 72; $i++) {
-            $field = "q{$i}";
-            $has_answer = (isset($responses[$field]) && $responses[$field] !== null) || 
-                         ($existing && isset($existing->$field) && $existing->$field !== null);
-            if (!$has_answer) {
-                $first_unanswered = $i;
-                break;
-            }
-        }
-        
-        $redirect_page = $first_unanswered ? ceil($first_unanswered / 9) : 1;
+    // If any question is unanswered, redirect to that page
+    if ($first_unanswered !== null) {
+        $redirect_page = ceil($first_unanswered / 9);
         $redirect_url = new moodle_url('/blocks/personality_test/view.php', 
                        array('cid' => $courseid, 'page' => $redirect_page));
         redirect($redirect_url, get_string('all_questions_required', 'block_personality_test'), 
                 null, \core\output\notification::NOTIFY_ERROR);
     }
-}
-
-if (!$all_answered && $action === 'finish') {
-    $redirect_url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $courseid, 'page' => $page, 'error' => '1'));
-    redirect($redirect_url, get_string('required_message', 'block_personality_test'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
 // Calculate results
