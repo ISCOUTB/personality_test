@@ -10,16 +10,89 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="user"/>
         <FIELD NAME="user" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="state"/>
         <FIELD NAME="state" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="user" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="extraversion"/>
-        <FIELD NAME="extraversion" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="introversion"/>
-        <FIELD NAME="introversion" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="sensing"/>
-        <FIELD NAME="sensing" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="intuition"/>
-        <FIELD NAME="intuition" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="thinking"/>
-        <FIELD NAME="thinking" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="feeling"/>
-        <FIELD NAME="feeling" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="judging"/>
-        <FIELD NAME="judging" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="perceptive"/>
-        <FIELD NAME="perceptive" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="created_at"/>
-        <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course"  NEXT="updated_at"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="is_completed"/>
+        <FIELD NAME="is_completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="q1"/>
+        <FIELD NAME="q1" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="is_completed" NEXT="q2"/>
+        <FIELD NAME="q2" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q1" NEXT="q3"/>
+        <FIELD NAME="q3" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q2" NEXT="q4"/>
+        <FIELD NAME="q4" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q3" NEXT="q5"/>
+        <FIELD NAME="q5" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q4" NEXT="q6"/>
+        <FIELD NAME="q6" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q5" NEXT="q7"/>
+        <FIELD NAME="q7" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q6" NEXT="q8"/>
+        <FIELD NAME="q8" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q7" NEXT="q9"/>
+        <FIELD NAME="q9" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q8" NEXT="q10"/>
+        <FIELD NAME="q10" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q9" NEXT="q11"/>
+        <FIELD NAME="q11" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q10" NEXT="q12"/>
+        <FIELD NAME="q12" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q11" NEXT="q13"/>
+        <FIELD NAME="q13" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q12" NEXT="q14"/>
+        <FIELD NAME="q14" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q13" NEXT="q15"/>
+        <FIELD NAME="q15" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q14" NEXT="q16"/>
+        <FIELD NAME="q16" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q15" NEXT="q17"/>
+        <FIELD NAME="q17" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q16" NEXT="q18"/>
+        <FIELD NAME="q18" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q17" NEXT="q19"/>
+        <FIELD NAME="q19" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q18" NEXT="q20"/>
+        <FIELD NAME="q20" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q19" NEXT="q21"/>
+        <FIELD NAME="q21" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q20" NEXT="q22"/>
+        <FIELD NAME="q22" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q21" NEXT="q23"/>
+        <FIELD NAME="q23" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q22" NEXT="q24"/>
+        <FIELD NAME="q24" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q23" NEXT="q25"/>
+        <FIELD NAME="q25" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q24" NEXT="q26"/>
+        <FIELD NAME="q26" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q25" NEXT="q27"/>
+        <FIELD NAME="q27" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q26" NEXT="q28"/>
+        <FIELD NAME="q28" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q27" NEXT="q29"/>
+        <FIELD NAME="q29" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q28" NEXT="q30"/>
+        <FIELD NAME="q30" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q29" NEXT="q31"/>
+        <FIELD NAME="q31" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q30" NEXT="q32"/>
+        <FIELD NAME="q32" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q31" NEXT="q33"/>
+        <FIELD NAME="q33" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q32" NEXT="q34"/>
+        <FIELD NAME="q34" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q33" NEXT="q35"/>
+        <FIELD NAME="q35" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q34" NEXT="q36"/>
+        <FIELD NAME="q36" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q35" NEXT="q37"/>
+        <FIELD NAME="q37" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q36" NEXT="q38"/>
+        <FIELD NAME="q38" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q37" NEXT="q39"/>
+        <FIELD NAME="q39" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q38" NEXT="q40"/>
+        <FIELD NAME="q40" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q39" NEXT="q41"/>
+        <FIELD NAME="q41" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q40" NEXT="q42"/>
+        <FIELD NAME="q42" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q41" NEXT="q43"/>
+        <FIELD NAME="q43" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q42" NEXT="q44"/>
+        <FIELD NAME="q44" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q43" NEXT="q45"/>
+        <FIELD NAME="q45" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q44" NEXT="q46"/>
+        <FIELD NAME="q46" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q45" NEXT="q47"/>
+        <FIELD NAME="q47" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q46" NEXT="q48"/>
+        <FIELD NAME="q48" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q47" NEXT="q49"/>
+        <FIELD NAME="q49" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q48" NEXT="q50"/>
+        <FIELD NAME="q50" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q49" NEXT="q51"/>
+        <FIELD NAME="q51" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q50" NEXT="q52"/>
+        <FIELD NAME="q52" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q51" NEXT="q53"/>
+        <FIELD NAME="q53" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q52" NEXT="q54"/>
+        <FIELD NAME="q54" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q53" NEXT="q55"/>
+        <FIELD NAME="q55" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q54" NEXT="q56"/>
+        <FIELD NAME="q56" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q55" NEXT="q57"/>
+        <FIELD NAME="q57" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q56" NEXT="q58"/>
+        <FIELD NAME="q58" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q57" NEXT="q59"/>
+        <FIELD NAME="q59" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q58" NEXT="q60"/>
+        <FIELD NAME="q60" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q59" NEXT="q61"/>
+        <FIELD NAME="q61" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q60" NEXT="q62"/>
+        <FIELD NAME="q62" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q61" NEXT="q63"/>
+        <FIELD NAME="q63" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q62" NEXT="q64"/>
+        <FIELD NAME="q64" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q63" NEXT="q65"/>
+        <FIELD NAME="q65" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q64" NEXT="q66"/>
+        <FIELD NAME="q66" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q65" NEXT="q67"/>
+        <FIELD NAME="q67" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q66" NEXT="q68"/>
+        <FIELD NAME="q68" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q67" NEXT="q69"/>
+        <FIELD NAME="q69" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q68" NEXT="q70"/>
+        <FIELD NAME="q70" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q69" NEXT="q71"/>
+        <FIELD NAME="q71" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q70" NEXT="q72"/>
+        <FIELD NAME="q72" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q71" NEXT="extraversion"/>
+        <FIELD NAME="extraversion" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="q72" NEXT="introversion"/>
+        <FIELD NAME="introversion" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="extraversion" NEXT="sensing"/>
+        <FIELD NAME="sensing" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="introversion" NEXT="intuition"/>
+        <FIELD NAME="intuition" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="sensing" NEXT="thinking"/>
+        <FIELD NAME="thinking" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="intuition" NEXT="feeling"/>
+        <FIELD NAME="feeling" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="thinking" NEXT="judging"/>
+        <FIELD NAME="judging" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="feeling" NEXT="perceptive"/>
+        <FIELD NAME="perceptive" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="judging" NEXT="created_at"/>
+        <FIELD NAME="created_at" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="perceptive" NEXT="updated_at"/>
         <FIELD NAME="updated_at" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="created_at" />
       </FIELDS>
       <KEYS>
