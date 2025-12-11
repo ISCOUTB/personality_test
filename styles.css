@@ -23,6 +23,12 @@
   border-bottom: 1px solid rgba(0, 91, 154, 0.1);
   padding: 8px 0;
   word-break: break-word;
+  list-style: none;
+}
+
+#page-blocks-personality_test-view .personality_test_q {
+  list-style: none;
+  padding-left: 0;
 }
 
 #page-blocks-personality_test-view .content-accept label {
