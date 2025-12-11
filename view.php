@@ -24,7 +24,7 @@ $PAGE->set_url('/blocks/personality_test/view.php', array('cid'=>$courseid));
 
 $title = get_string('pluginname', 'block_personality_test');
 
-$PAGE->set_pagelayout('print');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title($title." : ".$course->fullname);
 $PAGE->set_heading($title." : ".$course->fullname);
 
@@ -64,7 +64,7 @@ $action_form = new moodle_url('/blocks/personality_test/save.php');
             <p class="error"><?php echo get_string('required_message', 'block_personality_test') ?></p>
         <?php endif; ?>
 
-        <ol class="personality_test_q">
+        <ul class="personality_test_q">
         <?php for ($i=1;$i<=72;$i++){ ?>
         
         <li class="personality_test_item"><?php echo get_string("personality_test:q".$i, 'block_personality_test') ?>
@@ -75,7 +75,7 @@ $action_form = new moodle_url('/blocks/personality_test/save.php');
         </select>
         </li>
         <?php } ?>
-        </ol>
+        </ul>
         <div class="clearfix"></div>
         <input class="btn" type="submit" id="submitBtn" value="<?php echo get_string('submit_text', 'block_personality_test') ?>" >
     
