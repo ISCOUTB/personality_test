@@ -38,11 +38,12 @@ require_login($course, false);
 $enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
 $enrolled_ids = array_keys($enrolled_students);
 
-// Obtener datos de los estudiantes inscritos que han completado el test
+// Obtener datos de los estudiantes inscritos que han COMPLETADO el test
 $students = array();
 if (!empty($enrolled_ids)) {
     list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-    $students = $DB->get_records_select('personality_test', "user $insql", $params);
+    $params['completed'] = 1;
+    $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
 }
 
 if (empty($students)) {
