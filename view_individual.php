@@ -36,13 +36,6 @@ if (!$test_result) {
              get_string('no_test_results', 'block_personality_test'));
 }
 
-// Calcular tipo MBTI
-$mbti = '';
-$mbti .= ($test_result->extraversion >= $test_result->introversion) ? 'E' : 'I';
-$mbti .= ($test_result->sensing > $test_result->intuition) ? 'S' : 'N';
-$mbti .= ($test_result->thinking >= $test_result->feeling) ? 'T' : 'F';
-$mbti .= ($test_result->judging > $test_result->perceptive) ? 'J' : 'P';
-
 // Configurar página
 $PAGE->set_url(new moodle_url('/blocks/personality_test/view_individual.php', array('userid' => $userid, 'cid' => $courseid)));
 $PAGE->set_context($context);
@@ -62,6 +55,56 @@ echo '<li class="breadcrumb-item"><a href="' . new moodle_url('/blocks/personali
 echo '<li class="breadcrumb-item active" aria-current="page">' . get_string('individual_results', 'block_personality_test') . '</li>';
 echo '</ol>';
 echo '</nav>';
+
+// Verificar si el test está completado
+if ($test_result->is_completed == 0) {
+    // Mostrar alerta de progreso
+    echo "<div class='container-fluid'>";
+    echo "<div class='alert alert-warning' role='alert'>";
+    echo "<h4 class='alert-heading'><i class='fa fa-clock-o'></i> " . get_string('test_in_progress', 'block_personality_test') . "</h4>";
+    echo "<p>" . get_string('test_in_progress_message', 'block_personality_test', fullname($user)) . "</p>";
+    echo "<hr>";
+    
+    // Calcular progreso
+    $answered = 0;
+    for ($i = 1; $i <= 72; $i++) {
+        $field = 'q' . $i;
+        if (isset($test_result->$field) && $test_result->$field !== null && $test_result->$field !== '') {
+            $answered++;
+        }
+    }
+    
+    $progress_percentage = round(($answered / 72) * 100, 1);
+    
+    echo "<p class='mb-1'><strong>" . get_string('progress_label', 'block_personality_test') . ":</strong></p>";
+    echo "<div class='progress mb-2' style='height: 30px;'>";
+    echo "<div class='progress-bar bg-warning' role='progressbar' style='width: " . $progress_percentage . "%' aria-valuenow='" . $progress_percentage . "' aria-valuemin='0' aria-valuemax='100'>";
+    echo "<strong>" . $progress_percentage . "%</strong>";
+    echo "</div>";
+    echo "</div>";
+    echo "<p><strong>" . get_string('has_answered', 'block_personality_test') . ":</strong> " . get_string('of_72_questions', 'block_personality_test', $answered) . "</p>";
+    echo "<p class='mb-0'><em>" . get_string('results_available_when_complete', 'block_personality_test', fullname($user)) . "</em></p>";
+    echo "</div>";
+    
+    // Botón para volver
+    echo "<div class='mt-4'>";
+    echo "<a href='" . new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)) . "' class='btn btn-secondary'>";
+    echo "<i class='fa fa-arrow-left'></i> " . get_string('back_to_admin', 'block_personality_test');
+    echo "</a>";
+    echo "</div>";
+    echo "</div>";
+    
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Si llegamos aquí, el test está completado, mostrar resultados completos
+// Calcular tipo MBTI
+$mbti = '';
+$mbti .= ($test_result->extraversion >= $test_result->introversion) ? 'E' : 'I';
+$mbti .= ($test_result->sensing > $test_result->intuition) ? 'S' : 'N';
+$mbti .= ($test_result->thinking >= $test_result->feeling) ? 'T' : 'F';
+$mbti .= ($test_result->judging > $test_result->perceptive) ? 'J' : 'P';
 
 echo "<div class='container-fluid'>";
 

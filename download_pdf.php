@@ -44,12 +44,21 @@ require_login($course, false);
 define('BLOCK_PT_LANG', 'block_personality_test');
 
 // --- OBTENCIÓN Y PROCESAMIENTO DE DATOS ---
-// If userid is provided, get only that user's data (individual report)
+// If userid is provided, get only that user's data (individual report) - only if completed
 if ($userid) {
-    $students = $DB->get_records('personality_test', ['user' => $userid]);
+    $students = $DB->get_records('personality_test', ['user' => $userid, 'is_completed' => 1]);
 } else {
-    // Otherwise get all students in the course (aggregated report)
-    $students = $DB->get_records('personality_test', ['course' => $course->id]);
+    // Otherwise get all students in the course who have COMPLETED the test (aggregated report)
+    // Get enrolled students
+    $enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
+    $enrolled_ids = array_keys($enrolled_students);
+    
+    $students = array();
+    if (!empty($enrolled_ids)) {
+        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
+        $params['completed'] = 1;
+        $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
+    }
 }
 
 if (empty($students)) {

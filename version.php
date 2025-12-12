@@ -1,8 +1,8 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025120901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100;        // Requires this Moodle version (4.5)
-$plugin->component = 'block_personality_test';  // Full name of the plugin
+$plugin->version   = 2025121201;
+$plugin->requires  = 2022112800;        // Requires this Moodle version (4.1 or later)
+$plugin->component = 'block_personality_test';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.3.1';           // Human-readable version name
+$plugin->release   = '2.0.0';

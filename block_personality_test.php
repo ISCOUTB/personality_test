@@ -146,19 +146,38 @@ class block_personality_test extends block_base
             }
         }
         
-        // Obtener respuestas solo de estudiantes inscritos
+        // Obtener respuestas solo de estudiantes inscritos que hayan COMPLETADO el test
         $students = array();
         if (!empty($student_ids)) {
             list($insql, $params) = $DB->get_in_or_equal($student_ids, SQL_PARAMS_NAMED, 'user');
-            $sql = "SELECT * FROM {personality_test} WHERE user $insql";
+            $params['completed'] = 1;
+            $sql = "SELECT * FROM {personality_test} WHERE user $insql AND is_completed = :completed";
             $students = $DB->get_records_sql($sql, $params);
         }
 
-        // Depuración: Mostrar número de estudiantes encontrados
-        // Estudiantes encontrados para el curso
-
+        // Si no hay tests completados, mostrar estadísticas básicas
         if(empty($students)) {
-            $content->text = get_string('sin_datos_estudiantes', 'block_personality_test');
+            // Contar tests en progreso
+            $in_progress = 0;
+            if (!empty($student_ids)) {
+                list($insql, $params) = $DB->get_in_or_equal($student_ids, SQL_PARAMS_NAMED, 'user');
+                $params['completed'] = 0;
+                $in_progress = $DB->count_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
+            }
+            
+            $total_students = count($student_ids);
+            
+            $content->text .= '<div class="alert alert-info" style="margin: 10px 0;">';
+            $content->text .= '<h6 class="mb-2"><i class="fa fa-info-circle"></i> ' . get_string('participation_stats', 'block_personality_test') . '</h6>';
+            $content->text .= '<ul class="mb-0 small" style="list-style: none; padding-left: 0;">';
+            $content->text .= '<li><strong>' . get_string('total_participants', 'block_personality_test') . ':</strong> ' . $total_students . '</li>';
+            $content->text .= '<li><strong>' . get_string('completed_tests', 'block_personality_test') . ':</strong> 0</li>';
+            $content->text .= '<li><strong>' . get_string('in_progress_tests', 'block_personality_test') . ':</strong> ' . $in_progress . '</li>';
+            $content->text .= '</ul>';
+            $content->text .= '<hr style="margin: 10px 0;">';
+            $content->text .= '<p class="mb-0 small"><i class="fa fa-chart-bar text-info"></i> <strong>' . get_string('sin_datos_estudiantes', 'block_personality_test') . '</strong></p>';
+            $content->text .= '<p class="mb-0 mt-1 small text-muted" style="font-style: italic;">' . get_string('waiting_first_completion', 'block_personality_test') . '</p>';
+            $content->text .= '</div>';
             return $content;
         }
 
@@ -301,7 +320,7 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
         $output .= '</h6>';
         $output .= '<p class="card-text small mb-2">' . get_string('test_description', 'block_personality_test') . '</p>';
         $output .= '<ul class="list-unstyled small mb-0">';
-        $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_70_questions', 'block_personality_test') . '</li>';
+        $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_72_questions', 'block_personality_test') . '</li>';
         $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_16_types', 'block_personality_test') . '</li>';
         $output .= '<li><i class="fa fa-check text-success"></i> ' . get_string('feature_instant_results', 'block_personality_test') . '</li>';
         $output .= '</ul>';
@@ -319,7 +338,136 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
         
         $output .= '</div>';
         
-        // Add custom CSS for invitation
+        // Add custom CSS for invitation with high specificity to override Cognitio theme
+        $output .= '<style>
+        .block_personality_test .personality-invitation-block {
+            padding: 15px !important;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%) !important;
+            border-radius: 8px !important;
+            border: 1px solid #dee2e6 !important;
+            position: relative !important;
+        }
+        .block_personality_test .personality-invitation-block::before,
+        .block_personality_test .personality-invitation-block::after {
+            content: none !important;
+            display: none !important;
+        }
+        .block_personality_test .personality-header i {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+        }
+        .block_personality_test .personality-description .card {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            background: white !important;
+            border: 1px solid #17a2b8 !important;
+            position: relative !important;
+        }
+        /* Eliminar solo el pin del título interior (h6.card-title dentro de .personality-description) */
+        .block_personality_test .personality-description .card-title::before,
+        .block_personality_test .personality-description .card-title::after {
+            content: none !important;
+            display: none !important;
+        }
+        .block_personality_test .personality-description .card-title {
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            border-bottom: none !important;
+            font-weight: bold !important;
+        }
+        .block_personality_test .personality-actions .btn {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+            border: none !important;
+            color: white !important;
+        }
+        .block_personality_test .personality-actions .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+            background: linear-gradient(135deg, #138496 0%, #117a8b 100%) !important;
+        }
+        </style>';
+        
+        return $output;
+    }
+
+    /**
+     * Display continue test card for students with test in progress
+     * Design matches learning_style block for consistency
+     */
+    private function get_continue_test_card($answered_count) {
+        global $COURSE;
+        
+        $output = '';
+        $progress_percentage = ($answered_count / 72) * 100;
+        $all_answered = ($answered_count >= 72);
+        
+        $output .= '<div class="personality-invitation-block" style="padding: 15px; background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%); border-radius: 8px; border: 1px solid #dee2e6;">';
+        
+        // Header with user icon
+        $output .= '<div class="personality-header text-center mb-3">';
+        $output .= '<i class="fa fa-user-circle text-info" style="font-size: 1.8em; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"></i>';
+        $output .= '<h6 class="mt-2 mb-1">' . get_string('test_title', 'block_personality_test') . '</h6>';
+        $output .= '<small class="text-muted">' . get_string('discover_your_personality', 'block_personality_test') . '</small>';
+        $output .= '</div>';
+        
+        // Special alert if all questions answered but not submitted
+        if ($all_answered) {
+            $output .= '<div class="alert alert-warning mb-3" style="padding: 12px 15px; margin-bottom: 15px; border-left: 4px solid #ffc107; background-color: #fff3cd; border-radius: 4px;">';
+            $output .= '<div style="display: flex; align-items: start;">';
+            $output .= '<i class="fa fa-exclamation-triangle" style="color: #856404; margin-right: 10px; margin-top: 2px; font-size: 1.2em;"></i>';
+            $output .= '<div>';
+            $output .= '<strong style="color: #856404;">' . get_string('all_answered_title', 'block_personality_test') . '</strong><br>';
+            $output .= '<small style="color: #856404;">' . get_string('all_answered_message', 'block_personality_test') . '</small>';
+            $output .= '</div>';
+            $output .= '</div>';
+            $output .= '</div>';
+        } else {
+            // Description section (only show if not all answered)
+            $output .= '<div class="personality-description mb-3" style="background: white; padding: 10px 12px; border-radius: 5px; border-left: 3px solid #17a2b8;">';
+            $output .= '<small class="text-muted" style="line-height: 1.5;">';
+            $output .= '<i class="fa fa-info-circle text-info"></i> ';
+            $output .= get_string('test_description', 'block_personality_test');
+            $output .= '</small>';
+            $output .= '</div>';
+        }
+        
+        // Progress section
+        $output .= '<div class="personality-progress mb-3" style="background: white; padding: 12px; border-radius: 5px; border: 1px solid #e9ecef;">';
+        $output .= '<div class="d-flex justify-content-between align-items-center mb-2">';
+        $output .= '<span class="small font-weight-bold">' . get_string('your_progress', 'block_personality_test') . '</span>';
+        $output .= '<span class="small text-muted">' . $answered_count . '/72</span>';
+        $output .= '</div>';
+        $output .= '<div class="progress mb-2" style="height: 8px;">';
+        $output .= '<div class="progress-bar bg-info" style="width: ' . $progress_percentage . '%"></div>';
+        $output .= '</div>';
+        $output .= '<small class="text-muted">' . number_format($progress_percentage, 1) . '% ' . get_string('completed', 'block_personality_test') . '</small>';
+        $output .= '</div>';
+        
+        // Call to action button
+        $output .= '<div class="personality-actions text-center">';
+        
+        if ($all_answered) {
+            // Go to last page (8) with scroll parameter for finish button
+            $url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $COURSE->id, 'page' => 8, 'scroll_to_finish' => 1));
+            $output .= '<a href="' . $url . '" class="btn btn-success btn-block" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: 500; transition: all 0.3s ease;">';
+            $output .= '<i class="fa fa-check-circle"></i> ' . get_string('finish_test_now', 'block_personality_test');
+            $output .= '</a>';
+        } else {
+            // Go to page with first unanswered question
+            $url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $COURSE->id));
+            $output .= '<a href="' . $url . '" class="btn btn-info btn-block" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: 500; transition: all 0.3s ease;">';
+            $output .= '<i class="fa fa-play"></i> ' . get_string('continue_test', 'block_personality_test');
+            $output .= '</a>';
+        }
+        
+        $output .= '</div>';
+        
+        $output .= '</div>';
+        
+        // Add custom CSS matching learning_style
         $output .= '<style>
         .personality-invitation-block {
             padding: 15px;
@@ -330,8 +478,11 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
         .personality-header i {
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .personality-description .card {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .personality-progress {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
         }
         .personality-actions .btn {
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -408,6 +559,16 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
             if (!$entry) {
                 // El estudiante NO ha realizado el test todavía - Mostrar invitación
                 $this->content->text = $this->get_test_invitation();
+            } else if ($entry && isset($entry->is_completed) && $entry->is_completed == 0) {
+                // Test in progress - show continue option
+                $answered = 0;
+                for ($i = 1; $i <= 72; $i++) {
+                    $field = "q{$i}";
+                    if (isset($entry->$field) && $entry->$field !== null) {
+                        $answered++;
+                    }
+                }
+                $this->content->text = $this->get_continue_test_card($answered);
             } else {
                 // El estudiante YA HA realizado el test - Mostrar sus resultados
 
@@ -574,15 +735,7 @@ $content->text .= html_writer::tag('canvas', '', ['id' => 'mbtiChart', 'style' =
                     ),
                     'text-center'
                 );
-            } else {
-                // -- OTROS ROLES (Ni estudiante detectado, ni profesor con capacidad) --
-                // Mantener la lógica original para estos casos: mostrar mensajes de configuración.
-                 if (isset($this->config->personality_test_content) && !empty($this->config->personality_test_content["text"])) {
-                    $this->content->text = "<img src='" . $OUTPUT->pix_url('ok', 'block_personality_test') . "'>" . get_string('personality_test_actived', 'block_personality_test');
-                } else {
-                    $this->content->text = "<img src='" . $OUTPUT->pix_url('warning', 'block_personality_test') . "'>" . get_string('personality_test_configempty', 'block_personality_test');
-                }
-            } // Fin else ($is_teacher)
+            }
         } // Fin else ($COURSE_ROLED_AS_STUDENT)
 
         // Devolver el objeto de contenido construido
