@@ -124,7 +124,6 @@ $string['waiting_first_completion'] = 'Cuando al menos un test haya sido complet
 // Tabla MBTI
 $string['titulo_distribucion_mbti'] = 'Distribución MBTI';
 $string['mbti_type'] = 'Tipo MBTI';
-$string['num_estudiantes_header'] = 'Número de Estudiantes'; // Nueva clave para cabecera de tabla PDF/Gráfico
 
 // Tablas de Rasgos
 $string['titulo_distribucion_rasgos'] = 'Distribución de Rasgos';
@@ -192,7 +191,6 @@ $string['test_in_progress'] = 'Test en Progreso';
 $string['test_in_progress_message'] = '{$a} está realizando el test de personalidad actualmente.';
 $string['has_answered'] = 'Ha respondido';
 $string['results_available_when_complete'] = 'Los resultados estarán disponibles una vez que {$a} complete el test haciendo clic en el botón "Finalizar Test".';
-$string['back_to_admin'] = 'Volver a Administración';
 $string['back_to_admin'] = 'Volver a Administración';
 $string['personality_dimensions'] = 'Dimensiones de Personalidad';
 $string['summary_actions'] = 'Resumen y Acciones';
