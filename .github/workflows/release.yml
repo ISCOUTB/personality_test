@@ -1,73 +1,151 @@
-name: Create Release
+name: Automated Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ main ]
+    paths:
+      - 'version.php'
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: 'Force release even if version exists'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
-  release:
+  check-version:
     runs-on: ubuntu-latest
-    
+    outputs:
+      should-release: ${{ steps.version-check.outputs.should-release }}
+      version: ${{ steps.version-check.outputs.version }}
+      release-name: ${{ steps.version-check.outputs.release-name }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Get version from version.php
-      id: get_version
-      run: |
-        VERSION=$(grep "plugin->release" version.php | sed -n "s/.*'\([^']*\)'.*/\1/p")
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Version detected: $VERSION"
-        
-    - name: Create ZIP package
-      run: |
-        # Create a clean directory structure for the package
-        mkdir -p package_temp/personality_test
-        
-        # Copy all files except .git, .github, and other development files
-        rsync -av --exclude='.git' --exclude='.github' --exclude='*.md' \
-               --exclude='test_*' --exclude='*.log' --exclude='RELEASES.md' \
-               --exclude='.gitignore' \
-               ./ package_temp/personality_test/
-        
-        # Create the ZIP file with proper directory structure
-        cd package_temp
-        zip -r ../personality_test_v${{ steps.get_version.outputs.version }}.zip personality_test/
-        cd ..
-        
-        # Verify ZIP contents
-        echo "ZIP file contents:"
-        unzip -l personality_test_v${{ steps.get_version.outputs.version }}.zip | head -20
-        
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref_name }}
-        name: Personality Test Block v${{ steps.get_version.outputs.version }}
-        body: |
-          ## Personality Test Block v${{ steps.get_version.outputs.version }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          # Extraer versión actual del archivo version.php
+          CURRENT_VERSION=$(grep -oP "(?<=\\\$plugin->release = ')[^']*" version.php)
+          echo "Current version: $CURRENT_VERSION"
           
-          ### 🧠 **Bloque de Test de Personalidad MBTI para Moodle**
+          # Verificar si ya existe un tag para esta versión (a menos que sea forzado)
+          if [ "${{ github.event.inputs.force_release }}" = "true" ]; then
+            echo "Force release enabled, proceeding..."
+            echo "should-release=true" >> $GITHUB_OUTPUT
+          elif git tag --list | grep -q "^v$CURRENT_VERSION$"; then
+            echo "Tag v$CURRENT_VERSION already exists, skipping release"
+            echo "should-release=false" >> $GITHUB_OUTPUT
+          else
+            echo "New version detected: $CURRENT_VERSION"
+            echo "should-release=true" >> $GITHUB_OUTPUT
+          fi
           
-          Este bloque permite evaluar y visualizar los tipos de personalidad de los estudiantes basado en el modelo Myers-Briggs Type Indicator (MBTI).
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "release-name=Personality Test Block v$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+  create-release:
+    needs: check-version
+    if: needs.check-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Validate PHP syntax
+        run: |
+          echo "Validating PHP syntax..."
+          find . -name "*.php" -exec php -l {} \; || exit 1
+
+      - name: Create release archive
+        run: |
+          # Crear directorio temporal para el release
+          mkdir -p release-temp/personality_test
           
-          ### ✨ **Características Principales**
-          - **Test MBTI Completo** con 70 preguntas
-          - **Visualizaciones Interactivas** con Chart.js
-          - **Exportación PDF** de resultados detallados
-          - **Dashboard de Análisis** para profesores
-          - **Responsive Design** adaptado a dispositivos móviles
+          # Copiar archivos del plugin (excluyendo .git y archivos de desarrollo)
+          rsync -av \
+            --exclude='.git*' \
+            --exclude='release-temp' \
+            --exclude='*.log' \
+            --exclude='node_modules' \
+            --exclude='.DS_Store' \
+            ./ release-temp/personality_test/
           
-          ---
+          # Crear archivo ZIP
+          cd release-temp
+          zip -r ../personality_test-v${{ needs.check-version.outputs.version }}.zip personality_test/
+          cd ..
           
-          **Versión:** ${{ steps.get_version.outputs.version }}  
-          **Compatibilidad:** Moodle 2.5+  
-          **Desarrollado por:** SAVIO UTB  
-          **Licencia:** GPL v3  
+          # Verificar que el archivo se creó
+          ls -la personality_test-v${{ needs.check-version.outputs.version }}.zip
           
-        draft: false
-        prerelease: false
-        files: personality_test_v${{ steps.get_version.outputs.version }}.zip
+          # Limpiar directorio temporal
+          rm -rf release-temp
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          # Extraer changelog para la versión actual
+          if [ -f "RELEASES.md" ]; then
+            # Buscar la sección de la versión actual
+            awk '/## \["'"${{ needs.check-version.outputs.version }}"'"\]/{flag=1; next} /## \[/{flag=0} flag' RELEASES.md > current_changelog.md
+            
+            if [ -s current_changelog.md ]; then
+              echo "Found changelog entry for version ${{ needs.check-version.outputs.version }}"
+              echo "Changelog content:"
+              cat current_changelog.md
+            else
+              echo "No specific changelog entry found, using default message"
+              echo "### Cambios en esta versión" > current_changelog.md
+              echo "- Consultar RELEASES.md para detalles completos" >> current_changelog.md
+              echo "- Version: ${{ needs.check-version.outputs.version }}" >> current_changelog.md
+            fi
+          else
+            echo "### Cambios en esta versión" > current_changelog.md
+            echo "- Nueva versión del bloque Personality Test" >> current_changelog.md
+            echo "- Version: ${{ needs.check-version.outputs.version }}" >> current_changelog.md
+          fi
+
+      - name: Create Git tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ needs.check-version.outputs.version }}" -m "Release v${{ needs.check-version.outputs.version }}"
+          git push origin "v${{ needs.check-version.outputs.version }}"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.check-version.outputs.version }}
+          release_name: ${{ needs.check-version.outputs.release-name }}
+          body_path: current_changelog.md
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./personality_test-v${{ needs.check-version.outputs.version }}.zip
+          asset_name: personality_test-v${{ needs.check-version.outputs.version }}.zip
+          asset_content_type: application/zip
+
+      - name: Success notification
+        run: |
+          echo "✅ Release v${{ needs.check-version.outputs.version }} created successfully!"
+          echo "📦 Asset: personality_test-v${{ needs.check-version.outputs.version }}.zip"
+          echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.check-version.outputs.version }}"
