@@ -10,8 +10,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025122000;
-$plugin->requires  = 2022112800;
+$plugin->version = 2025122000;
+$plugin->requires = 2022112800;
 $plugin->component = 'block_personality_test';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '2.0.0';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '2.0.0';
