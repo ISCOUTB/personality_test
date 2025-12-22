@@ -1,8 +1,11 @@
 <?php
 $string['pluginname'] = 'Exploración de Personalidad';
+$string['management_title'] = 'Gestión del Test de Personalidad';
+$string['course_overview'] = 'Resumen del Curso';
+$string['admin_dashboard_description'] = 'Panel de administración del Test de Personalidad. Aquí puede ver estadísticas detalladas, gestionar respuestas de estudiantes y exportar datos.';
 $string['code_honor_text'] = '<p>Por favor, lea atentamente las instrucciones antes de comenzar el test.</p>';
 $string['accept_code_honor_text'] = 'Acepto';
-$string['redirect_accept_success'] = 'Gracias, ahora será redirigido a la página del curso.';
+$string['redirect_accept_success'] = 'Enhorabuena, ahora puedes ver tus resultados en la barra lateral del curso.';
 $string['redirect_accept_exist'] = 'Ya ha completado el test, será redirigido al curso.';
 $string['accept_message'] = 'Personalidad detectada';
 $string['required_message'] = 'Por favor, realice la evaluación de personalidad para continuar';
@@ -23,7 +26,18 @@ $string['completed'] = 'completado';
 $string['continue_test'] = 'Continuar Test';
 $string['all_answered_title'] = '¡Todas las Preguntas Respondidas!';
 $string['all_answered_message'] = 'Has respondido las 72 preguntas. ¡No olvides hacer clic en "Finalizar Test" para enviar tus respuestas y conocer tu tipo de personalidad!';
+$string['go_to_administration'] = 'Ir al Panel de Administración';
+
+// Test in progress and remind strings
+$string['test_in_progress'] = 'Test en Progreso';
+$string['test_in_progress_message'] = '{$a} ha comenzado el test pero aún no lo ha completado.';
+$string['results_available_when_complete'] = 'Los resultados completos estarán disponibles cuando {$a} termine el test.';
+$string['remind_submit_test'] = 'Recuérdale al estudiante que haga clic en el botón "Finalizar Test" para ver los resultados.';
+$string['questions'] = 'preguntas';
+$string['progress_label'] = 'Progreso';
+$string['has_answered'] = 'Ha respondido';
 $string['finish_test_now'] = 'Finalizar Test';
+$string['test_results'] = 'Tus Resultados';
 $string["personality_test_content"] = "Test de Personalidad";
 $string['personality_test:addinstance'] = 'Añadir un nuevo bloque de Test de Personalidad';
 $string['personality_test:myaddinstance'] = 'Añadir un nuevo bloque de Test de Personalidad a Mi Moodle';
@@ -34,7 +48,7 @@ $string["personality_test:q1"] = "Se enorgullece de su objetividad, a pesar de q
 $string["personality_test:q2"] = "Necesita recargar energías solo, después de reuniones, llamadas telefónicas o socialización; cuanto más intenso es el encuentro más agotado se siente posteriormente.";
 $string["personality_test:q3"] = "Cree que el amor no puede ser definido; se siente ofendido por los que tratan de hacerlo.";
 $string["personality_test:q4"] = "No le importa realizar decisiones difíciles y no comprende por que alguna gente se altera por cosas que no son relevantes para el asunto que se están tratando.";
-$string["personality_test:q5"] = "Tiende a hablar primero y pensar después; con frecuencia se reganña a sí mismo con cosas como '¿aprenderé alguna vez a mantener mi boca cerrada?'";
+$string["personality_test:q5"] = "Tiende a hablar primero y pensar después; con frecuencia se regaña a sí mismo con cosas como '¿aprenderé alguna vez a mantener mi boca cerrada?'";
 $string["personality_test:q6"] = "Recuerda los números y cifras más fácilmente que las caras y los nombres.";
 $string["personality_test:q7"] = "Conoce mucha gente y a muchos de ellos los considera como amigos íntimos; le gusta incluir tanta gente como sea posible en sus actividades. ";
 $string["personality_test:q8"] = "Considera como una buena decisión la que toma en cuenta los sentimientos de otros.";
@@ -42,7 +56,7 @@ $string["personality_test:q9"] = "Ensaya las cosas antes de decirlas; a menudo c
 $string["personality_test:q10"] = "No le importa leer o tener una conversación mientras se desarrolla otra actividad (como una conversación, la TV, Radio, etc.); en realidad puede permanecer indiferente a esta distracción.";
 $string["personality_test:q11"] = "No duda en retirar lo dicho si Ud. percibe que ha ofendido a alguien; como consecuencia Ud. es acusado de no tener convicciones.";
 $string["personality_test:q12"] = "No le gusta que le obliguen a tomar decisiones; prefiere mantener sus opciones abiertas. ";
-$string["personality_test:q13"] = "Es accesible y traba conversación fácilmente con amigos, companñeros del trabajo y extranños teniendo quizás un papel dominante en la conversación.	";
+$string["personality_test:q13"] = "Es accesible y traba conversación fácilmente con amigos, compañeros del trabajo y extranjeros teniendo quizás un papel dominante en la conversación.	";
 $string["personality_test:q14"] = "Prefiere la armonía a la claridad; el conflicto lo abruma y trata de evitarlo (cambiemos de tema, o démonos las manos y seamos todos amigos).";
 $string["personality_test:q15"] = "Se siente frustrado cuando las personas le dan instrucciones poco claras o cuando alguien le dice 'este es el plan general, nos ocuparemos de los detalles después'";
 $string["personality_test:q16"] = "En una conversación cambia a menudo de tema; el nuevo tema puede ser algo que le viene a la mente o que atrae su atención en ese momento.";
@@ -68,20 +82,20 @@ $string["personality_test:q35"] = "A menudo se pregunta si alguien se preocupa p
 $string["personality_test:q36"] = "Siempre tiene que esperar a los otros, quienes nunca parecen ser puntuales.";
 $string["personality_test:q37"] = "Cree que hablar de detalles aburridos es una pérdida de tiempo.";
 $string["personality_test:q38"] = "Depende de sus descargas de adrenalina en el último minuto para cumplir con sus fechas límite; habitualmente cumple con la fecha límite aunque vuelva loco a todo el mundo para lograrlo.";
-$string["personality_test:q39"] = "Piensa en varias cosas al mismo tiempo; a menudo sus amigos y colegas le senñalan que está 'como ausente'.";
+$string["personality_test:q39"] = "Piensa en varias cosas al mismo tiempo; a menudo sus amigos y colegas le señalan que está 'como ausente'.";
 $string["personality_test:q40"] = "Recuerda con más facilidad el rostro y las circunstancias en que conocio a alguien que su nombre.";
 $string["personality_test:q41"] = "Encuentra el futuro y sus posibilidades interesantes, más que atemorizantes; generalmente le atrae más a donde va que donde está.";
 $string["personality_test:q42"] = "'Sabe' que si cada uno hiciera lo que se supone debe hacer (y en el momento que se supone debe hacerlo) el mundo sería un lugar mejor.";
 $string["personality_test:q43"] = "Ud. es de la idea que hay que ver para creer; si alguno le dice que llego el correo, Ud. no lo cree hasta que no está sobre su escritorio.";
 $string["personality_test:q44"] = "Cree que el tiempo es relativo; no importa la hora a menos que la reunión, cena o evento haya comenzado sin Ud.";
 $string["personality_test:q45"] = "Usa las palabras en forma literal; a menudo se ve en la necesidad de preguntar si lo que dicen es en serio o es un chiste.";
-$string["personality_test:q46"] = "Se despierta por la manñana y sabe bastante bien cómo será su diá; tiene una agenda y la sigue; puede alterarse si las cosas no marchan como estaba planeado.";
+$string["personality_test:q46"] = "Se despierta por la mañana y sabe bastante bien cómo será su día; tiene una agenda y la sigue; puede alterarse si las cosas no marchan como estaba planeado.";
 $string["personality_test:q47"] = "Le interesa saber cómo funcionan las cosas solo por placer.";
 $string["personality_test:q48"] = "Le gusta demostrar su punto de vista por motivos de claridad; es habitual en Ud. discutir ambos puntos de vista en un debate simplemente para ampliar su horizonte intelectual.";
 $string["personality_test:q49"] = "Le gusta expresar sus pensamientos o ideas sin interrupciones; deja que otros hagan lo mismo, esperando que sea recíproco.";
 $string["personality_test:q50"] = "Es capaz de mantenerse frío, calmado y objetivo en situaciones donde todo el mundo está alterado.";
 $string["personality_test:q51"] = "Encuentra más fácil ver los árboles que el bosque;es feliz de concentrarse en su trabajo y no se preocupa acerca de cómo encaja éste en un esquema más amplio";
-$string["personality_test:q52"] = "Tiene inclinación a las chanzas y los juegos de palabras.	";
+$string["personality_test:q52"] = "Tiene inclinación a las chanzas y los juegos de palabras.";
 $string["personality_test:q53"] = "Encuentra más satisfactorios aquellos trabajos que producen resultados tangibles; preferiría limpiar su escritorio que pensar en lo que le depara el futuro de su carrera.";
 $string["personality_test:q54"] = "Desearía imponer sus ideas con más fuerza. Le molesta que otros digan antes cosas que Ud. estaba por decir.";
 $string["personality_test:q55"] = "Preferiría resolver una disputa basada en lo que es justo y verdadero más que en lo que hace feliz a la gente.";
@@ -103,7 +117,6 @@ $string["personality_test:q70"] = "Prefiere resultados con hechos y números que
 $string["personality_test:q71"] = "Le gusta ir a reuniones y tiende a manifestar su opinión; en realidad se siente frustrado si no le dan la oportunidad de expresar su punto de vista.";
 $string["personality_test:q72"] = "Disfruta de la paz y la tranquilidad de tener tiempo para Ud. mismo; halla que su tiempo privado se encuentra fácilmente invadido y tiende a adaptarse desarrollando un alto poder de concentración";
 
-
 // --- Cadenas para la interfaz del profesor y exportación ---
 $string['titulo_resultados_estudiantes'] = 'Resultados de los Estudiantes';
 $string['CSV'] = 'Descargar CSV';
@@ -124,6 +137,7 @@ $string['waiting_first_completion'] = 'Cuando al menos un test haya sido complet
 // Tabla MBTI
 $string['titulo_distribucion_mbti'] = 'Distribución MBTI';
 $string['mbti_type'] = 'Tipo MBTI';
+$string['num_estudiantes_header'] = 'Número de Estudiantes';
 
 // Tablas de Rasgos
 $string['titulo_distribucion_rasgos'] = 'Distribución de Rasgos';
@@ -137,11 +151,12 @@ $string['sensacion_intuicion'] = 'Sensación / Intuición';
 $string['pensamiento_sentimiento'] = 'Pensamiento / Sentimiento';
 $string['juicio_percepcion'] = 'Juicio / Percepción';
 
-// Claves específicas para etiquetas de rasgos (usadas en el PHP corregido)
+// Claves específicas para etiquetas de rasgos
 $string['Introvertido'] = 'Introvertido';
 $string['Extrovertido'] = 'Extrovertido';
 $string['Sensing'] = 'Sensación';
 $string['Intuicion'] = 'Intuición';
+$string['Pensamiento'] = 'Pensamiento';
 $string['Sentimiento'] = 'Sentimiento';
 $string['Juicio'] = 'Juicio';
 $string['Percepcion'] = 'Percepción';
@@ -151,18 +166,22 @@ $string['error_recuperando_resultados'] = 'Error al recuperar los resultados del
 $string['error_puntuacion_invalida'] = 'Error: Puntuación MBTI inválida calculada.';
 
 // Sección administrativa
-$string['admin_manage_title'] = 'Gestión de Test de Personalidad';
+$string['admin_manage_title'] = 'Administración - Exploración de Personalidad';
 $string['no_admin_access'] = 'No tienes acceso administrativo a este curso.';
 $string['total_students'] = 'Total de Estudiantes';
 $string['completed_tests'] = 'Tests Completados';
 $string['in_progress_tests'] = 'En Progreso';
-$string['no_participants'] = 'Sin Participantes';
-$string['no_participants_message'] = 'Ningún estudiante ha completado el test de personalidad en este curso aún.';
+$string['completion_rate'] = 'Tasa de Finalización';
+$string['general_statistics'] = 'Estadísticas Generales';
+$string['most_common_types'] = 'Tipos de Personalidad Más Comunes';
+$string['average_dimensions'] = 'Puntuaciones Promedio de Dimensiones';
+$string['no_data_available'] = 'No hay datos disponibles aún.';
+$string['no_participants'] = 'Aún no hay resultados disponibles';
+$string['no_participants_message'] = 'Ningún estudiante ha comenzado el test aún.';
 $string['participants_list'] = 'Lista de Participantes';
 $string['status'] = 'Estado';
 $string['completed_status'] = 'Completado';
 $string['in_progress_status'] = 'En Progreso';
-$string['progress_label'] = 'Progreso';
 $string['questions_answered'] = '{$a} preguntas respondidas';
 $string['of_72_questions'] = '{$a}/72 preguntas';
 $string['search_participant'] = 'Buscar participante...';
@@ -170,8 +189,7 @@ $string['export_csv'] = 'Exportar CSV';
 $string['export_pdf'] = 'Exportar PDF';
 $string['student_name'] = 'Nombre del Estudiante';
 $string['email'] = 'Correo Electrónico';
-$string['mbti_type'] = 'Tipo MBTI';
-$string['test_date'] = 'Fecha del Test';
+$string['test_date'] = 'Fecha de Última Acción';
 $string['actions'] = 'Acciones';
 $string['view'] = 'Ver';
 $string['delete'] = 'Eliminar';
@@ -187,14 +205,10 @@ $string['participation_deleted'] = 'La participación ha sido eliminada exitosam
 // Página de resultados individuales
 $string['individual_results'] = 'Resultados Individuales';
 $string['no_test_results'] = 'No se encontraron resultados del test para este estudiante.';
-$string['test_in_progress'] = 'Test en Progreso';
-$string['test_in_progress_message'] = '{$a} está realizando el test de personalidad actualmente.';
-$string['has_answered'] = 'Ha respondido';
-$string['results_available_when_complete'] = 'Los resultados estarán disponibles una vez que {$a} complete el test haciendo clic en el botón "Finalizar Test".';
-$string['back_to_admin'] = 'Volver a Administración';
+$string['back_to_admin'] = 'Volver al Panel de Administración';
 $string['personality_dimensions'] = 'Dimensiones de Personalidad';
 $string['summary_actions'] = 'Resumen y Acciones';
-$string['download_pdf'] = 'Descargar PDF';
+$string['download_pdf'] = 'Exportar PDF';
 $string['delete_results'] = 'Eliminar Resultados';
 $string['confirm_delete_individual'] = '¿Estás seguro de que quieres eliminar estos resultados del test?';
 $string['detailed_scores'] = 'Puntuaciones Detalladas';
@@ -249,8 +263,8 @@ $string['mbti_dimensions_entj'] = 'Extraversión - Intuición - Pensamiento - Ju
 // Invitación al test
 $string['test_title'] = 'Test de Personalidad';
 $string['discover_your_personality'] = 'Descubre tu tipo de personalidad';
-$string['what_is_mbti'] = '¿Qué es el Test de Myers-Briggs?';
-$string['test_description'] = 'Identifica tu tipo de personalidad basado en 4 dimensiones: Extraversión/Introversión, Sensación/Intuición, Pensamiento/Sentimiento y Juicio/Percepción.';
+$string['what_is_mbti'] = '¿Qué es el Test de Myers-Briggs (MBTI)?';
+$string['test_description'] = 'Una herramienta de introspección diseñada para revelar tus preferencias naturales en cuatro ejes fundamentales. Su objetivo es brindarte un perfil detallado sobre tus fortalezas, puntos ciegos y la forma en que interactúas con el mundo y las personas que te rodean.';
 $string['feature_72_questions'] = '72 preguntas rápidas';
 $string['feature_16_types'] = '16 tipos únicos de personalidad';
 $string['feature_instant_results'] = 'Resultados instantáneos con perfil detallado';
@@ -272,12 +286,13 @@ $string['students_completed_test'] = '{$a->completed} de {$a->total} estudiantes
 $string['csv_header_userid'] = 'ID Estudiante';
 $string['csv_header_fullname'] = 'Nombre Completo';
 $string['csv_header_mbti_type'] = 'Tipo MBTI';
-$string['csv_header_date'] = 'Fecha';
-$string['num_estudiantes_header'] = 'Número de Estudiantes';
+$string['csv_header_last_action_date'] = 'Fecha de Última Acción';
 
 // Nombres de archivos exportables
 $string['export_filename'] = 'Test_Personalidad_MBTI';
 
 // Security and validation strings
-$string['complete_previous_pages'] = 'Por favor, completa todas las preguntas de las páginas anteriores antes de acceder a esa página.';
 $string['all_questions_required'] = 'Debes responder las 72 preguntas antes de finalizar el test. Has sido redirigido a la primera pregunta sin responder.';
+
+// Redirect and acceptance messages
+$string['teachers_redirect_message'] = 'Los profesores son redirigidos al panel de administración.';
