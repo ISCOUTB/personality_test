@@ -1,202 +1,287 @@
-# Bloque Personality Test para Moodle
+# Bloque Exploración de Personalidad (Moodle)
 
-[![Build Status](https://github.com/ISCOUTB/personality_test/actions/workflows/build.yml/badge.svg)](https://github.com/ISCOUTB/personality_test/actions)
-[![Latest Release](https://img.shields.io/github/v/release/ISCOUTB/personality_test)](https://github.com/ISCOUTB/personality_test/releases/latest)
+El bloque **Test de Personalidad** permite a estudiantes realizar una prueba de **72 preguntas (Sí/No)** y obtener un perfil tipo **MBTI** (4 ejes: **Extraversión/Introversión**, **Sensorial/Intuitivo**, **Pensamiento/Sentimiento**, **Juicio/Percepción**). Para docentes y administradores, incorpora vistas de seguimiento, métricas agregadas, panel administrativo y exportación de reportes.
 
-## Descripción General
+Este repositorio incluye:
+- Experiencia de estudiante con **guardado progresivo**, validaciones por página y reanudación.
+- Herramientas docentes con **dashboard embebido**, **panel de administración**, **vista individual** y **exportación CSV/PDF**.
 
-El bloque `personality_test` permite a los estudiantes de un curso realizar un test de personalidad tipo MBTI y visualizar sus resultados, mientras que los profesores pueden ver estadísticas agregadas y exportar los datos en formatos CSV y PDF. El bloque es completamente internacionalizable, responsivo y sigue las buenas prácticas de desarrollo para Moodle.
+## Contenido
 
-## 🚀 Instalación Rápida
-
-### Desde GitHub Releases (Recomendado)
-1. Ve a [Releases](https://github.com/ISCOUTB/personality_test/releases/latest)
-2. Descarga el archivo `block_personality_test_vX.X.X.zip`
-3. Extrae el contenido en tu directorio `blocks/` de Moodle
-4. Visita la página de administración de Moodle para completar la instalación
-
-### Desde Código Fuente
-```bash
-cd /path/to/moodle/blocks/
-git clone https://github.com/ISCOUTB/personality_test.git
-# Luego visita la página de administración de Moodle
-```
+- [Funcionalidades](#funcionalidades)
+- [Recorrido Visual](#recorrido-visual)
+- [Sección técnica (modelo de datos, cálculo, flujos, permisos, endpoints)](#sección-técnica)
+- [Instalación](#instalación)
+- [Operación y soporte](#operación-y-soporte)
+- [Contribuciones](#contribuciones)
+- [Equipo de desarrollo](#equipo-de-desarrollo)
 
 ---
 
-## Estructura de Archivos
+## Funcionalidades
 
-```
-personality_test/
-│
-├── amd/
-│   ├── src/
-│   │   └── charts.js         # Lógica JS para gráficas (Chart.js, AMD)
-│   └── build/
-│       └── charts.min.js     # Versión minificada del JS
-│
-├── db/
-│   ├── access.php            # Definición de capacidades y permisos
-│   └── install.xml           # Estructura de la base de datos
-│
-├── lang/
-│   ├── es/
-│   │   └── block_personality_test.php  # Idioma español
-│   └── en/
-│       └── block_personality_test.php  # Idioma inglés
-│
-├── pix/                      # Imágenes e íconos del bloque
-│
-├── block_personality_test.php # Lógica principal del bloque (PHP, usa patrón Facade)
-├── styles.css                # Estilos CSS, responsivo y adaptado a SAVIO UTB
-├── view.php                  # Vista del formulario del test para estudiantes
-├── save.php                  # Lógica de guardado de respuestas
-├── lib.php                   # Funciones auxiliares (guardar resultados)
-├── download_csv.php          # Exportación profesional de resultados en CSV
-├── download_pdf.php          # Exportación profesional de resultados en PDF
-├── edit_form.php             # Formulario de edición/configuración del bloque
-├── version.php               # Versión y metadatos del plugin
-└── README.md                 # Documentación básica y créditos
-```
+### Para estudiantes
+- **Aplicación del test** (72 ítems, Sí/No) distribuido en **8 páginas** (9 preguntas por página).
+- **Guardado progresivo** con autosave tras inactividad y reanudación desde la primera pregunta pendiente.
+- **Validación por página** antes de avanzar o finalizar.
+- **Resultados** con tipo MBTI (p. ej. `ENTJ`) y visualizaciones comparativas por dimensión.
+
+### Para docentes / administradores
+- **Vista del bloque** con:
+  - Distribución de tipos MBTI (gráfico de torta),
+  - Distribución por rasgos (E/I, S/N, T/F, J/P) en gráficos de barras,
+  - Accesos rápidos a descargas.
+- **Panel de administración** con:
+  - **Conteos** (matriculados, completados, en progreso, tasa de finalización),
+  - **Estadísticas Generales** (Top 4 de Tipos de Personalidad más comunes y Promedios por dimensión).
+  - **Tabla de participantes** (nombre, correo, estado, tipo MBTI).
+  - Acceso a **vista individual** por estudiante.
+  - Posibilidad de **eliminación** de resultados individuales.
+  - Exportación **CSV** y **PDF** agregados por curso.
+- **Controles de privacidad**: acceso restringido por capacidades, matrícula y (en vista individual) reglas de grupo.
 
 ---
 
-## Principales Componentes y Responsabilidades
+## Recorrido Visual
 
-- **block_personality_test.php**  
-  - Controlador principal del bloque.
-  - Usa el patrón **Facade** para separar la lógica de negocio (cálculo MBTI, conteos, explicaciones).
-  - Presenta diferentes vistas según el rol (estudiante, profesor, otros).
-  - Llama a los módulos JS para mostrar gráficas.
+### 1. Experiencia del Estudiante
 
-- **PersonalityTestFacade (en block_personality_test.php)**  
-  - Encapsula la lógica de negocio: cálculo de tipo MBTI, explicaciones, conteos de tipos y rasgos.
-  - Facilita la mantenibilidad y escalabilidad.
+**Acceso Intuitivo y Llamado a la Acción**
 
-- **charts.js (AMD)**  
-  - Renderiza las gráficas usando Chart.js.
-  - Recibe datos desde PHP y los muestra de forma responsiva y profesional.
-  - Fácil de modificar para cambiar tipos de gráficas o librería.
+El recorrido comienza con una invitación clara y directa. Desde el bloque principal del curso, el estudiante puede visualizar su estado actual y acceder al test con un solo click, facilitando la participación sin fricciones.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ce509265-b917-4d27-878c-aa221c368bc6" alt="Invitación al Test" width="528">
+</p>
 
-- **save.php / lib.php**  
-  - Procesan y guardan las respuestas del test en la base de datos.
-  - Validan y aseguran la integridad de los datos.
+**Interfaz de Evaluación Optimizada**
 
-- **download_csv.php / download_pdf.php**  
-  - Exportan los resultados de forma profesional, con metadatos y estructura clara.
+Se presenta un entorno de respuesta limpio y libre de distracciones. La interfaz ha sido diseñada para priorizar la legibilidad y la facilidad de uso, permitiendo que el estudiante se concentre totalmente en el proceso de autodescubrimiento.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3ae455bd-394b-4d69-9a9f-fc653afd1247" alt="Formulario del Test" height="500">
+</p>
 
-- **styles.css**  
-  - Estilos modernos, responsivos y adaptados a la identidad visual de SAVIO UTB.
+**Asistencia y Validación en Tiempo Real**
 
-- **Archivos de idioma**  
-  - Permiten la traducción completa del bloque.
+Para garantizar la integridad de los datos, el sistema implementa una validación inteligente. Si el usuario olvida alguna respuesta, el sistema lo guía visualmente mediante alertas en rojo y un desplazamiento automático hacia los campos pendientes, asegurando una experiencia sin errores.
 
----
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d320f9ab-9b6e-4448-b0a0-9b9cd57118ba" alt="Validación" width="528">
+</p>
 
-## Buenas Prácticas y Estándares Cumplidos
+**Persistencia de Progreso y Continuidad**
 
-- **Internacionalización**: Todos los textos están en archivos de idioma.
-- **Seguridad**: Uso de permisos, validación de parámetros, y control de acceso.
-- **Separación de responsabilidades**: Lógica de negocio separada de la presentación.
-- **Responsividad**: CSS y JS adaptados a cualquier dispositivo y nivel de zoom.
-- **Extensibilidad**: Fácil de modificar o ampliar (por ejemplo, cambiar gráficas).
-- **Compatibilidad Moodle**: Uso de AMD para JS, helpers de Moodle para HTML, y API de base de datos.
+Entendemos que el tiempo es valioso. Si el estudiante debe interrumpir su sesión, el sistema guarda automáticamente su avance. Al regresar, el bloque muestra el porcentaje de progreso y permite reanudar el test exactamente donde se dejó, resaltando visualmente la siguiente pregunta a responder.
+	
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c485bcbb-59cf-42c5-b619-a08ba5d7539e" alt="Progreso del Test" height="350">
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/002b5f98-beee-453e-a044-1454d05130c8" alt="Continuar Test" height="350">
+</p>
 
----
+**Confirmación de Envío Pendiente**
+Si el estudiante ha completado las 44 preguntas pero aún no ha procesado el envío, el bloque muestra una notificación clara y amigable, invitándolo a formalizar la entrega y conocer su tipo de personalidad.
 
-## Evaluación ATAM (Architecture Tradeoff Analysis Method)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/14b3dca2-a484-4100-8a71-c650ff97b607" alt="Confirmación de Test Completado" width="528">
+</p>
 
-### A. Atributos de Calidad Evaluados
-- **Mantenibilidad**
-- **Escalabilidad**
-- **Seguridad**
-- **Internacionalización**
-- **Usabilidad**
-- **Rendimiento**
-- **Extensibilidad**
+**Análisis de Perfil y Recomendaciones Personalizadas**
 
-### B. Riesgos Identificados
-- **Dependencia de Chart.js**: Si se quiere cambiar la librería de gráficas, hay que modificar el JS, pero la separación actual lo facilita.
-- **Crecimiento de lógica de negocio**: Si la lógica de personalidad crece mucho, podría ser necesario migrar la fachada a un archivo propio o incluso a un servicio.
-- **Validación de datos**: Si se agregan más tipos de tests, habría que generalizar la lógica de guardado y cálculo.
+Al concluir, el estudiante recibe un diagnóstico detallado de su tipo de personalidad. La presentación incluye un gráfico con una explicación clara, Además, se la da recomendaciones prácticas para su desarrollo personal.
 
-### C. Trade-offs (Compromisos)
-- **Simplicidad vs. Escalabilidad**:  
-  El uso de una fachada y separación de JS añade un poco de complejidad inicial, pero permite escalar y mantener el bloque fácilmente en el futuro.
-- **Flexibilidad vs. Rendimiento**:  
-  El uso de Chart.js y renderizado en el cliente es flexible y visualmente atractivo, pero puede ser menos eficiente con grandes volúmenes de datos (no es un problema en el contexto actual).
-- **Internacionalización vs. Facilidad de edición**:  
-  Todo texto está en archivos de idioma, lo que es excelente para traducción, pero requiere editar varios archivos para cambios de texto.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/62243409-8ab2-4370-b5a0-2e8748786b0e" alt="Resultados del Estudiante" width="528">
+</p>
 
-### D. Escenarios de Cambio y Facilidad de Adaptación
-- **Cambiar el tipo de gráficas**:  
-  Solo se modifica el archivo `charts.js` (y su minificado). No afecta la lógica de negocio ni la base de datos.
-- **Agregar nuevos idiomas**:  
-  Solo se agregan archivos en la carpeta `lang/`.
-- **Modificar la lógica de cálculo**:  
-  Solo se modifica la clase `PersonalityTestFacade`.
-- **Agregar nuevos tipos de test**:  
-  Requiere ampliar la base de datos y la fachada, pero la estructura modular lo facilita.
+### 2. Experiencia del Profesor
 
-### E. Conclusión ATAM
-- **El diseño actual es robusto, seguro y preparado para el crecimiento.**
-- **Los riesgos son bajos y los trade-offs están bien balanceados para el contexto educativo de Moodle.**
-- **La arquitectura favorece la mantenibilidad, la internacionalización y la experiencia de usuario.**
+**Dashboard de Control Rápido (Vista del Bloque)**
+
+El profesor cuenta con una vista ejecutiva desde el bloque, donde puede monitorizar métricas clave y gráficos de tendencia de forma inmediata, además de acceder a funciones avanzadas de exportación y administración.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f375b852-eccf-4797-a15a-b3242a5df2cb" alt="Bloque del Profesor" width="528">
+</p>
+
+**Centro de Gestión y Analíticas**
+
+Un panel de administración que centraliza el seguimiento grupal. Permite visualizar quiénes han completado el proceso, quiénes están en curso y gestionar los resultados colectivos para adaptar la estrategia pedagógica del aula.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f75caaad-6dc5-49e8-8826-3175350aca67" alt="Panel de Administración" width="800">
+</p>
+
+**Seguimiento Individualizado y Detallado**
+
+El docente puede profundizar en el perfil específico de cada estudiante. Esta vista permite comprender las necesidades particulares de cada alumno y las recomendaciones sugeridas por el sistema para brindar un apoyo docente más humano y dirigido.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b4fc7f84-65ff-47bc-ab6a-14b6b2b69ed5" alt="Vista Detallada del Estudiante" width="600">
+</p>
 
 ---
 
-## 🔄 Desarrollo y Releases
+## Sección técnica
 
-### Sistema de Releases Automatizado
-Este proyecto utiliza GitHub Actions para generar releases automáticamente:
+Esta sección describe el comportamiento **tal como está implementado** en el bloque (cálculo, persistencia, flujos y controles de acceso).
 
-- **Releases Oficiales**: Se crean cuando se actualiza la versión en `version.php` y se hace push a `main`
-- **Builds de Desarrollo**: Se generan automáticamente en cada push para testing
-- **Packages**: Cada release incluye un ZIP listo para instalar en Moodle
+### 1) Estructura del test y codificación de respuestas
 
-Ver [RELEASES.md](RELEASES.md) para más detalles sobre el sistema de releases.
+- Total de preguntas: **72**.
+- Opciones por pregunta: **Sí/No**.
+- Paginación: **9 preguntas por página** (**8** páginas).
+- Persistencia en base de datos:
+  - Se almacena una columna por pregunta: `q1` … `q72`.
+  - Valores: **Sí = 1**, **No = 0**.
 
-### Contribuir al Proyecto
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Crea un Pull Request
+### 2) Mapeo de preguntas a dimensiones
 
-### Versionado
-Seguimos [Semantic Versioning](https://semver.org/):
-- **MAJOR**: Cambios incompatibles
-- **MINOR**: Nueva funcionalidad compatible
-- **PATCH**: Bug fixes compatibles
+El cálculo usa 8 conjuntos de índices (9 ítems por dimensión), definidos en el guardado final:
+
+- **Extraversion (E)**: 5, 7, 10, 13, 23, 25, 61, 68, 71
+- **Introversion (I)**: 2, 9, 49, 54, 63, 65, 67, 69, 72
+- **Sensing (S)**: 15, 43, 45, 51, 53, 56, 59, 66, 70
+- **Intuition (N)**: 37, 39, 41, 44, 47, 52, 57, 62, 64
+- **Thinking (T)**: 1, 4, 6, 18, 20, 48, 50, 55, 58
+- **Feeling (F)**: 3, 8, 11, 14, 27, 31, 33, 35, 40
+- **Judging (J)**: 19, 21, 24, 26, 29, 34, 36, 42, 46
+- **Perceiving (P)**: 12, 16, 17, 22, 28, 30, 32, 38, 60
+
+### 3) Cálculo de puntajes y tipo MBTI
+
+El puntaje por dimensión es la **suma** de las respuestas (Sí=1/No=0) en el conjunto correspondiente, por lo que cada dimensión queda en un rango **0–9**.
+
+Se guardan 8 totales en la tabla:
+
+- `extraversion`, `introversion`
+- `sensing`, `intuition`
+- `thinking`, `feeling`
+- `judging`, `perceptive`
+
+Derivación de tipo MBTI (comparación por pares):
+
+Se aplica la **Regla de "Prevalencia Teórica"**: ante un empate, se favorece una de las dos polaridades basándose en la teoría del autor.
+
+- **E/I**: `I` si `extraversion == introversion` (Se asigna I).
+- **S/N**: `N` si `sensing == intuition` (Se asigna N).
+- **T/F**: `T` si `thinking == feeling` (Se asigna T).
+- **J/P**: `P` si `judging == perceptive` (Se asigna P).
+
+Implementación técnica:
+
+- **E/I**: `E` si `extraversion > introversion`, si no `I`
+- **S/N**: `S` si `sensing > intuition`, si no `N`
+- **T/F**: `T` si `thinking >= feeling`, si no `F`
+- **J/P**: `J` si `judging > perceptive`, si no `P`
+
+> Nota: Todas las vistas (bloque, reportes, exportaciones) han sido unificadas para seguir estas reglas de desempate.
+
+*Impacto:* Si un estudiante queda **exactamente empatado** en un eje, el sistema asignará consistentemente la letra definida por la regla de prevalencia (I, N, T, P).
+
+### 4) Guardado progresivo, navegación y reanudación
+
+El flujo del estudiante está diseñado para soportar progreso parcial:
+
+- Se crea/actualiza un registro con `is_completed = 0` mientras el test está en curso.
+- El autosave se ejecuta tras **2 segundos** de inactividad después de responder.
+- La navegación **Anterior/Siguiente** guarda progreso en el servidor.
+
+Reglas de integridad implementadas:
+
+- **No se puede finalizar** si falta alguna respuesta: el servidor valida las 72 preguntas y redirige a la página de la primera pendiente.
+- **No se puede saltar páginas**: el servidor calcula una “página máxima permitida” en base al progreso guardado.
+- **Guardado robusto**: el endpoint de guardado maneja condición de carrera (insert/update concurrente) unificando respuestas existentes con las nuevas.
+
+### 5) Modelo de datos (tabla principal)
+
+Tabla: `personality_test`
+
+- `user` (índice **único**): el test se almacena **globalmente por usuario**.
+- `is_completed`: 0 (en progreso) / 1 (completado).
+- `q1..q72`: respuestas individuales.
+- Totales: `extraversion`, `introversion`, `sensing`, `intuition`, `thinking`, `feeling`, `judging`, `perceptive`.
+- Trazabilidad: `created_at`, `updated_at` y `last_action`.
+
+Implicación importante:
+
+- Al ser **único por usuario** y sin campo de curso, el resultado puede reutilizarse entre cursos. Las vistas docentes filtran participantes por **matrícula en el curso**, pero el registro del test pertenece al usuario a nivel global.
+
+### 6) Vistas, endpoints y exportación
+
+**Estudiante**
+
+- Formulario del test: `view.php?cid=<courseid>`
+- Endpoint de guardado (autosave / navegación / finish): `save.php` (POST con `sesskey`)
+
+**Docente / Administrador**
+
+- Panel de administración del curso: `admin_view.php?cid=<courseid>`
+- Vista individual: `view_individual.php?cid=<courseid>&userid=<userid>`
+- Exportación CSV agregada: `download_csv.php?cid=<courseid>&sesskey=<sesskey>`
+- Exportación PDF agregada/individual: `download_pdf.php?cid=<courseid>[&userid=<userid>][&sesskey=<sesskey>]`
+
+### 7) Permisos (capabilities) y controles de acceso
+
+El bloque define capacidades específicas:
+
+- `block/personality_test:taketest` (estudiante): permite tomar el test.
+- `block/personality_test:viewreports` (docente/manager): permite ver reportes, paneles y exportaciones.
+- `block/personality_test:addinstance` / `block/personality_test:myaddinstance`: gestión de instancias del bloque.
+
+Controles adicionales implementados:
+
+- Exportaciones y panel administrativo requieren `viewreports` (o ser site admin).
+- La tabla de participantes excluye usuarios con capacidad de reportes (defensa ante mala configuración de roles).
+- La vista individual aplica restricciones de grupo cuando el docente no tiene `moodle/site:accessallgroups`.
 
 ---
 
-## Recomendaciones Futuras
+## Instalación
 
-- Si el bloque crece mucho, migrar la fachada a un archivo/clase independiente.
-- Considerar agregar pruebas automáticas (PHPUnit, QUnit).
-- Documentar con más detalle las funciones auxiliares en `lib.php`.
-- Si se agregan más tipos de test, generalizar la lógica de guardado y cálculo.
-
----
-
-## 📄 Licencia
-
-Este proyecto está licenciado bajo los términos de la licencia GPL v3. Ver el archivo LICENSE para más detalles.
-
-## 👥 Créditos y Contacto
-
-Desarrollado para la plataforma SAVIO UTB, siguiendo estándares de calidad y buenas prácticas de Moodle.
-
-- **Organización**: [ISCOUTB](https://github.com/ISCOUTB)
-- **Repositorio**: [personality_test](https://github.com/ISCOUTB/personality_test)
-- **Issues**: [Reportar problemas](https://github.com/ISCOUTB/personality_test/issues)
+1. Descargar el plugin desde las *releases* del repositorio oficial: https://github.com/ISCOUTB/personality_test/
+2. En Moodle (como administrador):
+   - Ir a **Administración del sitio → Extensiones → Instalar plugins**.
+   - Subir el archivo ZIP.
+   - Completar el asistente de instalación.
+3. En un curso, agregar el bloque **Exploración de Personalidad** desde el selector de bloques.
 
 ---
 
-## 📊 Stats
+## Operación y soporte
 
-![GitHub release](https://img.shields.io/github/v/release/ISCOUTB/personality_test)
-![GitHub issues](https://img.shields.io/github/issues/ISCOUTB/personality_test)
-![GitHub stars](https://img.shields.io/github/stars/ISCOUTB/personality_test)
-![GitHub forks](https://img.shields.io/github/forks/ISCOUTB/personality_test)
+### Consideraciones de despliegue
+
+- Compatibilidad declarada: Moodle **4.0+**.
+- Gráficas: el bloque consume `core/chartjs` (Chart.js provisto por Moodle).
+- PDF: se genera con **TCPDF** (incluido en Moodle vía `$CFG->libdir/tcpdf`).
+
+### Resolución de problemas (rápido)
+
+- **El estudiante no ve el test**: validar que tenga la capacidad `block/personality_test:taketest` en el contexto del curso.
+- **El docente no ve reportes/descargas**: validar `block/personality_test:viewreports`.
+- **El progreso no se guarda**: revisar que el POST incluya `sesskey` válido y que no haya bloqueos del navegador/red.
+
+---
+
+## Contribuciones
+
+¡Las contribuciones son bienvenidas! Si deseas mejorar este bloque, por favor sigue estos pasos:
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tu característica o corrección de errores.
+3. Realiza tus cambios y asegúrate de que todo funcione correctamente.
+4. Envía un pull request describiendo tus cambios.
+
+---
+
+## Equipo de desarrollo
+
+- Jairo Enrique Serrano Castañeda
+- Yuranis Henriquez Núñez
+- Isaac David Sánchez Sánchez
+- Santiago Andrés Orejuela Cueter
+- María Valentina Serna González
+
+<div align="center">
+<strong>Desarrollado con ❤️ para la Universidad Tecnológica de Bolívar</strong>
+</div>

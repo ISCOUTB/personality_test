@@ -10,6 +10,7 @@
 
 // --- INCLUDES Y CONFIGURACIÓN INICIAL DE MOODLE ---
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir . '/tcpdf/tcpdf.php');
 
 // --- PARÁMETROS Y SEGURIDAD ---
@@ -33,32 +34,30 @@ if ($sesskey) {
     require_sesskey($sesskey);
 }
 
-// Obtiene el curso y el contexto. Termina si no existen.
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$context = context_course::instance($course->id);
-
-// Requiere inicio de sesión
-require_login($course, false);
-
 // Define el nombre del plugin para usar en get_string
 define('BLOCK_PT_LANG', 'block_personality_test');
 
 // --- OBTENCIÓN Y PROCESAMIENTO DE DATOS ---
-// If userid is provided, get only that user's data (individual report) - only if completed
 if ($userid) {
+    // Individual report logic
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $context = context_course::instance($course->id);
+    require_login($course, false);
+
+    $canviewreports = has_capability('block/personality_test:viewreports', $context) || is_siteadmin();
+    if (!$canviewreports && (int)$userid !== (int)$USER->id) {
+        redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
+    }
+    
     $students = $DB->get_records('personality_test', ['user' => $userid, 'is_completed' => 1]);
 } else {
-    // Otherwise get all students in the course who have COMPLETED the test (aggregated report)
-    // Get enrolled students
-    $enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
-    $enrolled_ids = array_keys($enrolled_students);
-    
-    $students = array();
-    if (!empty($enrolled_ids)) {
-        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-        $params['completed'] = 1;
-        $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
+    // Aggregated report logic using helper
+    $report_data = block_personality_test_get_report_data($courseid);
+    if ($report_data === false) {
+        redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
     }
+    list($course, $students) = $report_data;
+    $context = context_course::instance($course->id);
 }
 
 if (empty($students)) {
@@ -85,22 +84,18 @@ foreach ($students as $entry) {
         continue;
     }
 
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion >= $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     if (isset($mbti_count[$mbti_score])) {
         $mbti_count[$mbti_score]++;
     }
 
-    $aspect_counts['Introvertido'] += ($entry->introversion > $entry->extraversion) ? 1 : 0;
-    $aspect_counts['Extrovertido'] += ($entry->extraversion >= $entry->introversion) ? 1 : 0;
+    $aspect_counts['Introvertido'] += ($entry->introversion >= $entry->extraversion) ? 1 : 0;
+    $aspect_counts['Extrovertido'] += ($entry->extraversion > $entry->introversion) ? 1 : 0;
     $aspect_counts['Sensing'] += ($entry->sensing > $entry->intuition) ? 1 : 0;
     $aspect_counts['Intuicion'] += ($entry->intuition >= $entry->sensing) ? 1 : 0;
-    $aspect_counts['Pensamiento'] += ($entry->thinking > $entry->feeling) ? 1 : 0;
-    $aspect_counts['Sentimiento'] += ($entry->feeling >= $entry->thinking) ? 1 : 0;
+    $aspect_counts['Pensamiento'] += ($entry->thinking >= $entry->feeling) ? 1 : 0;
+    $aspect_counts['Sentimiento'] += ($entry->feeling > $entry->thinking) ? 1 : 0;
     $aspect_counts['Juicio'] += ($entry->judging > $entry->perceptive) ? 1 : 0;
     $aspect_counts['Percepcion'] += ($entry->perceptive >= $entry->judging) ? 1 : 0;
 
@@ -119,11 +114,7 @@ if ($is_individual_report) {
     $student_data = reset($students);
     $student_user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname, email, idnumber');
     // Calculate MBTI for individual
-    $student_mbti = '';
-    $student_mbti .= ($student_data->extraversion >= $student_data->introversion) ? 'E' : 'I';
-    $student_mbti .= ($student_data->sensing > $student_data->intuition) ? 'S' : 'N';
-    $student_mbti .= ($student_data->thinking >= $student_data->feeling) ? 'T' : 'F';
-    $student_mbti .= ($student_data->judging > $student_data->perceptive) ? 'J' : 'P';
+    $student_mbti = block_personality_test_calculate_mbti($student_data);
 }
 
 // --- CLASE PDF PERSONALIZADA (ENCABEZADO/PIE CON LOGO) ---
@@ -417,44 +408,34 @@ $html4 = crearTablaAspectoHTML(
     $total_students_processed
 );
 $pdf->writeHTML($html4, true, false, true, false, '');
+    
+    // Descripción Tipos de MBTI (solo para reporte agregado/grupal con soporte bilingüe)
+    $current_lang = current_language();
+    
+    $pdf->Ln(10);
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', 'B', 14);
+    
+    if ($current_lang == 'es') {
+        $pdf->Cell(0, 10, 'Descripción de tipos de personalidad', 0, 1, 'C');
+    } else {
+        $pdf->Cell(0, 10, 'Personality Type Descriptions', 0, 1, 'C');
+    }
+    $pdf->Ln(5);
+    
+    // Generar descripción bilingüe para cada tipo MBTI
+    $pdf->SetFont('helvetica', '', 9);
+    foreach ($mbti_types as $type) {
+        $mbti_key = 'mbti_' . strtolower($type);
+        $mbti_dimensions_key = 'mbti_dimensions_' . strtolower($type);
+        
+        $pdf->SetFont('helvetica', 'B', 11);
+        $pdf->Cell(0, 8, $type . ' - ' . get_string($mbti_dimensions_key, 'block_personality_test'), 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 9);
+        $pdf->MultiCell(0, 5, get_string($mbti_key, 'block_personality_test'), 0, 'J');
+        $pdf->Ln(3);
+    }
 } // End of aggregated report
-
-
-// Descripción Tipos de MBTI (común para ambos tipos de reporte)
-$descripcion_html = '
-<h2>Descripción de tipos de personalidad</h2>
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr style="background-color:#eeeeee; font-weight:bold;">
-            <th>Tipo</th>
-            <th>Descripción</th>
-        </tr>
-    </thead>
-    <tbody>
-  <tr><td>ISTJ</td><td>Introvertido, Sensitivo, Pensamiento, Juicio</td></tr>
-  <tr><td>ISFJ</td><td>Introvertido, Sensitivo, Sentimiento, Juicio</td></tr>
-  <tr><td>INFJ</td><td>Introvertido, Intuitivo, Sentimiento, Juicio</td></tr>
-  <tr><td>INTJ</td><td>Introvertido, Intuitivo, Pensamiento, Juicio</td></tr>
-  <tr><td>ISTP</td><td>Introvertido, Sensitivo, Pensamiento, Percepción</td></tr>
-  <tr><td>ISFP</td><td>Introvertido, Sensitivo, Sentimiento, Percepción</td></tr>
-  <tr><td>INFP</td><td>Introvertido, Intuitivo, Sentimiento, Percepción</td></tr>
-  <tr><td>INTP</td><td>Introvertido, Intuitivo, Pensamiento, Percepción</td></tr>
-  <tr><td>ESTP</td><td>Extrovertido, Sensitivo, Pensamiento, Percepción</td></tr>
-  <tr><td>ESFP</td><td>Extrovertido, Sensitivo, Sentimiento, Percepción</td></tr>
-  <tr><td>ENFP</td><td>Extrovertido, Intuitivo, Sentimiento, Percepción</td></tr>
-  <tr><td>ENTP</td><td>Extrovertido, Intuitivo, Pensamiento, Percepción</td></tr>
-  <tr><td>ESTJ</td><td>Extrovertido, Sensitivo, Pensamiento, Juicio</td></tr>
-  <tr><td>ESFJ</td><td>Extrovertido, Sensitivo, Sentimiento, Juicio</td></tr>
-  <tr><td>ENFJ</td><td>Extrovertido, Intuitivo, Sentimiento, Juicio</td></tr>
-  <tr><td>ENTJ</td><td>Extrovertido, Intuitivo, Pensamiento, Juicio</td></tr>
-</tbody>
-
-</table>
-';
-
-$pdf->Ln(10); 
-$pdf->writeHTML($descripcion_html, true, false, true, false, '');
-
 // --- SALIDA DEL PDF ---
 @ob_end_clean();
 
@@ -474,4 +455,3 @@ $filename = clean_filename($filename);
 $pdf->Output($filename, 'D');
 exit; // Terminar script
 ?>
-

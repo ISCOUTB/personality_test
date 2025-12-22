@@ -6,6 +6,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 // Parámetros y Seguridad
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -27,24 +28,15 @@ if ($sesskey) {
     require_sesskey($sesskey);
 }
 
-// Obtener curso y contexto
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$context = context_course::instance($course->id);
+// Obtener datos usando la función helper
+$report_data = block_personality_test_get_report_data($courseid);
 
-// Requerir inicio de sesión
-require_login($course, false);
-
-// Get enrolled students in this course
-$enrolled_students = get_enrolled_users($context, '', 0, 'u.id');
-$enrolled_ids = array_keys($enrolled_students);
-
-// Obtener datos de los estudiantes inscritos que han COMPLETADO el test
-$students = array();
-if (!empty($enrolled_ids)) {
-    list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-    $params['completed'] = 1;
-    $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
+if ($report_data === false) {
+    redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
 }
+
+list($course, $students) = $report_data;
+$context = context_course::instance($course->id);
 
 if (empty($students)) {
     // Redirigir si no hay datos, con un mensaje
@@ -76,22 +68,18 @@ foreach ($students as $entry) {
         continue;
     }
 
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion >= $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     if (isset($mbti_count[$mbti_score])) {
         $mbti_count[$mbti_score]++;
     }
 
-    $aspect_counts["Introvertido"] += ($entry->introversion > $entry->extraversion) ? 1 : 0;
-    $aspect_counts["Extrovertido"] += ($entry->extraversion >= $entry->introversion) ? 1 : 0;
+    $aspect_counts["Introvertido"] += ($entry->introversion >= $entry->extraversion) ? 1 : 0;
+    $aspect_counts["Extrovertido"] += ($entry->extraversion > $entry->introversion) ? 1 : 0;
     $aspect_counts["Sensing"] += ($entry->sensing > $entry->intuition) ? 1 : 0;
     $aspect_counts["Intuición"] += ($entry->intuition >= $entry->sensing) ? 1 : 0;
-    $aspect_counts["Pensamiento"] += ($entry->thinking > $entry->feeling) ? 1 : 0;
-    $aspect_counts["Sentimiento"] += ($entry->feeling >= $entry->thinking) ? 1 : 0;
+    $aspect_counts["Pensamiento"] += ($entry->thinking >= $entry->feeling) ? 1 : 0;
+    $aspect_counts["Sentimiento"] += ($entry->feeling > $entry->thinking) ? 1 : 0;
     $aspect_counts["Juicio"] += ($entry->judging > $entry->perceptive) ? 1 : 0;
     $aspect_counts["Percepción"] += ($entry->perceptive >= $entry->judging) ? 1 : 0;
 }
@@ -176,7 +164,7 @@ fputcsv($output, [
     get_string('csv_header_fullname', 'block_personality_test'),
     get_string('csv_header_mbti_type', 'block_personality_test'),
     'E', 'I', 'S', 'N', 'T', 'F', 'J', 'P',
-    get_string('csv_header_date', 'block_personality_test')
+    get_string('csv_header_last_action_date', 'block_personality_test')
 ]);
 
 // Procesar y escribir datos de cada estudiante
@@ -188,18 +176,17 @@ foreach ($students as $entry) {
         continue;
     }
     
-    // Obtener información del usuario
+    // Obtener información del usuarios
     $student_user = $DB->get_record('user', ['id' => $entry->user], 'id, firstname, lastname, idnumber');
     $fullname = fullname($student_user);
 
     // Calcular tipo MBTI
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion >= $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     // Escribir fila en el CSV
+    // Use last_action (guaranteed present)
+    $lastaction = $entry->last_action;
+
     fputcsv($output, [
         $student_user->idnumber,
         $fullname,
@@ -212,7 +199,7 @@ foreach ($students as $entry) {
         $entry->feeling,
         $entry->judging,
         $entry->perceptive,
-        userdate($entry->created_at, get_string('strftimedatefullshort', 'langconfig'))
+        date('Y-m-d H:i:s', $lastaction)
     ]);
 }
 

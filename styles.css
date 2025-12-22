@@ -1,3 +1,7 @@
+.oficial-color {
+  color: #00bf91;
+}
+
 #page-blocks-personality_test-view .content_personality_test {
   width: 100%;
   max-width: 350px;
@@ -8,7 +12,7 @@
 
 #page-blocks-personality_test-view .title_personality_test {
   text-align: left;
-  color: #005B9A;
+  color: #00bf91;
   font-weight: 600;
 }
 
@@ -20,7 +24,7 @@
   height: auto;
   min-height: 2.2em;
   font-size: 1em;
-  border-bottom: 1px solid rgba(0, 91, 154, 0.1);
+  border-bottom: 1px solid rgba(0, 191, 145, 0.1);
   padding: 8px 0;
   word-break: break-word;
   list-style: none;
@@ -41,7 +45,7 @@
 
 #page-blocks-personality_test-view .content-accept input[type="submit"] {
   margin: 10px 0;
-  background-color: #005B9A;
+  background-color: #00bf91;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -53,7 +57,7 @@
 }
 
 #page-blocks-personality_test-view .content-accept input[type="submit"]:hover {
-  background-color: #00B5E2;
+  background-color: #00d9a8;
 }
 
 #page-blocks-personality_test-view .content-accept .error {
@@ -72,13 +76,20 @@
 }
 
 .block_personality_test .header .title {
-  color: #005B9A;
+  color: #00bf91;
   font-weight: 600;
 }
 
 .block_personality_test img {
   float: left;
   margin: 0 3px 3px 0;
+}
+
+/* Do not float the new block SVG icon; allow true centering. */
+.block_personality_test img.personality-test-icon {
+  float: none !important;
+  display: block;
+  margin: 0 auto 10px auto;
 }
 
 .block_personality_test .chart-container,
@@ -104,9 +115,9 @@
 .block_personality_test .alert,
 #page-blocks-personality_test-view .alert {
   border-radius: 4px;
-  border-color: rgba(0, 91, 154, 0.3);
-  background-color: rgba(0, 91, 154, 0.1);
-  color: #005B9A;
+  border-color: rgba(0, 191, 145, 0.3);
+  background-color: rgba(0, 191, 145, 0.1);
+  color: #00bf91;
   font-size: 0.95em;
   padding: 8px 10px;
   box-sizing: border-box;
@@ -114,7 +125,7 @@
 
 .block_personality_test .alert-info,
 #page-blocks-personality_test-view .alert-info {
-  color: #005B9A;
+  color: #00bf91;
 }
 
 /* The container must be positioned relative: */
@@ -125,8 +136,10 @@
   margin-bottom: 15px;
 }
 
-h2 {
-  color: #005B9A;
+#page-blocks-personality_test-view h2,
+#page-blocks-personality_test-view_individual h2,
+#page-blocks-personality_test-admin_view h2 {
+  color: #00bf91;
 }
 
 .custom-select select {
@@ -134,7 +147,7 @@ h2 {
 }
   
 .select-selected {
-  background-color: #005B9A;
+  background-color: #00bf91;
   border-radius: 4px;
   padding: 10px 15px;
   cursor: pointer;
@@ -171,7 +184,7 @@ h2 {
 /* Style items (options): */
 .select-items {
   position: absolute;
-  background-color: #00B5E2;
+  background-color: #00d9a8;
   top: 100%;
   left: 0;
   right: 0;
@@ -204,4 +217,457 @@ h2 {
 .block_personality_test,
 #page-blocks-personality_test-view {
   word-break: break-word;
+}
+
+/* ========================================
+   ADMIN_VIEW.PHP STYLES - Administrative Dashboard
+   ======================================== */
+
+.block_personality_test_container h1 {
+    color: #00bf91;
+    border-bottom: 3px solid #00bf91;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* IMPORTANTE: Scope total al contenedor del bloque para no afectar el header (botón de perfil/admin) */
+.block_personality_test_container {
+    font-weight: normal !important;
+}
+
+.block_personality_test_container .card {
+    border: 1px solid #e0f7f1 !important;
+    box-shadow: 0 2px 4px rgba(0, 191, 145, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+.block_personality_test_container .card:hover {
+    box-shadow: 0 4px 8px rgba(0, 191, 145, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+.block_personality_test_container .card-header {
+    background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important;
+    border-bottom: 2px solid #00bf91 !important;
+}
+
+.block_personality_test_container .card-header h5 {
+    color: #00bf91 !important;
+    font-weight: 700 !important;
+}
+
+.block_personality_test_container .card-title {
+    color: #5a6268 !important;
+    font-weight: 600 !important;
+}
+
+.block_personality_test_container .table thead th {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 700 !important;
+}
+
+.block_personality_test_container .table {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+.block_personality_test_container .btn-info {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.block_personality_test_container .btn-info:hover {
+    background: linear-gradient(135deg, #00a07a 0%, #008966 100%) !important;
+    color: #fff !important;
+}
+
+.block_personality_test_container .btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.block_personality_test_container .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.block_personality_test_container .badge.bg-primary {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%) !important;
+}
+
+.block_personality_test_container .text-primary {
+    color: #00bf91 !important;
+}
+
+.block_personality_test_container .alert-info {
+    background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important;
+    border-left: 4px solid #00bf91 !important;
+}
+
+/* Negrilla SOLO donde corresponde (dentro del bloque) */
+.block_personality_test_container strong {
+    font-weight: 700 !important;
+}
+
+/* ========================================
+   BLOCK_PERSONALITY_TEST.PHP STYLES - Block Invitation Cards
+   ======================================== */
+
+.block_personality_test .personality-invitation-block {
+    padding: 15px !important;
+    background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important;
+    border-radius: 8px !important;
+    border: 1px solid #dee2e6 !important;
+    position: relative !important;
+}
+
+.block_personality_test .personality-invitation-block::before,
+.block_personality_test .personality-invitation-block::after {
+    content: none !important;
+    display: none !important;
+}
+
+.block_personality_test .personality-header i {
+    width: 24px;
+    height: 24px;
+    border-radius: 50% !important;
+    background-color: #28a745 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    font-size: 15px !important;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.block_personality_test .personality-description .card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    background: white !important;
+    border: 1px solid #00bf91 !important;
+    position: relative !important;
+}
+
+/* Eliminar solo el pin del título interior (h6.card-title dentro de .personality-description) */
+.block_personality_test .personality-description .card-title::before,
+.block_personality_test .personality-description .card-title::after {
+    content: none !important;
+    display: none !important;
+}
+
+.block_personality_test .personality-description .card-title {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border-bottom: none !important;
+    font-weight: bold !important;
+}
+
+.block_personality_test .personality-invitation-block .personality-actions .btn {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.block_personality_test .personality-invitation-block .personality-actions .btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+.block_personality_test .personality-invitation-block .personality-actions .btn-info {
+    background-color: #00bf91 !important;
+    border-color: #00bf91 !important;
+    color: #fff !important;
+}
+
+.block_personality_test .personality-progress {
+    background: white !important;
+    padding: 12px !important;
+    border-radius: 5px !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.block_personality_test .personality-invitation-block .personality-actions .btn-success {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: #fff !important;
+}
+
+/* ========================================
+   VIEW.PHP STYLES - Test Form Page (Updated)
+   ======================================== */
+
+/* Estilos específicos solo para el formulario del test - con mayor especificidad */
+body#page-blocks-personality_test-view .title_personality_test {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #00bf91;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+body#page-blocks-personality_test-view .personality_test_q {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+body#page-blocks-personality_test-view .personality_test_item {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 191, 145, 0.06);
+    transition: all 0.3s ease;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #37474f;
+}
+
+body#page-blocks-personality_test-view .personality_test_item:hover {
+    box-shadow: 0 4px 12px rgba(0, 191, 145, 0.12);
+    transform: translateY(-2px);
+    border-color: #00bf91;
+}
+
+/* Ocultar el select original */
+body#page-blocks-personality_test-view .personality_test_item select {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* Contenedor de botones */
+body#page-blocks-personality_test-view .personality_test_item .answer-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    width: 100%;
+}
+
+/* Botones de respuesta */
+body#page-blocks-personality_test-view .personality_test_item .answer-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid #e0e0e0;
+    background: #ffffff;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #546e7a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 191, 145, 0.15);
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a {
+    border-color: #00bf91;
+    color: #00bf91;
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a:hover {
+    background: #f0fdf9;
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a.selected {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%);
+    border-color: #00bf91;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 191, 145, 0.3);
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b {
+    border-color: #00d9a8;
+    color: #00d9a8;
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b:hover {
+    background: #e6fcf5;
+}
+
+body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b.selected {
+    background: linear-gradient(135deg, #00d9a8 0%, #00bf91 100%);
+    border-color: #00d9a8;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 217, 168, 0.3);
+}
+
+/* Estilo para preguntas sin responder después de intentar enviar */
+body#page-blocks-personality_test-view form.attempted .personality_test_item:has(select:invalid) {
+    border: 2px solid #d32f2f !important;
+    background-color: #fff5f5 !important;
+}
+
+body#page-blocks-personality_test-view form.attempted .personality_test_item:has(select:invalid):hover {
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.15);
+}
+
+/* Botón de envío */
+body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 191, 145, 0.3);
+    display: block;
+    margin: 2.5rem auto;
+    min-width: 200px;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn:hover {
+    background: linear-gradient(135deg, #00d9a8 0%, #00bf91 100%);
+    box-shadow: 0 6px 20px rgba(0, 217, 168, 0.4);
+    transform: translateY(-2px);
+}
+
+body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 191, 145, 0.3);
+}
+
+/* Mensaje de error */
+body#page-blocks-personality_test-view .content-accept .error {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #d32f2f;
+    font-weight: 500;
+}
+
+/* Mejoras generales de tipografía solo para el test */
+body#page-blocks-personality_test-view .generalbox {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Estilos para el cuadro informativo */
+body#page-blocks-personality_test-view .generalbox > div:first-of-type {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #455a64;
+    margin-bottom: 1rem;
+    padding: 0 4px;
+}
+
+body#page-blocks-personality_test-view .generalbox > div[style*="background-color"] {
+    background: linear-gradient(135deg, #e0f7f1 0%, #ccf2e8 100%) !important;
+    border-left: 4px solid #00bf91 !important;
+    padding: 16px 20px !important;
+    margin-bottom: 2rem !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 6px rgba(0, 191, 145, 0.08);
+}
+
+/* Navigation buttons - only within the form */
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 32px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3) !important;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #545b62 100%) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-primary {
+    background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 32px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 10px rgba(0, 191, 145, 0.3) !important;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-primary:hover {
+    background: linear-gradient(135deg, #00d9a8 0%, #00bf91 100%) !important;
+    box-shadow: 0 6px 16px rgba(0, 217, 168, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 32px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3) !important;
+}
+
+body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%) !important;
+    box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Responsive para view.php */
+@media (max-width: 768px) {
+    body#page-blocks-personality_test-view .personality_test_item .answer-buttons {
+        flex-direction: column;
+    }
+    
+    body#page-blocks-personality_test-view .personality_test_item {
+        padding: 20px 22px;
+    }
+    
+    body#page-blocks-personality_test-view .navigation-buttons {
+        flex-direction: column !important;
+        gap: 10px;
+    }
+    
+    body#page-blocks-personality_test-view .navigation-buttons > div {
+        width: 100%;
+    }
+    
+    body#page-blocks-personality_test-view .navigation-buttons button {
+        width: 100%;
+    }
 }
