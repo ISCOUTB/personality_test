@@ -1,7 +1,7 @@
 <?php
 /**
  * Personality Test Block Major Update
- * Version 2.0.0 - Production Ready
+ * Version 2.0.1 - Production Ready
  *
  * @package    block_personality_test
  * @copyright  2025 Jairo Serrano, Yuranis Henriquez, Isaac Sanchez, Santiago Orejuela, Maria Valentina
