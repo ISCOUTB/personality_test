@@ -8,10 +8,8 @@
     <TABLE NAME="personality_test" COMMENT="" >
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="user"/>
-        <FIELD NAME="user" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="state"/>
-        <FIELD NAME="state" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="user" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="is_completed"/>
-        <FIELD NAME="is_completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="q1"/>
+        <FIELD NAME="user" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="is_completed"/>
+        <FIELD NAME="is_completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="user" NEXT="q1"/>
         <FIELD NAME="q1" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="is_completed" NEXT="q2"/>
         <FIELD NAME="q2" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q1" NEXT="q3"/>
         <FIELD NAME="q3" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="q2" NEXT="q4"/>
