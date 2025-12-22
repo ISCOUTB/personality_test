@@ -6,6 +6,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 // Parámetros y Seguridad
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -27,43 +28,15 @@ if ($sesskey) {
     require_sesskey($sesskey);
 }
 
-// Obtener curso y contexto
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+// Obtener datos usando la función helper
+$report_data = block_personality_test_get_report_data($courseid);
+
+if ($report_data === false) {
+    redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
+}
+
+list($course, $students) = $report_data;
 $context = context_course::instance($course->id);
-
-// Requerir inicio de sesión
-require_login($course, false);
-
-// Only teachers/managers (or site admins) should download aggregated exports.
-if (!has_capability('block/personality_test:viewreports', $context) && !is_siteadmin()) {
-    redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
-}
-
-// Get enrolled students in this course
-$enrolled_students = get_enrolled_users($context, 'block/personality_test:taketest', 0, 'u.id');
-$enrolled_ids = array_keys($enrolled_students);
-
-// Defensive: exclude report-capable users.
-$student_ids = array();
-foreach ($enrolled_ids as $candidateid) {
-    $candidateid = (int)$candidateid;
-    if (is_siteadmin($candidateid)) {
-        continue;
-    }
-    if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
-        continue;
-    }
-    $student_ids[] = $candidateid;
-}
-$enrolled_ids = $student_ids;
-
-// Obtener datos de los estudiantes inscritos que han COMPLETADO el test
-$students = array();
-if (!empty($enrolled_ids)) {
-    list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-    $params['completed'] = 1;
-    $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
-}
 
 if (empty($students)) {
     // Redirigir si no hay datos, con un mensaje
@@ -95,11 +68,7 @@ foreach ($students as $entry) {
         continue;
     }
 
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion > $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     if (isset($mbti_count[$mbti_score])) {
         $mbti_count[$mbti_score]++;
@@ -212,11 +181,7 @@ foreach ($students as $entry) {
     $fullname = fullname($student_user);
 
     // Calcular tipo MBTI
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion >= $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     // Escribir fila en el CSV
     // Use last_action (guaranteed present)
