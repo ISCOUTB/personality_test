@@ -20,6 +20,11 @@ $context = $PAGE->context;
 
 require_login($course);
 
+// If a user with reporting capability tries to open the student test view, redirect them to admin silently
+if (has_capability('block/personality_test:viewreports', $context) && !has_capability('block/personality_test:taketest', $context)) {
+    redirect(new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)), get_string('teachers_redirect_message', 'block_personality_test'), null, \core\output\notification::NOTIFY_INFO);
+}
+
 // Check for existing response
 $existing_response = $DB->get_record('personality_test', array('user' => $USER->id));
 
@@ -37,6 +42,8 @@ $title = get_string('pluginname', 'block_personality_test');
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_title($title." : ".$course->fullname);
 $PAGE->set_heading($title." : ".$course->fullname);
+
+$PAGE->requires->css(new moodle_url('/blocks/personality_test/styles.css'));
 
 // Pagination settings
 $questions_per_page = 9;
@@ -71,9 +78,7 @@ if ($existing_response && $page > 1) {
     // If trying to access a page beyond allowed, redirect to max allowed
     if ($page > $max_allowed_page) {
         redirect(new moodle_url('/blocks/personality_test/view.php', 
-                 array('cid' => $courseid, 'page' => $max_allowed_page)),
-                 get_string('complete_previous_pages', 'block_personality_test'),
-                 null, \core\output\notification::NOTIFY_WARNING);
+                 array('cid' => $courseid, 'page' => $max_allowed_page)));
     }
 }
 
@@ -111,289 +116,27 @@ if ($existing_response) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
-echo "<h1 class='title_personality_test'>".get_string('test_page_title', 'block_personality_test')."</h1>";
+
+// Display personality test icon centered above title
+$iconurl = new moodle_url('/blocks/personality_test/pix/personality_test_icon.svg');
+echo '<div style="text-align: center; margin-bottom: 15px;">';
+echo '<img src="' . $iconurl . '" alt="Personality Test Icon" style="width: 70px; height: 70px; display: block; margin: 0 auto 10px auto;" />';
+echo '</div>';
+
+echo "<h1 class='title_personality_test' style='text-align: center;'>".get_string('test_page_title', 'block_personality_test')."</h1>";
 echo "
 <div>
 ".get_string('test_intro_p1', 'block_personality_test')." 
 ".get_string('test_intro_p2', 'block_personality_test')." 
 </div>
 <br>
-<div style='background-color: #e3f2fd; border-left: 4px solid #2196F3; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;'>
+<div style='background-color: #e0f7f1; border-left: 4px solid #00bf91; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;'>
     <strong>".get_string('test_benefit_note', 'block_personality_test')."</strong> ".get_string('test_benefit_required', 'block_personality_test')." (<span style='color: #d32f2f;'>*</span>)
 </div>
 ";
 
 $action_form = new moodle_url('/blocks/personality_test/save.php');
 ?>
-
-<style>
-    /* Estilos específicos solo para el formulario del test - con mayor especificidad */
-    body#page-blocks-personality_test-view .title_personality_test {
-        font-size: 2rem;
-        font-weight: 600;
-        color: #005B9A;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        letter-spacing: -0.5px;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_q {
-        list-style: none;
-        padding: 0;
-        margin: 2rem 0;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item {
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 24px 28px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 6px rgba(0, 91, 154, 0.06);
-        transition: all 0.3s ease;
-        font-size: 1.05rem;
-        line-height: 1.6;
-        color: #37474f;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item:hover {
-        box-shadow: 0 4px 12px rgba(0, 91, 154, 0.12);
-        transform: translateY(-2px);
-        border-color: #005B9A;
-    }
-    
-    /* Ocultar el select original */
-    body#page-blocks-personality_test-view .personality_test_item select {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-        pointer-events: none;
-    }
-    
-    /* Contenedor de botones */
-    body#page-blocks-personality_test-view .personality_test_item .answer-buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 18px;
-        width: 100%;
-    }
-    
-    /* Botones de respuesta */
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn {
-        flex: 1;
-        padding: 14px 20px;
-        border: 2px solid #e0e0e0;
-        background: #ffffff;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 500;
-        color: #546e7a;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 91, 154, 0.15);
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a {
-        border-color: #005B9A;
-        color: #005B9A;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a:hover {
-        background: #f0f7fc;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-a.selected {
-        background: linear-gradient(135deg, #005B9A 0%, #004a7c 100%);
-        border-color: #005B9A;
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 91, 154, 0.3);
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b {
-        border-color: #00B5E2;
-        color: #00B5E2;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b:hover {
-        background: #e6f7fd;
-    }
-    
-    body#page-blocks-personality_test-view .personality_test_item .answer-btn.option-b.selected {
-        background: linear-gradient(135deg, #00B5E2 0%, #0095c7 100%);
-        border-color: #00B5E2;
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 181, 226, 0.3);
-    }
-    
-    /* Estilo para preguntas sin responder después de intentar enviar */
-    body#page-blocks-personality_test-view form.attempted .personality_test_item:has(select:invalid) {
-        border: 2px solid #d32f2f !important;
-        background-color: #fff5f5 !important;
-    }
-    
-    body#page-blocks-personality_test-view form.attempted .personality_test_item:has(select:invalid):hover {
-        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.15);
-    }
-    
-    /* Botón de envío */
-    body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn {
-        background: linear-gradient(135deg, #005B9A 0%, #004a7c 100%);
-        color: white;
-        border: none;
-        padding: 16px 48px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 91, 154, 0.3);
-        display: block;
-        margin: 2.5rem auto;
-        min-width: 200px;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn:hover {
-        background: linear-gradient(135deg, #00B5E2 0%, #0095c7 100%);
-        box-shadow: 0 6px 20px rgba(0, 181, 226, 0.4);
-        transform: translateY(-2px);
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm input[type="submit"].btn:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 8px rgba(0, 91, 154, 0.3);
-    }
-    
-    /* Mensaje de error */
-    body#page-blocks-personality_test-view .content-accept .error {
-        background-color: #ffebee;
-        color: #c62828;
-        padding: 16px 20px;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid #d32f2f;
-        font-weight: 500;
-    }
-    
-    /* Mejoras generales de tipografía solo para el test */
-    body#page-blocks-personality_test-view .generalbox {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    
-    /* Estilos para el cuadro informativo */
-    body#page-blocks-personality_test-view .generalbox > div:first-of-type {
-        font-size: 1.05rem;
-        line-height: 1.7;
-        color: #455a64;
-        margin-bottom: 1rem;
-        padding: 0 4px;
-    }
-    
-    body#page-blocks-personality_test-view .generalbox > div[style*="background-color"] {
-        background: linear-gradient(135deg, #e8f4f8 0%, #d4ebf7 100%) !important;
-        border-left: 4px solid #005B9A !important;
-        padding: 16px 20px !important;
-        margin-bottom: 2rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 2px 6px rgba(0, 91, 154, 0.08);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        body#page-blocks-personality_test-view .personality_test_item .answer-buttons {
-            flex-direction: column;
-        }
-        
-        body#page-blocks-personality_test-view .personality_test_item {
-            padding: 20px 22px;
-        }
-        
-        body#page-blocks-personality_test-view .navigation-buttons {
-            flex-direction: column !important;
-            gap: 10px;
-        }
-        
-        body#page-blocks-personality_test-view .navigation-buttons > div {
-            width: 100%;
-        }
-        
-        body#page-blocks-personality_test-view .navigation-buttons button {
-            width: 100%;
-        }
-    }
-    
-    /* Navigation buttons - only within the form */
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-secondary {
-        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 14px 32px !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3) !important;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-secondary:hover {
-        background: linear-gradient(135deg, #5a6268 0%, #545b62 100%) !important;
-        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
-        transform: translateY(-2px) !important;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-primary {
-        background: linear-gradient(135deg, #005B9A 0%, #004a7c 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 14px 32px !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 10px rgba(0, 91, 154, 0.3) !important;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-primary:hover {
-        background: linear-gradient(135deg, #00B5E2 0%, #0095c7 100%) !important;
-        box-shadow: 0 6px 16px rgba(0, 181, 226, 0.4) !important;
-        transform: translateY(-2px) !important;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-success {
-        background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 14px 32px !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3) !important;
-    }
-    
-    body#page-blocks-personality_test-view #personalityTestForm .navigation-buttons .btn-success:hover {
-        background: linear-gradient(135deg, #218838 0%, #1e7e34 100%) !important;
-        box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4) !important;
-        transform: translateY(-2px) !important;
-    }
-</style>
 
 <form method="POST" action="<?php echo $action_form ?>" id="personalityTestForm">
     <div class="content-accept">
@@ -417,8 +160,8 @@ $action_form = new moodle_url('/blocks/personality_test/save.php');
             </div>
             <select name="personality_test:q<?php echo $i; ?>" class="hidden-select select-q" id="select_q<?php echo $i; ?>" data-question="<?php echo $i; ?>">
                 <option value="" disabled <?php echo ($saved_value === null) ? 'selected' : ''; ?> hidden><?php echo get_string('select_option', 'block_personality_test') ?></option>
-                <option value="1" <?php echo ($saved_value === '1' || $saved_value === 1) ? 'selected' : ''; ?>>Yes</option>
-                <option value="0" <?php echo ($saved_value === '0' || $saved_value === 0) ? 'selected' : ''; ?>>No</option>
+                <option value="1" <?php echo ($saved_value === '1' || $saved_value === 1) ? 'selected' : ''; ?>><?php echo get_string('yes', 'block_personality_test'); ?></option>
+                <option value="0" <?php echo ($saved_value === '0' || $saved_value === 0) ? 'selected' : ''; ?>><?php echo get_string('no', 'block_personality_test'); ?></option>
             </select>
         </li>
         <?php } ?>
