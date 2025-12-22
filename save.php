@@ -69,8 +69,6 @@ function save_test_progress($data, $userid) {
 function prepare_data_object($userid, $courseid, $existing_response) {
     $data = new stdClass();
     $data->user = $userid;
-    $data->course = $courseid;
-    $data->state = 1;
     $data->is_completed = 0;
     $data->updated_at = time();
     
@@ -218,7 +216,7 @@ if ($action === 'finish') {
 // Calculate results
 $extra = [5,7,10,13,23,25,61,68,71];
 $intra = [2,9,49,54,63,65,67,69,72];
-$sensi = [15,45,45,51,53,56,59,66,70];
+$sensi = [15,43,45,51,53,56,59,66,70];
 $intui = [37,39,41,44,47,52,57,62,64];
 $ratio = [1,4,6,18,20,48,50,55,58];
 $emoti = [3,8,11,14,27,31,33,35,40];
