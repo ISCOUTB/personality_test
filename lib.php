@@ -53,3 +53,64 @@ function save_personality_test($course,$extra_res,$intra_res,$sensi_res,$intui_r
         return true;
     }
 }
+
+/**
+ * Helper function to get aggregated report data for a course.
+ *
+ * @param int $courseid The course ID.
+ * @return array|false Array containing [$course, $students] or false if permission denied.
+ */
+function block_personality_test_get_report_data($courseid) {
+    global $DB;
+    
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $context = context_course::instance($course->id);
+    
+    require_login($course, false);
+    
+    // Check permissions
+    if (!has_capability('block/personality_test:viewreports', $context) && !is_siteadmin()) {
+        return false;
+    }
+    
+    // Get enrolled students
+    $enrolled_students = get_enrolled_users($context, 'block/personality_test:taketest', 0, 'u.id');
+    $enrolled_ids = array_keys($enrolled_students);
+
+    // Filter out admins/teachers
+    $student_ids = array();
+    foreach ($enrolled_ids as $candidateid) {
+        $candidateid = (int)$candidateid;
+        if (is_siteadmin($candidateid)) {
+            continue;
+        }
+        if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
+            continue;
+        }
+        $student_ids[] = $candidateid;
+    }
+    
+    $students = array();
+    if (!empty($student_ids)) {
+        list($insql, $params) = $DB->get_in_or_equal($student_ids, SQL_PARAMS_NAMED);
+        $params['completed'] = 1;
+        $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
+    }
+    
+    return [$course, $students];
+}
+
+/**
+ * Helper function to calculate MBTI type string from test result.
+ *
+ * @param stdClass $entry The test result object.
+ * @return string The MBTI type string (e.g., "INTJ").
+ */
+function block_personality_test_calculate_mbti($entry) {
+    $mbti_score = "";
+    $mbti_score .= ($entry->extraversion > $entry->introversion) ? "E" : "I";
+    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
+    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
+    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    return $mbti_score;
+}
