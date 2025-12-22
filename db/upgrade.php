@@ -16,9 +16,9 @@ function xmldb_block_personality_test_upgrade($oldversion) {
         }
 
         // Clean up duplicate entries before creating unique index
-        $sql = "SELECT user, COUNT(*) as count 
-                FROM {personality_test} 
-                GROUP BY user 
+        $sql = "SELECT user, COUNT(*) as count
+                FROM {personality_test}
+                GROUP BY user
                 HAVING count > 1";
         $duplicates = $DB->get_records_sql($sql);
 
