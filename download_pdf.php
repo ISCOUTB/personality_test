@@ -10,6 +10,7 @@
 
 // --- INCLUDES Y CONFIGURACIÓN INICIAL DE MOODLE ---
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir . '/tcpdf/tcpdf.php');
 
 // --- PARÁMETROS Y SEGURIDAD ---
@@ -33,60 +34,30 @@ if ($sesskey) {
     require_sesskey($sesskey);
 }
 
-// Obtiene el curso y el contexto. Termina si no existen.
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$context = context_course::instance($course->id);
-
-// Requiere inicio de sesión
-require_login($course, false);
-
-// Access control:
-// - Aggregated report (no userid): teachers/managers only.
-// - Individual report (userid): allow self, or teachers/managers.
-$canviewreports = has_capability('block/personality_test:viewreports', $context) || is_siteadmin();
-if (!$userid) {
-    if (!$canviewreports) {
-        redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
-    }
-} else {
-    if (!$canviewreports && (int)$userid !== (int)$USER->id) {
-        redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
-    }
-}
-
 // Define el nombre del plugin para usar en get_string
 define('BLOCK_PT_LANG', 'block_personality_test');
 
 // --- OBTENCIÓN Y PROCESAMIENTO DE DATOS ---
-// If userid is provided, get only that user's data (individual report) - only if completed
 if ($userid) {
+    // Individual report logic
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $context = context_course::instance($course->id);
+    require_login($course, false);
+
+    $canviewreports = has_capability('block/personality_test:viewreports', $context) || is_siteadmin();
+    if (!$canviewreports && (int)$userid !== (int)$USER->id) {
+        redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
+    }
+    
     $students = $DB->get_records('personality_test', ['user' => $userid, 'is_completed' => 1]);
 } else {
-    // Otherwise get all students in the course who have COMPLETED the test (aggregated report)
-    // Get enrolled students
-    $enrolled_students = get_enrolled_users($context, 'block/personality_test:taketest', 0, 'u.id');
-    $enrolled_ids = array_keys($enrolled_students);
-
-    // Defensive: exclude report-capable users.
-    $student_ids = array();
-    foreach ($enrolled_ids as $candidateid) {
-        $candidateid = (int)$candidateid;
-        if (is_siteadmin($candidateid)) {
-            continue;
-        }
-        if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
-            continue;
-        }
-        $student_ids[] = $candidateid;
+    // Aggregated report logic using helper
+    $report_data = block_personality_test_get_report_data($courseid);
+    if ($report_data === false) {
+        redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
     }
-    $enrolled_ids = $student_ids;
-    
-    $students = array();
-    if (!empty($enrolled_ids)) {
-        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-        $params['completed'] = 1;
-        $students = $DB->get_records_select('personality_test', "user $insql AND is_completed = :completed", $params);
-    }
+    list($course, $students) = $report_data;
+    $context = context_course::instance($course->id);
 }
 
 if (empty($students)) {
@@ -113,11 +84,7 @@ foreach ($students as $entry) {
         continue;
     }
 
-    $mbti_score = "";
-    $mbti_score .= ($entry->extraversion > $entry->introversion) ? "E" : "I";
-    $mbti_score .= ($entry->sensing > $entry->intuition) ? "S" : "N";
-    $mbti_score .= ($entry->thinking >= $entry->feeling) ? "T" : "F";
-    $mbti_score .= ($entry->judging > $entry->perceptive) ? "J" : "P";
+    $mbti_score = block_personality_test_calculate_mbti($entry);
 
     if (isset($mbti_count[$mbti_score])) {
         $mbti_count[$mbti_score]++;
@@ -147,11 +114,7 @@ if ($is_individual_report) {
     $student_data = reset($students);
     $student_user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname, email, idnumber');
     // Calculate MBTI for individual
-    $student_mbti = '';
-    $student_mbti .= ($student_data->extraversion > $student_data->introversion) ? 'E' : 'I';
-    $student_mbti .= ($student_data->sensing > $student_data->intuition) ? 'S' : 'N';
-    $student_mbti .= ($student_data->thinking >= $student_data->feeling) ? 'T' : 'F';
-    $student_mbti .= ($student_data->judging > $student_data->perceptive) ? 'J' : 'P';
+    $student_mbti = block_personality_test_calculate_mbti($student_data);
 }
 
 // --- CLASE PDF PERSONALIZADA (ENCABEZADO/PIE CON LOGO) ---
@@ -492,4 +455,3 @@ $filename = clean_filename($filename);
 $pdf->Output($filename, 'D');
 exit; // Terminar script
 ?>
-
