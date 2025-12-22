@@ -238,10 +238,12 @@ Controles adicionales implementados:
 
 ## Instalación
 
-1. Copiar el directorio del plugin en `blocks/personality_test` dentro de la instalación de Moodle.
-2. Ingresar como administrador y ejecutar el flujo estándar de instalación/actualización:
-   - **Administración del sitio → Notificaciones**.
-3. En un curso, agregar el bloque **Test de Personalidad** desde el selector de bloques.
+1. Descargar el plugin desde las *releases* del repositorio oficial: https://github.com/ISCOUTB/personality_test/
+2. En Moodle (como administrador):
+   - Ir a **Administración del sitio → Extensiones → Instalar plugins**.
+   - Subir el archivo ZIP.
+   - Completar el asistente de instalación.
+3. En un curso, agregar el bloque **Exploración de Personalidad** desde el selector de bloques.
 
 ---
 
