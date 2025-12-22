@@ -11,7 +11,6 @@ function save_personality_test($course,$extra_res,$intra_res,$sensi_res,$intui_r
         $entry = new stdClass();
         $entry->user = $USER->id;
         $entry->course = $course;
-        $entry->state = "1";
         $entry->is_completed = 1;
         $entry->extraversion = $extra_res;
         $entry->introversion = $intra_res;
@@ -54,4 +53,3 @@ function save_personality_test($course,$extra_res,$intra_res,$sensi_res,$intui_r
         return true;
     }
 }
-
