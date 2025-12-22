@@ -95,9 +95,9 @@ jobs:
         id: changelog
         run: |
           # Extraer changelog para la versión actual
-          if [ -f "RELEASES.md" ]; then
+          if [ -f "CHANGELOG.md" ]; then
             # Buscar la sección de la versión actual
-            awk '/## \["'"${{ needs.check-version.outputs.version }}"'"\]/{flag=1; next} /## \[/{flag=0} flag' RELEASES.md > current_changelog.md
+            awk '/## \["'"${{ needs.check-version.outputs.version }}"'"\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md > current_changelog.md
             
             if [ -s current_changelog.md ]; then
               echo "Found changelog entry for version ${{ needs.check-version.outputs.version }}"
@@ -106,7 +106,7 @@ jobs:
             else
               echo "No specific changelog entry found, using default message"
               echo "### Cambios en esta versión" > current_changelog.md
-              echo "- Consultar RELEASES.md para detalles completos" >> current_changelog.md
+              echo "- Consultar CHANGELOG.md para detalles completos" >> current_changelog.md
               echo "- Version: ${{ needs.check-version.outputs.version }}" >> current_changelog.md
             fi
           else
