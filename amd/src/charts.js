@@ -161,10 +161,46 @@ define(['core/chartjs'], function(Chart) {
                 }
             }
 
+            // Ajusta un color hex (#RRGGBB) por porcentaje (negativo = oscurecer, positivo = aclarar)
+            function adjustColor(color, percent) {
+                var r = parseInt(color.substring(1, 3), 16);
+                var g = parseInt(color.substring(3, 5), 16);
+                var b = parseInt(color.substring(5, 7), 16);
+
+                r = parseInt(r * (100 + percent) / 100);
+                g = parseInt(g * (100 + percent) / 100);
+                b = parseInt(b * (100 + percent) / 100);
+
+                r = (r < 255) ? r : 255;
+                g = (g < 255) ? g : 255;
+                b = (b < 255) ? b : 255;
+
+                r = Math.max(0, r);
+                g = Math.max(0, g);
+                b = Math.max(0, b);
+
+                var rr = ((r.toString(16).length == 1) ? "0" + r.toString(16) : r.toString(16));
+                var gg = ((g.toString(16).length == 1) ? "0" + g.toString(16) : g.toString(16));
+                var bb = ((b.toString(16).length == 1) ? "0" + b.toString(16) : b.toString(16));
+
+                return "#" + rr + gg + bb;
+            }
+
             // Función para crear gráficos de barras
-            function createBarChart(elementId, title, labels, data, colors) {
+            function createBarChart(elementId, title, labels, data, colors, indexAxis) {
                 var ctx = document.getElementById(elementId);
                 if (ctx) {
+                    // Constrain height in wide Moodle layouts (sidebars, large screens)
+                    try {
+                        ctx.style.maxHeight = '320px';
+                        if (ctx.parentNode && ctx.parentNode.style) {
+                            ctx.parentNode.style.maxHeight = '320px';
+                            ctx.parentNode.style.position = 'relative';
+                        }
+                    } catch (e) {
+                        // no-op
+                    }
+
                     ctx = ctx.getContext('2d');
                     
                     // Verificar si tenemos datos, pero no usar datos de ejemplo si no hay
@@ -179,6 +215,26 @@ define(['core/chartjs'], function(Chart) {
                     // Determinar el máximo valor para la escala Y
                     const maxValue = Math.max(...data);
                     const yMax = Math.ceil(maxValue * 1.1);
+
+                    // indexAxis configurable: por defecto 'x', pero en móviles con etiquetas largas usar 'y'
+                    if (!indexAxis) {
+                        const hasLongLabels = Array.isArray(labels) && labels.some(l => (l || '').length > 12);
+                        const isMobile = window.matchMedia && window.matchMedia('(max-width: 576px)').matches;
+                        indexAxis = (isMobile && hasLongLabels) ? 'y' : 'x';
+                    }
+
+                    const borderColors = [];
+                    const hoverBgColors = [];
+                    const hoverBorderColors = [];
+
+                    for (let i = 0; i < colors.length; i++) {
+                        borderColors.push(adjustColor(colors[i], -20));
+                        hoverBgColors.push(adjustColor(colors[i], 10));
+                        hoverBorderColors.push(adjustColor(colors[i], -30));
+                    }
+
+                    const valueAxis = (indexAxis === 'y') ? 'x' : 'y';
+                    const categoryAxis = (indexAxis === 'y') ? 'y' : 'x';
                     
                     new Chart(ctx, {
                         type: 'bar',
@@ -188,9 +244,11 @@ define(['core/chartjs'], function(Chart) {
                                 label: strings.num_estudiantes_header,
                                 data: data,
                                 backgroundColor: colors,
-                                borderColor: colors,
-                                borderWidth: 0,
-                                borderRadius: 2,
+                                borderColor: borderColors,
+                                borderWidth: 1,
+                                borderRadius: 3,
+                                hoverBackgroundColor: hoverBgColors,
+                                hoverBorderColor: hoverBorderColors,
                                 barPercentage: 0.8,
                                 categoryPercentage: 0.9
                             }]
@@ -198,9 +256,9 @@ define(['core/chartjs'], function(Chart) {
                         options: {
                             responsive: true,
                             maintainAspectRatio: true,
-                            indexAxis: 'x',
+                            indexAxis: indexAxis,
                             scales: {
-                                y: {
+                                [valueAxis]: {
                                     beginAtZero: true,
                                     max: yMax,
                                     ticks: {
@@ -215,7 +273,7 @@ define(['core/chartjs'], function(Chart) {
                                         drawBorder: false
                                     }
                                 },
-                                x: {
+                                [categoryAxis]: {
                                     grid: {
                                         display: false,
                                         drawBorder: false
@@ -247,7 +305,8 @@ define(['core/chartjs'], function(Chart) {
                                     backgroundColor: 'rgba(0, 43, 73, 0.8)',
                                     callbacks: {
                                         label: function(context) {
-                                            return strings.num_estudiantes_header + ': ' + context.parsed.y;
+                                            const v = (indexAxis === 'y') ? context.parsed.x : context.parsed.y;
+                                            return strings.num_estudiantes_header + ': ' + v;
                                         }
                                     }
                                 }
