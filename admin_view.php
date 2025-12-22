@@ -5,29 +5,20 @@ require_login();
 
 $courseid = optional_param('cid', 0, PARAM_INT);
 
-if ($courseid == SITEID && !$courseid) {
+if ($courseid == SITEID || !$courseid) {
     redirect($CFG->wwwroot);
 }
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $PAGE->set_course($course);
-$context = $PAGE->context;
+$context = context_course::instance($courseid);
+$PAGE->set_context($context);
 
-// Verificar permisos: solo administradores y profesores
-$isadmin = is_siteadmin($USER);
-$COURSE_ROLED_AS_TEACHER = $DB->get_record_sql("
-    SELECT m.id
-    FROM {user} m 
-    LEFT JOIN {role_assignments} m2 ON m.id = m2.userid 
-    LEFT JOIN {context} m3 ON m2.contextid = m3.id 
-    LEFT JOIN {course} m4 ON m3.instanceid = m4.id 
-    WHERE (m3.contextlevel = 50 AND m2.roleid IN (3, 4) AND m.id IN ({$USER->id})) 
-    AND m4.id = {$courseid} 
-");
+require_login($course, false);
 
-if (!$isadmin && (!isset($COURSE_ROLED_AS_TEACHER->id) || !$COURSE_ROLED_AS_TEACHER->id)) {
-    redirect(new moodle_url('/course/view.php', array('id' => $courseid)), 
-             get_string('no_admin_access', 'block_personality_test'));
+// Silent redirect for users without report capability (e.g., students)
+if (!has_capability('block/personality_test:viewreports', $context)) {
+    redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -37,6 +28,15 @@ $userid = optional_param('userid', 0, PARAM_INT);
 if ($action === 'delete' && $userid && confirm_sesskey()) {
     $confirm = optional_param('confirm', 0, PARAM_INT);
     if ($confirm) {
+        // Defensive: allow deletion only for users that are students in this course.
+        $targetuser = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        if (!is_siteadmin() && (
+            !is_enrolled($context, $targetuser, 'block/personality_test:taketest', true)
+            || has_capability('block/personality_test:viewreports', $context, $userid)
+            || is_siteadmin($userid)
+        )) {
+            redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
+        }
         // Eliminar registro global del test del usuario
         $DB->delete_records('personality_test', array('user' => $userid));
         redirect(new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)), 
@@ -50,71 +50,16 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title($title . " : " . $course->fullname);
 $PAGE->set_heading($title . " : " . $course->fullname);
 
-echo $OUTPUT->header();
+$PAGE->requires->css(new moodle_url('/blocks/personality_test/styles.css'));
 
-// CSS personalizado
-echo "<link rel='stylesheet' href='" . $CFG->wwwroot . "/blocks/personality_test/styles.css'>";
-echo "<style>
-    .block_personality_test_container h1 {
-        color: #17a2b8;
-        border-bottom: 3px solid #17a2b8;
-        padding-bottom: 10px;
-        display: inline-block;
-    }
-    .card {
-        border: 1px solid #e3f2fd;
-        box-shadow: 0 2px 4px rgba(23, 162, 184, 0.1);
-        transition: all 0.3s ease;
-    }
-    .card:hover {
-        box-shadow: 0 4px 8px rgba(23, 162, 184, 0.2);
-        transform: translateY(-2px);
-    }
-    .card-header {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
-        border-bottom: 2px solid #17a2b8;
-    }
-    .card-header h5 {
-        color: #17a2b8;
-    }
-    .card-title {
-        color: #5a6268;
-        font-weight: 500;
-    }
-    .table thead th {
-        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-        color: white;
-        border: none;
-    }
-    .btn-info {
-        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-        border: none;
-    }
-    .btn-info:hover {
-        background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
-    }
-    .btn-primary {
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-        border: none;
-    }
-    .btn-success {
-        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-        border: none;
-    }
-    .badge.bg-primary {
-        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
-    }
-    .text-primary {
-        color: #17a2b8 !important;
-    }
-    .alert-info {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
-        border-left: 4px solid #17a2b8;
-    }
-</style>";
+echo $OUTPUT->header();
 echo "<div class='block_personality_test_container'>";
 
-echo "<h1 class='mb-4'><i class='fa fa-users'></i> " . get_string('admin_manage_title', 'block_personality_test') . "</h1>";
+// Generate personality test icon for header
+$iconurl = new moodle_url('/blocks/personality_test/pix/personality_test_icon.svg');
+$icon_html = '<img src="' . $iconurl . '" alt="Personality Test Icon" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 15px;" />';
+
+echo "<h1 class='mb-4 text-center'>" . $icon_html . get_string('admin_manage_title', 'block_personality_test') . "</h1>";
 
 // Confirmación de eliminación
 if ($action === 'delete' && $userid) {
@@ -126,20 +71,53 @@ if ($action === 'delete' && $userid) {
         echo "<div class='mt-3'>";
         echo "<a href='" . new moodle_url('/blocks/personality_test/admin_view.php', 
                 array('cid' => $courseid, 'action' => 'delete', 'userid' => $userid, 'confirm' => 1, 'sesskey' => sesskey())) . 
-                "' class='btn btn-danger'>" . get_string('confirm_delete_yes', 'block_personality_test') . "</a> ";
+                "' class='btn btn-danger text-white'>" . get_string('confirm_delete_yes', 'block_personality_test') . "</a> ";
         echo "<a href='" . new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)) . 
-                "' class='btn btn-secondary'>" . get_string('cancel', 'block_personality_test') . "</a>";
+                "' class='btn btn-secondary text-white'>" . get_string('cancel', 'block_personality_test') . "</a>";
         echo "</div>";
         echo "</div>";
     }
 } else {
+    // Description banner (match other admin dashboards)
+    echo "<div class='alert alert-info mb-4'>";
+    echo format_text(get_string('admin_dashboard_description', 'block_personality_test'), FORMAT_HTML);
+    echo "</div>";
+
     // Obtener estadísticas
-    // Get enrolled students in this course (only students, roleid = 5)
-    $enrolled_students = get_role_users(5, $context, false, 'u.id, u.firstname, u.lastname');
+    // Get enrolled users who can take the test (defaults to student archetype)
+    $enrolled_students = get_enrolled_users($context, 'block/personality_test:taketest', 0, 'u.id, u.firstname, u.lastname');
     $enrolled_ids = array_keys($enrolled_students);
+
+    // Defensive: ensure only students show in admin tables (exclude report-capable users).
+    $student_ids = array();
+    foreach ($enrolled_ids as $candidateid) {
+        $candidateid = (int)$candidateid;
+        if (is_siteadmin($candidateid)) {
+            continue;
+        }
+        if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
+            continue;
+        }
+        $student_ids[] = $candidateid;
+    }
+    $enrolled_ids = $student_ids;
     
     // Total students in course
-    $total_students = count($enrolled_students);
+    $total_students = count($enrolled_ids);
+    
+    // Obtener participantes con información del usuario PRIMERO (antes de calcular estadísticas)
+    $userfields = \core_user\fields::for_name()->with_userpic()->get_sql('u', false, '', '', false)->selects;
+    $participants = array();
+    if (!empty($enrolled_ids)) {
+        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
+        $sql = "SELECT pt.*, {$userfields}
+                FROM {personality_test} pt
+                JOIN {user} u ON pt.user = u.id
+                WHERE pt.user $insql
+                ORDER BY pt.created_at DESC";
+        
+        $participants = $DB->get_records_sql($sql, $params);
+    }
     
     // Count participants who are enrolled in this course
     $completed_tests = 0;
@@ -161,19 +139,19 @@ if ($action === 'delete' && $userid) {
     echo "<div class='row mb-4'>";
     
     // Total students card
-    echo "<div class='col-md-4'>";
-    echo "<div class='card border-info'>";
+    echo "<div class='col-md-3 mb-4'>";
+    echo "<div class='card border-info' style='border-color: #00bf91 !important; border-radius: 4px !important;'>";
     echo "<div class='card-body text-center'>";
-    echo "<i class='fa fa-users text-info' style='font-size: 2em; margin-bottom: 10px;'></i>";
+    echo "<i class='fa fa-users' style='font-size: 2em; margin-bottom: 10px; color: #00bf91;'></i>";
     echo "<h5 class='card-title'>" . get_string('total_students', 'block_personality_test') . "</h5>";
-    echo "<h2 class='text-info'>" . $total_students . "</h2>";
+    echo "<h2 class='oficial-color'>" . $total_students . "</h2>";
     echo "</div>";
     echo "</div>";
     echo "</div>";
     
     // Completed tests card
-    echo "<div class='col-md-4'>";
-    echo "<div class='card border-success'>";
+    echo "<div class='col-md-3 mb-4'>";
+    echo "<div class='card border-success' style='border-color: #28a745 !important;'>";
     echo "<div class='card-body text-center'>";
     echo "<i class='fa fa-check-circle text-success' style='font-size: 2em; margin-bottom: 10px;'></i>";
     echo "<h5 class='card-title'>" . get_string('completed_tests', 'block_personality_test') . "</h5>";
@@ -183,8 +161,8 @@ if ($action === 'delete' && $userid) {
     echo "</div>";
     
     // In progress tests card
-    echo "<div class='col-md-4'>";
-    echo "<div class='card border-warning'>";
+    echo "<div class='col-md-3 mb-4'>";
+    echo "<div class='card border-warning' style='border-color: #ffc107 !important;'>";
     echo "<div class='card-body text-center'>";
     echo "<i class='fa fa-clock-o text-warning' style='font-size: 2em; margin-bottom: 10px;'></i>";
     echo "<h5 class='card-title'>" . get_string('in_progress_tests', 'block_personality_test') . "</h5>";
@@ -193,32 +171,147 @@ if ($action === 'delete' && $userid) {
     echo "</div>";
     echo "</div>";
     
+    // Completion rate card
+    $completion_rate = $total_students > 0 ? round(($completed_tests / $total_students) * 100, 1) : 0;
+    echo "<div class='col-md-3'>";
+    echo "<div class='card border-primary' style='border-color: #00bf91 !important;'>";   
+    echo "<div class='card-body text-center'>"; 
+    echo '<i class="fa fa-percent text-primary" style="font-size: 2em; margin-bottom: 10px;"></i>';
+    echo "<h5 class='card-title'>" . get_string('completion_rate', 'block_personality_test') . "</h5>";
+    echo "<h2 class='text-primary'>" . $completion_rate . "%</h2>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+    
     echo "</div>";
 
-    // Obtener participantes con información del usuario
-    $userfields = \core_user\fields::for_name()->with_userpic()->get_sql('u', false, '', '', false)->selects;
-    $participants = array();
-    if (!empty($enrolled_ids)) {
-        list($insql, $params) = $DB->get_in_or_equal($enrolled_ids, SQL_PARAMS_NAMED);
-        $sql = "SELECT pt.*, {$userfields}
-                FROM {personality_test} pt
-                JOIN {user} u ON pt.user = u.id
-                WHERE pt.user $insql
-                ORDER BY pt.created_at DESC";
+    // General statistics section (only meaningful when there are completed tests)
+    if ($completed_tests > 0) {
+        echo "<div class='row mt-4'>";
+        echo "<div class='col-12'>";
+        echo "<div class='card'>";
+        echo "<div class='card-header'>";
+        echo "<h5 class='mb-0'><i class='fa fa-chart-bar'></i> " . get_string('general_statistics', 'block_personality_test') . "</h5>";
+        echo "</div>";
+        echo "<div class='card-body'>";
+        echo "<div class='row'>";
         
-        $participants = $DB->get_records_sql($sql, $params);
+        // Calculate MBTI type distribution
+        $type_distribution = array();
+        if (!empty($participants)) {
+            foreach ($participants as $p) {
+                if ($p->is_completed == 1) {
+                    $e_or_i = $p->extraversion > $p->introversion ? 'E' : 'I';
+                    $s_or_n = $p->sensing > $p->intuition ? 'S' : 'N';
+                    $t_or_f = $p->thinking >= $p->feeling ? 'T' : 'F';
+                    $j_or_p = $p->judging > $p->perceptive ? 'J' : 'P';
+                    $type = $e_or_i . $s_or_n . $t_or_f . $j_or_p;
+                    if (!isset($type_distribution[$type])) {
+                        $type_distribution[$type] = 0;
+                    }
+                    $type_distribution[$type]++;
+                }
+            }
+        }
+        
+        // Display top 4 most common types
+        arsort($type_distribution);
+        $top_types = array_slice($type_distribution, 0, 4, true);
+        
+        echo "<div class='col-md-6 mt-3 mt-md-0'>";
+        echo "<h6 class='text-center text-md-left mt-3 mb-3 mt-md-0 mb-md-2'>" . get_string('most_common_types', 'block_personality_test') . "</h6>";
+        if (!empty($top_types)) {
+            echo "<ul class='list-group'>";
+            foreach ($top_types as $type => $count) {
+                $percentage = $completed_tests > 0 ? round(($count / $completed_tests) * 100, 1) : 0;
+                echo "<li class='list-group-item d-flex justify-content-between align-items-center'>";
+                echo "<strong>" . $type . "</strong>";
+                echo "<span class='badge bg-secondary rounded-pill'>" . $count . " (" . $percentage . "%)</span>";
+                echo "</li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p class='text-muted'>" . get_string('no_data_available', 'block_personality_test') . "</p>";
+        }
+        echo "</div>";
+        
+        // Average dimension scores
+        echo "<div class='col-md-6 mt-3 mt-md-0'>";
+        echo "<h6 class='text-center text-md-left mt-3 mb-3 mt-md-0 mb-md-2'>" . get_string('average_dimensions', 'block_personality_test') . "</h6>";
+        if ($completed_tests > 0) {
+            $avg_extraversion = 0;
+            $avg_introversion = 0;
+            $avg_sensing = 0;
+            $avg_intuition = 0;
+            $avg_thinking = 0;
+            $avg_feeling = 0;
+            $avg_judging = 0;
+            $avg_perceptive = 0;
+            
+            foreach ($participants as $p) {
+                if ($p->is_completed == 1) {
+                    $avg_extraversion += $p->extraversion;
+                    $avg_introversion += $p->introversion;
+                    $avg_sensing += $p->sensing;
+                    $avg_intuition += $p->intuition;
+                    $avg_thinking += $p->thinking;
+                    $avg_feeling += $p->feeling;
+                    $avg_judging += $p->judging;
+                    $avg_perceptive += $p->perceptive;
+                }
+            }
+            
+            $avg_extraversion = round($avg_extraversion / $completed_tests, 1);
+            $avg_introversion = round($avg_introversion / $completed_tests, 1);
+            $avg_sensing = round($avg_sensing / $completed_tests, 1);
+            $avg_intuition = round($avg_intuition / $completed_tests, 1);
+            $avg_thinking = round($avg_thinking / $completed_tests, 1);
+            $avg_feeling = round($avg_feeling / $completed_tests, 1);
+            $avg_judging = round($avg_judging / $completed_tests, 1);
+            $avg_perceptive = round($avg_perceptive / $completed_tests, 1);
+            
+            echo "<ul class='list-group'>";
+            echo "<li class='list-group-item d-flex justify-content-between align-items-center'>";
+            echo "<strong>" . get_string('extraversion','block_personality_test') . " - " . get_string('introversion','block_personality_test') . "</strong>";
+            echo "<span class='rounded-pill'>" . $avg_extraversion . " - " . $avg_introversion . "</span>";
+            echo "</li>";
+            echo "<li class='list-group-item d-flex justify-content-between align-items-center'>";
+            echo "<strong>" . get_string('sensing','block_personality_test') . " - " . get_string('intuition','block_personality_test') . "</strong>";
+            echo "<span class='rounded-pill'>" . $avg_sensing . " - " . $avg_intuition . "</span>";
+            echo "</li>";
+            echo "<li class='list-group-item d-flex justify-content-between align-items-center'>";
+            echo "<strong>" . get_string('thinking','block_personality_test') . " - " . get_string('feeling','block_personality_test') . "</strong>";
+            echo "<span class='rounded-pill'>" . $avg_thinking . " - " . $avg_feeling . "</span>";
+            echo "</li>";
+            echo "<li class='list-group-item d-flex justify-content-between align-items-center'>";
+            echo "<strong>" . get_string('judging','block_personality_test') . " - " . get_string('perceptive','block_personality_test') . "</strong>";
+            echo "<span class='rounded-pill'>" . $avg_judging . " - " . $avg_perceptive . "</span>";
+            echo "</li>";
+            echo "</ul>";
+        } else {
+            echo "<p class='text-muted'>" . get_string('no_data_available', 'block_personality_test') . "</p>";
+        } 
+
+        echo "</div>";
+        
+        echo "</div>"; // Cierra row de estadísticas
+        echo "</div>"; // Cierra card-body
+        echo "</div>"; // Cierra card
+        echo "</div>"; // Cierra col-12
+        echo "</div>"; // Cierra row mt-4
     }
 
+    // Sección de Participants List
     if (empty($participants)) {
-        echo "<div class='alert alert-info'>";
+        echo "<div class='alert alert-info mt-4'>";
         echo "<i class='fa fa-info-circle'></i> ";
         echo "<h5>" . get_string('no_participants', 'block_personality_test') . "</h5>";
         echo "<p>" . get_string('no_participants_message', 'block_personality_test') . "</p>";
         echo "</div>";
     } else {
-        echo "<div class='card'>";
+        echo "<div class='card mt-5'>";
         echo "<div class='card-header'>";
-        echo "<h5 class='mb-0 d-inline'>" . get_string('participants_list', 'block_personality_test') . "</h5>";
+        echo "<h5 class='mb-0'>" . get_string('participants_list', 'block_personality_test') . "</h5>";
         echo "</div>";
         echo "<div class='card-body'>";
         
@@ -228,10 +321,10 @@ if ($action === 'delete' && $userid) {
         echo "<input type='text' id='searchInput' class='form-control' placeholder='" . 
              get_string('search_participant', 'block_personality_test') . "'>";
         echo "</div>";
-        echo "<div class='col-md-6'>";
-        echo "<button class='btn btn-primary' onclick='exportData(\"csv\")'>" . 
+        echo "<div class='col-md-6 d-flex justify-content-center justify-content-md-start mt-3 mt-md-0'>";
+        echo "<button class='btn btn-primary mr-2' onclick='exportData(\"csv\")'><i class='fa fa-download mr-2'></i>" . 
              get_string('export_csv', 'block_personality_test') . "</button> ";
-        echo "<button class='btn btn-success' onclick='exportData(\"pdf\")'>" . 
+        echo "<button class='btn btn-success' onclick='exportData(\"pdf\")'><i class='fa fa-file-pdf-o mr-2'></i>" . 
              get_string('export_pdf', 'block_personality_test') . "</button>";
         echo "</div>";
         echo "</div>";
@@ -266,7 +359,7 @@ if ($action === 'delete' && $userid) {
             // Estado y Progreso
             echo "<td>";
             if ($participant->is_completed == 1) {
-                echo "<span class='badge bg-success'>" . get_string('completed_status', 'block_personality_test') . "</span>";
+                echo "<span class='badge bg-success text-white'>" . get_string('completed_status', 'block_personality_test') . "</span>";
             } else {
                 // Calcular progreso - contar respuestas no nulas
                 $answered = 0;
@@ -289,7 +382,7 @@ if ($action === 'delete' && $userid) {
                 $mbti .= ($participant->sensing > $participant->intuition) ? 'S' : 'N';
                 $mbti .= ($participant->thinking >= $participant->feeling) ? 'T' : 'F';
                 $mbti .= ($participant->judging > $participant->perceptive) ? 'J' : 'P';
-                echo "<span class='badge bg-primary'>" . $mbti . "</span>";
+                echo "<strong>" . $mbti . "</strong>";
             } else {
                 echo "<span class='text-muted'>-</span>";
             }
@@ -299,7 +392,7 @@ if ($action === 'delete' && $userid) {
             echo "<td>";
             echo "<a href='" . new moodle_url('/blocks/personality_test/view_individual.php', 
                     array('userid' => $participant->user, 'cid' => $courseid)) . 
-                    "' class='btn btn-sm btn-info me-1' title='" . get_string('view_results', 'block_personality_test') . "'>";
+                    "' class='btn btn-sm btn-info mr-2 mt-1 mb-1' title='" . get_string('view_results', 'block_personality_test') . "'>";
             echo "<i class='fa fa-eye'></i> " . get_string('view', 'block_personality_test');
             echo "</a>";
             echo "<a href='" . new moodle_url('/blocks/personality_test/admin_view.php', 
@@ -320,7 +413,7 @@ if ($action === 'delete' && $userid) {
 }
 
 // Botón para regresar al curso
-echo "<div class='mt-4'>";
+echo "<div class='mt-4 text-center'>";
 echo "<a href='" . new moodle_url('/course/view.php', array('id' => $courseid)) . "' class='btn btn-secondary'>";
 echo "<i class='fa fa-arrow-left'></i> " . get_string('back_to_course', 'block_personality_test');
 echo "</a>";
