@@ -14,6 +14,32 @@ function xmldb_block_personality_test_upgrade($oldversion) {
         if ($dbman->index_exists($table, $old_index)) {
             $dbman->drop_index($table, $old_index);
         }
+
+        // Clean up duplicate entries before creating unique index
+        $sql = "SELECT user, COUNT(*) as count
+                FROM {personality_test}
+                GROUP BY user
+                HAVING count > 1";
+        $duplicates = $DB->get_records_sql($sql);
+
+        if ($duplicates) {
+            foreach ($duplicates as $dup) {
+                // Get all records for this user, ordered by id DESC
+                // We want to keep the most recent one (highest ID)
+                $records = $DB->get_records('personality_test', ['user' => $dup->user], 'id DESC');
+                
+                // Skip the first one (the one we want to keep)
+                $first = true;
+                foreach ($records as $record) {
+                    if ($first) {
+                        $first = false;
+                        continue;
+                    }
+                    // Delete the rest
+                    $DB->delete_records('personality_test', ['id' => $record->id]);
+                }
+            }
+        }
         
         // Add unique index on user to prevent duplicate tests per user
         $index = new xmldb_index('user_unique', XMLDB_INDEX_UNIQUE, ['user']);
