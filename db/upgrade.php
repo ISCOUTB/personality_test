@@ -69,5 +69,31 @@ function xmldb_block_personality_test_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2025120904, 'personality_test');
     }
 
+    // Remove course field as functionality is now cross-course
+    if ($oldversion < 2025121700) {
+        $table = new xmldb_table('personality_test');
+        
+        // Drop the course field if it exists
+        $field = new xmldb_field('course');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        
+        upgrade_block_savepoint(true, 2025121700, 'personality_test');
+    }
+
+    // Remove obsolete state field
+    if ($oldversion < 2025121701) {
+        $table = new xmldb_table('personality_test');
+        
+        // Drop the state field if it exists
+        $field = new xmldb_field('state');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        
+        upgrade_block_savepoint(true, 2025121701, 'personality_test');
+    }
+
     return true;
 }
