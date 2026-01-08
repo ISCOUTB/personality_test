@@ -1,0 +1,50 @@
+<div class="personality-invitation-block" style="padding: 15px; background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%); border-radius: 8px; border: 1px solid #dee2e6;">
+    <div class="personality-header text-center mb-3">
+        {{{icon}}}
+        <h6 class="mt-2 mb-1">{{#str}}test_title, block_personality_test{{/str}}</h6>
+        <small class="text-muted">{{#str}}discover_your_personality, block_personality_test{{/str}}</small>
+    </div>
+    
+    <div class="personality-description mb-3" style="background: white; padding: 10px 12px; border-radius: 5px; border-left: 3px solid #00bf91;">
+        <small class="text-muted" style="line-height: 1.5;">
+            <i class="fa fa-info-circle" style="color: #00bf91;"></i> 
+            {{#str}}test_description, block_personality_test{{/str}}
+        </small>
+    </div>
+    
+    {{#all_answered}}
+    <div class="alert alert-warning mb-3" style="padding: 12px 15px; margin-bottom: 15px; border-left: 4px solid #ffc107; background-color: #fff3cd; border-radius: 4px;">
+        <div style="display: flex; align-items: start;">
+            <i class="fa fa-exclamation-triangle" style="color: #856404; margin-right: 10px; margin-top: 2px; font-size: 1.2em;"></i>
+            <div>
+                <strong style="color: #856404;">{{#str}}all_answered_title, block_personality_test{{/str}}</strong><br>
+                <small style="color: #856404;">{{#str}}all_answered_message, block_personality_test{{/str}}</small>
+            </div>
+        </div>
+    </div>
+    {{/all_answered}}
+    
+    <div class="personality-progress mb-3" style="background: white; padding: 12px; border-radius: 5px; border: 1px solid #e9ecef;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small font-weight-bold">{{#str}}your_progress, block_personality_test{{/str}}</span>
+            <span class="small text-muted">{{answered_count}}/72</span>
+        </div>
+        <div class="progress mb-2" style="height: 8px;">
+            <div class="progress-bar" style="width: {{progress_percentage}}%; background: linear-gradient(135deg, #00dda9ff 0%, #00a07a 100%);"></div>
+        </div>
+        <small class="text-muted">{{progress_percentage_formatted}}% {{#str}}completed, block_personality_test{{/str}}</small>
+    </div>
+    
+    <div class="personality-actions text-center">
+        {{#all_answered}}
+        <a href="{{url}}" class="btn btn-success btn-block" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: 500; transition: all 0.3s ease;">
+            <i class="fa fa-flag-checkered"></i> {{#str}}finish_test_now, block_personality_test{{/str}}
+        </a>
+        {{/all_answered}}
+        {{^all_answered}}
+        <a href="{{url}}" class="btn btn-info btn-block" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: 500; transition: all 0.3s ease;">
+            <i class="fa fa-play"></i> {{#str}}continue_test, block_personality_test{{/str}}
+        </a>
+        {{/all_answered}}
+    </div>
+</div>
