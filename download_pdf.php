@@ -1,11 +1,11 @@
 <?php
-
 /**
- * Descarga los resultados agregados del test de personalidad en formato PDF para un curso.
+ * Personality Test PDF Download
  *
- * @package     block_personality_test
- * @copyright
- * @license
+ * @package    block_personality_test
+ * @copyright  2026 SAVIO - Sistema de Aprendizaje Virtual Interactivo (UTB)
+ * @author     SAVIO Development Team
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // --- INCLUDES Y CONFIGURACIÓN INICIAL DE MOODLE ---
