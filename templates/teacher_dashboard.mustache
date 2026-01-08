@@ -1,0 +1,58 @@
+<div class="personality-header text-center mb-3">
+    {{{icon}}}
+    <h6 class="mt-2 mb-1 font-weight-bold">{{#str}}management_title, block_personality_test{{/str}}</h6>
+    <small class="text-muted">{{#str}}course_overview, block_personality_test{{/str}}</small>
+</div>
+
+{{^has_data}}
+<div class="alert alert-info" style="margin: 10px 0;">
+    <h6 class="mb-2"><i class="fa fa-info-circle"></i> {{#str}}participation_stats, block_personality_test{{/str}}</h6>
+    <ul class="mb-0 small" style="list-style: none; padding-left: 0;">
+        <li><strong>{{#str}}total_participants, block_personality_test{{/str}}:</strong> {{total_students}}</li>
+        <li><strong>{{#str}}completed_tests, block_personality_test{{/str}}:</strong> 0</li>
+        <li><strong>{{#str}}in_progress_tests, block_personality_test{{/str}}:</strong> {{in_progress}}</li>
+    </ul>
+    <hr style="margin: 10px 0;">
+    <p class="mb-0 small"><i class="fa fa-chart-bar" style="color: #00bf91;"></i> <strong>{{#str}}sin_datos_estudiantes, block_personality_test{{/str}}</strong></p>
+    <p class="mb-0 mt-1 small text-muted" style="font-style: italic;">{{#str}}waiting_first_completion, block_personality_test{{/str}}</p>
+</div>
+{{/has_data}}
+
+{{#has_data}}
+<div class="alert alert-info" style="margin-bottom: 15px; padding: 10px; text-align: center;">
+    <strong>{{#str}}participation_stats, block_personality_test{{/str}}: </strong>
+    <span>{{completed_str}}</span>
+</div>
+
+<h6 style="text-align: center;">{{#str}}titulo_resultados_estudiantes, block_personality_test{{/str}}</h6>
+<canvas id="mbtiChart" style="max-width: 100%; max-height: 350px; height: auto;"></canvas>
+
+<h6 style="text-align: center; margin-top: 20px;">{{#str}}titulo_distribucion_rasgos, block_personality_test{{/str}}</h6>
+
+<div class="d-flex flex-wrap justify-content-around">
+    <div style="width: 100%; max-width: 350px; margin: 10px; box-sizing: border-box;">
+        <canvas id="generalTrendChart"></canvas>
+    </div>
+    <div style="width: 100%; max-width: 350px; margin: 10px; box-sizing: border-box;">
+        <canvas id="infoProcessingChart"></canvas>
+    </div>
+    <div style="width: 100%; max-width: 350px; margin: 10px; box-sizing: border-box;">
+        <canvas id="decisionMakingChart"></canvas>
+    </div>
+    <div style="width: 100%; max-width: 350px; margin: 10px; box-sizing: border-box;">
+        <canvas id="organizationChart"></canvas>
+    </div>
+</div>
+
+<div class="text-center" style="margin-top: 20px;">
+    <a href="{{csv_url}}" class="btn btn-sm d-inline-block" style="margin: 5px; background-color: #1e7e34; color: #ffffff; text-decoration: none; border: none;" role="button">{{#str}}CSV, block_personality_test{{/str}}</a>
+    <a href="{{pdf_url}}" class="btn btn-sm d-inline-block" style="margin: 5px; background-color: #1e7e34; color: #ffffff; text-decoration: none; border: none;" role="button">{{#str}}PDF, block_personality_test{{/str}}</a>
+</div>
+{{/has_data}}
+{{#admin_url}}
+<div class="text-center">
+    <a href="{{admin_url}}" class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%); color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; border: none;">
+        {{#str}}go_to_administration, block_personality_test{{/str}}
+    </a>
+</div>
+{{/admin_url}}
