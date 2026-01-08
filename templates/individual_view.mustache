@@ -1,0 +1,163 @@
+{{#in_progress}}
+<div class='container-fluid'>
+    <div class='alert alert-warning' role='alert'>
+        <h4 class='alert-heading'><i class='fa fa-clock-o'></i> {{test_in_progress_title}}</h4>
+        <p>{{test_in_progress_message}}</p>
+        <hr>
+        
+        <p class='mb-1'><strong>{{progress_label}}:</strong></p>
+        <div class='progress mb-2' style='height: 30px;'>
+            <div class='progress-bar bg-warning' role='progressbar' style='width: {{progress_percentage}}%' aria-valuenow='{{progress_percentage}}' aria-valuemin='0' aria-valuemax='100'>
+                <strong>{{progress_percentage}}%</strong>
+            </div>
+        </div>
+        <p><strong>{{has_answered_label}}:</strong> {{answered_message}}</p>
+        
+        {{#show_submit_reminder}}
+        <div class='alert alert-info mt-2' role='alert'>
+            <i class='fa fa-info-circle'></i> 
+            <strong>{{remind_submit_test}}</strong>
+        </div>
+        {{/show_submit_reminder}}
+        
+        <p class='mb-0'><em>{{results_available_message}}</em></p>
+    </div>
+    
+    <div class='mt-4'>
+        <a href='{{back_url}}' class='btn btn-secondary'>
+            <i class='fa fa-arrow-left'></i> {{back_to_admin_label}}
+        </a>
+    </div>
+</div>
+{{/in_progress}}
+
+{{#is_completed}}
+<div class='container-fluid'>
+
+    <!-- Header with student info -->
+    <div class='row mb-4'>
+        <div class='col-12'>
+            <div class='card'>
+                <div class='card-header' style='background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%); color: white;'>
+                    <h3 class='card-title mb-0'>
+                        <span style='color: #ffffff;'><img src='{{iconurl}}' alt='Personality Test Icon' style='width: 30px; height: 30px; vertical-align: middle; margin-right: 10px;' />{{individual_results_title}}</span>
+                    </h3>
+                </div>
+                <div class='card-body'>
+                    <div class='row'>
+                        <div class='col-md-8'>
+                            <h4>{{user_fullname}}</h4>
+                            <p class='text-muted mb-1'><strong>{{email_label}}:</strong> {{user_email}}</p>
+                            <p class='text-muted mb-1'><strong>{{date_label}}:</strong> {{test_date}}</p>
+                            <p class='text-muted mb-1'><strong>{{mbti_label}}:</strong> {{mbti_type}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='row'>
+
+        <!-- Personality Dimensions -->
+        <div class='col-lg-8 mb-4'>
+            <div class='card h-100'>
+                <div class='card-header' style='background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important; color: #00bf91 !important;'>
+                    <h5 class='mb-0'><i class='fa fa-chart-bar'></i> {{dimensions_title}}</h5>
+                </div>
+                <div class='card-body'>
+                    {{#dimension_bars}}
+                    <div class='mb-4'>
+                        <div class='d-flex justify-content-between mb-2'>
+                            <span><strong>{{label1}}</strong> ({{value1}})</span> 
+                            <span><strong>{{label2}}</strong> ({{value2}})</span>
+                        </div>
+                        <div class='progress' style='height: 25px;'>
+                            <div class='progress-bar' style='width: {{percent1}}%; background-color: #00bf91; border-right: 2px solid rgba(255,255,255,0.85);' role='progressbar' aria-valuenow='{{percent1}}' aria-valuemin='0' aria-valuemax='100'>
+                                {{percent1_display}}%
+                            </div>
+                            <div class='progress-bar' style='width: {{percent2}}%; background-color: #00d9a8;' role='progressbar' aria-valuenow='{{percent2}}' aria-valuemin='0' aria-valuemax='100'>
+                                {{percent2_display}}%
+                            </div>
+                        </div>
+                    </div>
+                    {{/dimension_bars}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary and Actions -->
+        <div class='col-lg-4 mb-4'>
+            <div class='card h-100'>
+                <div class='card-header' style='background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important; color: #00bf91 !important;'>
+                    <h5 class='mb-0'><i class='fa fa-info-circle'></i> {{summary_actions_title}}</h5>
+                </div>
+                <div class='card-body'>
+
+                    <div class='text-center mb-4'>
+                        <h2 class='oficial-color mb-2'>{{mbti_type}}</h2>
+                        <p class='text-muted' style='font-size: 0.9em;'>({{mbti_dimensions_str}})</p>
+                        <p class='text-muted' style='text-align: justify;'>{{mbti_description}}</p>
+                    </div>
+
+                    <div class='d-flex justify-content-center gap-2'>
+                        <a href='{{download_url}}' class='btn mr-3' style='background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important; border: none; color: white;'>
+                            <i class='fa fa-download'></i> {{download_pdf_label}}
+                        </a>
+
+                        <a href='{{delete_url}}' class='btn btn-danger' onclick='return confirm("{{confirm_delete_msg}}")'>
+                            <i class='fa fa-trash'></i> {{delete_results_label}}
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Detailed Scores Table -->
+    <div class='row'>
+        <div class='col-12'>
+            <div class='card'>
+                <div class='card-header' style='background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important; color: #00bf91 !important;'>
+                    <h5 class='mb-0'><i class='fa fa-table'></i> {{detailed_scores_title}}</h5>
+                </div>
+                <div class='card-body'>
+                    <div class='table-responsive'>
+                        <table class='table table-striped'>
+                            <thead>
+                                <tr>
+                                    <th>{{dimension_header}}</th>
+                                    <th>{{score_header}}</th>
+                                    <th>{{preference_header}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#score_rows}}
+                                <tr>
+                                    <td><strong>{{label1}} - {{label2}}</strong></td>
+                                    <td>{{value1}} - {{value2}}</td>
+                                    <td>{{dominant}}</td>
+                                </tr>
+                                {{/score_rows}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class='mt-5 text-center d-flex gap-3 justify-content-center'>
+        <a href='{{back_to_admin_url}}' class='btn btn-secondary btn-modern mr-3'>
+            <i class="fa fa-arrow-left mr-2"></i>{{back_to_admin_label}}
+        </a>
+        <a href='{{back_to_course_url}}' class='btn btn-modern' style='background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%); border: none; color: white;'>
+            <i class="fa fa-home mr-2"></i>{{back_to_course_label}}
+        </a>
+    </div>
+
+</div>
+{{/is_completed}}
