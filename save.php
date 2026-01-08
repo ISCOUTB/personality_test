@@ -1,4 +1,12 @@
 <?php
+/**
+ * Save personality test responses and handle navigation actions.
+ *
+ * @package    block_personality_test
+ * @copyright  2026 SAVIO - Sistema de Aprendizaje Virtual Interactivo (UTB)
+ * @author     SAVIO Development Team
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__) . '/lib.php');
 
