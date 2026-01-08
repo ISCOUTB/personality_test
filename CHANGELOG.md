@@ -2,6 +2,15 @@
 
 Todas las modificaciones importantes del proyecto se documentarán en este archivo.
 
+## [2.0.2] — 2026-01-08
+- Paginación en la lista de estudiantes en el panel de administración.
+- Nueva forma de mostrar las estadísticas generales en el panel de administración.
+- Uso de arquitectura de plantillas Mustache para todas las vistas del bloque.
+- Refactorización completa del código para separar lógica de presentación.
+- Mejora en la mantenibilidad y escalabilidad del código.
+- Optimización del rendimiento en búsquedas.
+- Pequeñas mejoras de seguridad.
+
 ## [2.0.1] — 2025-12-22
 - Correción de un error (al actualizar de la versión 1.x a 2.0.0) que causaba fallos en la base de datos.
 - Lectura correcta del CHANGELOG en el flujo de trabajo de GitHub Actions.
