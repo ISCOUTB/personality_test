@@ -97,7 +97,7 @@ jobs:
           # Extraer changelog para la versión actual
           if [ -f "CHANGELOG.md" ]; then
             # Buscar la sección de la versión actual
-            awk '/## \["'"${{ needs.check-version.outputs.version }}"'"\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md > current_changelog.md
+            awk '/## \['"${{ needs.check-version.outputs.version }}"'\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md > current_changelog.md
             
             if [ -s current_changelog.md ]; then
               echo "Found changelog entry for version ${{ needs.check-version.outputs.version }}"
