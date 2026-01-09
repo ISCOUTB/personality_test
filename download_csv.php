@@ -187,8 +187,8 @@ foreach ($students as $entry) {
     $mbti_score = block_personality_test_calculate_mbti($entry);
 
     // Escribir fila en el CSV
-    // Use last_action (guaranteed present)
-    $lastaction = $entry->last_action;
+    // Use updated_at as the last action timestamp
+    $lastaction = $entry->updated_at;
 
     fputcsv($output, [
         $student_user->idnumber,
