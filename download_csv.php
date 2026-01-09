@@ -1,8 +1,11 @@
 <?php
 /**
- * Descarga los resultados agregados del test de personalidad en formato CSV.
+ * Personality Test CSV Download
  *
- * @package   block_personality_test
+ * @package    block_personality_test
+ * @copyright  2026 SAVIO - Sistema de Aprendizaje Virtual Interactivo (UTB)
+ * @author     SAVIO Development Team
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
@@ -184,8 +187,8 @@ foreach ($students as $entry) {
     $mbti_score = block_personality_test_calculate_mbti($entry);
 
     // Escribir fila en el CSV
-    // Use last_action (guaranteed present)
-    $lastaction = $entry->last_action;
+    // Use updated_at as the last action timestamp
+    $lastaction = $entry->updated_at;
 
     fputcsv($output, [
         $student_user->idnumber,

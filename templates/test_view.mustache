@@ -1,0 +1,276 @@
+<div class="personality-test-container">
+    <div style="text-align: center; margin-bottom: 15px;">
+        <img src="{{iconurl}}" alt="Personality Test Icon" style="width: 70px; height: 70px; display: block; margin: 0 auto 10px auto;" />
+    </div>
+
+    <h1 class='title_personality_test' style='text-align: center;'>{{test_page_title}}</h1>
+    <div>
+        {{{test_intro_p1}}} 
+        {{{test_intro_p2}}}
+    </div>
+    <br>
+    <div style='background-color: #e0f7f1; border-left: 4px solid #00bf91; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;'>
+        <strong>{{test_benefit_note}}</strong> {{test_benefit_required}} (<span style='color: #d32f2f;'>*</span>)
+    </div>
+
+    <form method="POST" action="{{action_form}}" id="personalityTestForm">
+        <div class="content-accept">
+            <ul class="personality_test_q">
+            {{#questions}}
+            <li class="personality_test_item" data-question="{{number}}">
+                <div>{{question_text}}</div>
+                <div class="answer-buttons">
+                    <label class="answer-btn option-a {{class_yes}}" data-question="{{number}}" data-value="1">
+                        {{yes_label}}
+                    </label>
+                    <label class="answer-btn option-b {{class_no}}" data-question="{{number}}" data-value="0">
+                        {{no_label}}
+                    </label>
+                </div>
+                <select name="personality_test:q{{number}}" class="hidden-select select-q" id="select_q{{number}}" data-question="{{number}}">
+                    <option value="" disabled {{selected_none}} hidden>{{select_option_label}}</option>
+                    <option value="1" {{selected_yes}}>{{yes_label}}</option>
+                    <option value="0" {{selected_no}}>{{no_label}}</option>
+                </select>
+            </li>
+            {{/questions}}
+            </ul>
+            
+            <!-- Hidden inputs for all previously answered questions from other pages -->
+            {{#hidden_answers}}
+            <input type="hidden" name="personality_test:q{{number}}" value="{{value}}">
+            {{/hidden_answers}}
+            
+            <div class="clearfix"></div>
+            
+            <!-- Navigation buttons -->
+            <div class="navigation-buttons" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+                <div>
+                    {{#show_previous}}
+                        <button type="submit" name="action" value="previous" class="btn btn-secondary">
+                            {{btn_previous_label}}
+                        </button>
+                    {{/show_previous}}
+                </div>
+                
+                <div>
+                    {{#show_next}}
+                        <button type="submit" name="action" value="next" class="btn btn-primary">
+                            {{btn_next_label}}
+                        </button>
+                    {{/show_next}}
+                    {{#show_finish}}
+                        <button type="submit" name="action" value="finish" id="submitBtn" class="btn btn-success">
+                            {{btn_finish_label}}
+                        </button>
+                    {{/show_finish}}
+                </div>
+            </div>
+        
+        </div>
+        
+        <input type="hidden" name="cid" value="{{courseid}}">
+        <input type="hidden" name="page" value="{{page}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <div class="clearfix"></div>
+        
+    </form>
+</div>
+
+<script>
+// Auto-save functionality (silent, no visual feedback)
+let autoSaveTimer = null;
+let isSaving = false;
+
+function autoSaveProgress() {
+    if (isSaving) return;
+    
+    isSaving = true;
+    const formData = new FormData(document.getElementById('personalityTestForm'));
+    formData.set('action', 'autosave');
+    
+    fetch('{{wwwroot}}/blocks/personality_test/save.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Silent save - no visual feedback
+        isSaving = false;
+    })
+    .catch(error => {
+        console.error('Auto-save error:', error);
+        isSaving = false;
+    });
+}
+
+// Manejar clics en los botones de respuesta
+document.querySelectorAll('.answer-btn').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        var question = this.getAttribute('data-question');
+        var value = this.getAttribute('data-value');
+        var select = document.getElementById('select_q' + question);
+        
+        // Actualizar el select oculto
+        select.value = value;
+        
+        // Remover la clase selected de ambos botones de esta pregunta
+        var allButtons = document.querySelectorAll('.answer-btn[data-question="' + question + '"]');
+        allButtons.forEach(function(btn) {
+            btn.classList.remove('selected');
+        });
+        
+        // Agregar la clase selected al botón clickeado
+        this.classList.add('selected');
+        
+        // Remove red highlight when user answers the question
+        const listItem = this.closest('.personality_test_item');
+        if (listItem && listItem.classList.contains('question-error-highlight')) {
+            listItem.style.border = '';
+            listItem.style.backgroundColor = '';
+            listItem.style.borderRadius = '';
+            listItem.style.padding = '';
+            listItem.style.marginBottom = '';
+            listItem.style.boxShadow = '';
+            listItem.classList.remove('question-error-highlight');
+        }
+        
+        // Clear previous timer
+        if (autoSaveTimer) {
+            clearTimeout(autoSaveTimer);
+        }
+        
+        // Auto-save after 2 seconds of inactivity
+        autoSaveTimer = setTimeout(autoSaveProgress, 2000);
+    });
+});
+
+// Handle form submission for navigation
+document.getElementById('personalityTestForm').addEventListener('submit', function(e) {
+    const submitButton = e.submitter;
+    const action = submitButton ? submitButton.value : 'next';
+    
+    // For "previous" button, always allow navigation without validation
+    if (action === 'previous') {
+        return true;
+    }
+    
+    // Only validate for "next" and "finish" actions
+    if (action !== 'next' && action !== 'finish') {
+        return true;
+    }
+    
+    // Validate current page for next/finish
+    const selectsOnPage = document.querySelectorAll('.select-q');
+    let allAnswered = true;
+    let firstUnanswered = null;
+    
+    selectsOnPage.forEach(function(select) {
+        if (select.value === '') {
+            allAnswered = false;
+            const listItem = select.closest('.personality_test_item');
+            
+            if (listItem) {
+                listItem.style.border = '3px solid #d32f2f';
+                listItem.style.backgroundColor = '#ffebee';
+                listItem.style.borderRadius = '8px';
+                listItem.style.padding = '24px 28px';
+                listItem.style.marginBottom = '1.5rem';
+                listItem.style.boxShadow = '0 4px 8px rgba(211, 47, 47, 0.3)';
+                listItem.classList.add('question-error-highlight');
+                
+                if (!firstUnanswered) {
+                    firstUnanswered = select;
+                }
+            }
+        }
+    });
+    
+    if (!allAnswered) {
+        e.preventDefault();
+        
+        // Scroll to first unanswered question
+        if (firstUnanswered) {
+            firstUnanswered.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+        
+        return false;
+    }
+});
+
+// Auto-scroll to first unanswered question when continuing test
+{{#should_auto_scroll}}
+window.addEventListener('load', function() {
+    // Wait a bit for the page to fully render
+    setTimeout(function() {
+        // Find first unanswered question on current page
+        const selects = document.querySelectorAll('.select-q');
+        for (let i = 0; i < selects.length; i++) {
+            if (selects[i].value === '') {
+                const selectElement = selects[i];
+                const listItem = selectElement.closest('.personality_test_item');
+                
+                // Add green highlight
+                if (listItem) {
+                    // Store original styles
+                    const originalStyles = {
+                        border: listItem.style.border,
+                        backgroundColor: listItem.style.backgroundColor,
+                        boxShadow: listItem.style.boxShadow
+                    };
+                    
+                    listItem.style.border = '3px solid #28a745';
+                    listItem.style.backgroundColor = '#d4edda';
+                    listItem.style.boxShadow = '0 4px 8px rgba(40, 167, 69, 0.3)';
+                    listItem.style.transition = 'all 0.3s ease';
+                    
+                    // Scroll to it
+                    listItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    
+                    // Remove highlight after 5 seconds
+                    setTimeout(function() {
+                        listItem.style.border = originalStyles.border;
+                        listItem.style.backgroundColor = originalStyles.backgroundColor;
+                        listItem.style.boxShadow = originalStyles.boxShadow;
+                    }, 5000);
+                }
+                
+                break;
+            }
+        }
+    }, 300);
+});
+{{/should_auto_scroll}}
+
+// Scroll to finish button when coming from block with all questions answered
+{{#scroll_to_finish}}
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const finishBtn = document.getElementById('submitBtn');
+        if (finishBtn) {
+            finishBtn.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Add green pulsing highlight to the button
+            finishBtn.style.boxShadow = '0 0 20px rgba(40, 167, 69, 0.8)';
+            finishBtn.style.transition = 'all 0.3s ease';
+            
+            // Remove highlight after 5 seconds
+            setTimeout(function() {
+                finishBtn.style.boxShadow = '';
+            }, 5000);
+        }
+    }, 300);
+});
+{{/scroll_to_finish}}
+</script>

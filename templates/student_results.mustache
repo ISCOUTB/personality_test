@@ -1,0 +1,49 @@
+<div class="personality-results-block" style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #dee2e6;">
+    <div class="personality-header text-center mb-3">
+        <div style="position: relative; display: inline-block; line-height: 0;">
+            {{{icon}}}
+            <i class="fa fa-check" style="position: absolute; top: -6px; right: -9px; font-size: 1.4em; background: white; border-radius: 50%; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.1); color: #00bf91;"></i>
+        </div>
+        <h6 class="mt-2 mb-1">{{#str}}test_completed, block_personality_test{{/str}}</h6>
+        <small class="text-muted">{{#str}}your_personality_type, block_personality_test{{/str}}</small>
+    </div>
+    
+    <div class="personality-description mb-3" style="background: #f8f9fa; padding: 10px 12px; border-radius: 5px; border-left: 3px solid #00bf91;">
+        <small class="text-muted" style="line-height: 1.5;">
+            <i class="fa fa-info-circle" style="color: #00bf91;"></i> 
+            {{#str}}test_description, block_personality_test{{/str}}
+        </small>
+    </div>
+    
+    <div class="mb-3 text-center">
+        <h3 class="mb-2" style="color: #00bf91;"><strong>{{mbti_score}}</strong></h3>
+        <small class="text-muted">{{mbti_dimensions_str}}</small>
+    </div>
+    
+    <p class="mb-3" style="text-align: justify; line-height: 1.6;">
+        {{{mbti_description}}}
+    </p>
+    
+    <canvas id="{{chart_id}}" width="400" height="400"></canvas>
+</div>
+{{#js}}
+require(['jquery'], function($) {
+    var instanceId = "{{instanceid}}";
+    /* Check if instanceId is valid before proceeding */
+    if (instanceId && window.location.hash) {
+        var targetHash = "#inst" + instanceId;
+        if (window.location.hash === targetHash) {
+             /* Add a small delay to ensure rendering is complete */
+             setTimeout(function() {
+                 var $target = $(targetHash);
+                 if ($target.length) {
+                     /* Scroll to element with some top offset (e.g. 100px for header) */
+                     $('html, body').animate({
+                         scrollTop: $target.offset().top - 100
+                     }, 500);
+                 }
+             }, 300);
+        }
+    }
+});
+{{/js}}
