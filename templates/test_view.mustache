@@ -142,8 +142,8 @@ document.querySelectorAll('.answer-btn').forEach(function(button) {
             clearTimeout(autoSaveTimer);
         }
         
-        // Auto-save after 2 seconds of inactivity
-        autoSaveTimer = setTimeout(autoSaveProgress, 2000);
+        // Auto-save after 400ms of inactivity
+        autoSaveTimer = setTimeout(autoSaveProgress, 400);
     });
 });
 
