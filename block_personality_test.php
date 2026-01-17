@@ -217,7 +217,8 @@ class block_personality_test extends block_base
         $url = new moodle_url('/blocks/personality_test/view.php', array('cid' => $COURSE->id));
         $data = [
             'icon' => $this->get_personality_test_icon('4em', '', true),
-            'url' => $url->out(false)
+            'url' => $url->out(false),
+            'showdescriptions' => !empty($this->config->showdescriptions)
         ];
         
         return $OUTPUT->render_from_template('block_personality_test/student_invitation', $data);
@@ -245,7 +246,8 @@ class block_personality_test extends block_base
             'progress_percentage' => $progress_percentage,
             'progress_percentage_formatted' => number_format($progress_percentage, 1),
             'all_answered' => $all_answered,
-            'url' => $url->out(false)
+            'url' => $url->out(false),
+            'showdescriptions' => !empty($this->config->showdescriptions)
         ];
         
         return $OUTPUT->render_from_template('block_personality_test/student_continue', $data);
@@ -378,7 +380,9 @@ class block_personality_test extends block_base
                         'mbti_description' => get_string('mbti_' . strtolower($mbti_score), 'block_personality_test'),
                         'chart_id' => $chart_id,
                         'uniqid' => $USER->id,
-                        'instanceid' => $this->instance->id
+                        'instanceid' => $this->instance->id,
+                        'showdescriptions' => !empty($this->config->showdescriptions),
+                        'summary_url' => (new moodle_url('/blocks/personality_test/view_individual.php', array('userid' => $USER->id, 'cid' => $COURSE->id)))->out(false)
                     ];
                     
                     $this->content->text = $OUTPUT->render_from_template('block_personality_test/student_results', $template_data);
