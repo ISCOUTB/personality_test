@@ -5,12 +5,14 @@
         <small class="text-muted">{{#str}}discover_your_personality, block_personality_test{{/str}}</small>
     </div>
     
+    {{#showdescriptions}}
     <div class="personality-description mb-3" style="background: white; padding: 10px 12px; border-radius: 5px; border-left: 3px solid #00bf91;">
         <small class="text-muted" style="line-height: 1.5;">
             <i class="fa fa-info-circle" style="color: #00bf91;"></i> 
             {{#str}}test_description, block_personality_test{{/str}}
         </small>
     </div>
+    {{/showdescriptions}}
     
     {{#all_answered}}
     <div class="alert alert-warning mb-3" style="padding: 12px 15px; margin-bottom: 15px; border-left: 4px solid #ffc107; background-color: #fff3cd; border-radius: 4px;">
