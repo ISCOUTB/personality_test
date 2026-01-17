@@ -267,10 +267,10 @@ foreach($perce as $index => $value){
 
 // Save final results with is_completed = 1
 if(save_personality_test($courseid,$extra_res,$intra_res,$sensi_res,$intui_res,$ratio_res,$emoti_res,$estru_res,$perce_res, $responses)){
-    $redirect = new moodle_url('/course/view.php', array('id'=>$courseid));
+    $redirect = new moodle_url('/blocks/personality_test/view_individual.php', array('cid' => $courseid, 'userid' => $USER->id));
     redirect($redirect, get_string('redirect_accept_success', 'block_personality_test') );
 }else{
-    $redirect = new moodle_url('/course/view.php', array('id'=>$courseid));
+    $redirect = new moodle_url('/blocks/personality_test/view_individual.php', array('cid' => $courseid, 'userid' => $USER->id));
     redirect($redirect, get_string('redirect_accept_exist', 'block_personality_test') );
 }
 ?>
