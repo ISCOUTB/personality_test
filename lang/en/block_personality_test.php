@@ -23,9 +23,9 @@ $string['your_progress'] = 'Your Progress';
 $string['completed'] = 'completed';
 $string['continue_test'] = 'Continue Exploration';
 $string['all_answered_title'] = 'All Questions Answered!';
-$string['all_answered_message'] = 'You have answered all 72 questions. Don\'t forget to click "Finish Exploration" to submit your answers and see your personality results!';
+$string['all_answered_message'] = 'You have answered all 72 questions. Don\'t forget to click "Finish Exploration" to submit your answers and view your personality results!';
 $string['go_to_administration'] = 'Go to Administration Panel';
-$string['see_detailed_results'] = 'See Detailed Results';
+$string['see_detailed_results'] = 'View Detailed Results';
 
 // Test in progress and remind strings
 $string['test_in_progress'] = 'Exploration in Progress';
@@ -274,7 +274,7 @@ $string['feature_16_types'] = '16 unique personality types';
 $string['feature_instant_results'] = 'Instant results with detailed profile';
 $string['start_test'] = 'Start Exploration';
 $string['test_completed'] = 'Personality Exploration Completed';
-$string['your_results_here'] = 'See your results here';
+$string['your_results_here'] = 'View your results here';
 
 // Test page strings
 $string['test_page_title'] = 'Discover Your Personality Type';
