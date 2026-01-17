@@ -104,9 +104,10 @@
                         <a href='{{download_url}}' class='btn mr-3' style='background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important; border: none; color: white;'>
                             <i class='fa fa-download'></i> {{download_pdf_label}}
                         </a>
-
+                        {{#can_view_reports}}
                         <a href='{{delete_url}}' class='btn btn-danger' onclick='return confirm("{{confirm_delete_msg}}")'>
                             <i class='fa fa-trash'></i> {{delete_results_label}}
+                        {{/can_view_reports}}
                         </a>
                     </div>
 
@@ -116,34 +117,52 @@
 
     </div>
 
-    <!-- Detailed Scores Table -->
-    <div class='row'>
-        <div class='col-12'>
-            <div class='card'>
-                <div class='card-header' style='background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important; color: #00bf91 !important;'>
-                    <h5 class='mb-0'><i class='fa fa-table'></i> {{detailed_scores_title}}</h5>
-                </div>
-                <div class='card-body'>
-                    <div class='table-responsive'>
-                        <table class='table table-striped'>
-                            <thead>
-                                <tr>
-                                    <th>{{dimension_header}}</th>
-                                    <th>{{score_header}}</th>
-                                    <th>{{preference_header}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#score_rows}}
-                                <tr>
-                                    <td><strong>{{label1}} - {{label2}}</strong></td>
-                                    <td>{{value1}} - {{value2}}</td>
-                                    <td>{{dominant}}</td>
-                                </tr>
-                                {{/score_rows}}
-                            </tbody>
-                        </table>
+    <!-- Detailed Scores & Radar Section -->
+    <div class="card mt-4" style="border-radius: 12px; overflow: hidden;">
+        <div class="card-header" style="background: linear-gradient(135deg, #e0f7f1 0%, #f8f9fa 100%) !important; color: #00bf91 !important;">
+            <i class="fa fa-database mr-2"></i>
+            <h5 class="mb-0 d-inline" style="color: #00bf91 !important;">{{detailed_scores_title}}</h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="row">
+                <!-- LEFT COLUMN: SCORES BADGES -->
+                <div class="col-lg-5 d-flex flex-column justify-content-center">
+                    <h6 class="mb-4 text-center text-muted">{{score_header}}</h6>
+                    
+                    <div class="container-fluid px-2">
+                        {{#score_rows}}
+                        <div class="row mb-4 align-items-center p-2 rounded" style="background-color: #fcfcfc; border-bottom: 1px dashed #e9ecef;">
+                             <!-- Left Dimension -->
+                             <div class="col-5 text-center px-1">
+                                <div class="text-muted mb-1 font-weight-bold text-truncate" style="font-size: 0.85rem;" title="{{label1}}">{{label1}}</div>
+                                <div class="mx-auto shadow-sm d-flex align-items-center justify-content-center" 
+                                     style="width: 42px; height: 42px; background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 2px solid #00bf91; color: #00bf91; border-radius: 50%; font-weight: bold; font-size: 1rem;">
+                                    {{value1}}
+                                </div>
+                             </div>
+                             
+                             <!-- Separator -->
+                             <div class="col-2 text-center text-muted text-xs">vs</div>
+
+                             <!-- Right Dimension -->
+                             <div class="col-5 text-center px-1">
+                                <div class="text-muted mb-1 font-weight-bold text-truncate" style="font-size: 0.85rem;" title="{{label2}}">{{label2}}</div>
+                                <div class="mx-auto shadow-sm d-flex align-items-center justify-content-center" 
+                                     style="width: 42px; height: 42px; background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 2px solid #00d9a8; color: #00d9a8; border-radius: 50%; font-weight: bold; font-size: 1rem;">
+                                    {{value2}}
+                                </div>
+                             </div>
+                        </div>
+                        {{/score_rows}}
                     </div>
+                </div>
+
+                <!-- RIGHT COLUMN: RADAR CHART -->
+                <div class="col-lg-7 d-flex flex-column align-items-center justify-content-center border-start-lg" style="border-left: 1px solid rgba(0,0,0,0.05);">
+                     <h6 class="mb-4 text-center text-muted">{{radar_chart_title}}</h6>
+                     <div style="width: 100%; max-width: 550px; position: relative;">
+                        <canvas id="{{chart_id}}"></canvas>
+                     </div>
                 </div>
             </div>
         </div>
@@ -151,9 +170,11 @@
 
     <!-- Navigation Buttons -->
     <div class='mt-5 text-center d-flex gap-3 justify-content-center'>
+        {{#can_view_reports}}
         <a href='{{back_to_admin_url}}' class='btn btn-secondary btn-modern mr-3'>
             <i class="fa fa-arrow-left mr-2"></i>{{back_to_admin_label}}
         </a>
+        {{/can_view_reports}}
         <a href='{{back_to_course_url}}' class='btn btn-modern' style='background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%); border: none; color: white;'>
             <i class="fa fa-home mr-2"></i>{{back_to_course_label}}
         </a>
