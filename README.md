@@ -38,7 +38,7 @@ Este repositorio incluye:
   - Acceso a **vista individual** por estudiante.
   - Posibilidad de **eliminación** de resultados individuales.
   - Exportación **CSV** y **PDF** agregados por curso.
-- Opción para **mostrar/ocultar** las descripciones en el bloque principal.
+- Opción para **mostrar/ocultar** las descripciones en el bloque principal **(oculto por defecto)**.
 - **Controles de privacidad**: acceso restringido por capacidades, matrícula y (en vista individual) reglas de grupo.
 
 ---
