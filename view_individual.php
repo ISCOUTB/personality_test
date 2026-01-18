@@ -22,16 +22,15 @@ $test_result = $DB->get_record('personality_test', array('user' => $userid));
 // Verificar permisos y manejo de privacidad
 $is_own_results = ($USER->id == $userid);
 $can_view_reports = has_capability('block/personality_test:viewreports', $context);
-$is_siteadmin = is_siteadmin($USER);
 
 // Acceso básico: Si no es propietario, ni profesor (con permisos), ni admin -> Redirigir
-if (!$is_own_results && !$can_view_reports && !$is_siteadmin) {
+if (!$is_own_results && !$can_view_reports) {
     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
 // Check if teacher can access this specific user info (Grouping check)
 // Si no es admin y no son sus propios resultados...
-if (!$is_siteadmin && !$is_own_results) {
+if (!$is_own_results) {
     // Si el usuario tiene la capacidad de ver todos los grupos, permitir.
     if (!has_capability('moodle/site:accessallgroups', $context)) {
         // Obtener grupos del profesor y del estudiante objetivo
