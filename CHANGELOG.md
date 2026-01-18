@@ -2,7 +2,7 @@
 
 Todas las modificaciones importantes del proyecto se documentarán en este archivo.
 
-## [2.0.3] — 2026-01-16
+## [2.0.3] — 2026-01-18
 - Opción para mostrar/ocultar las descripciones en el bloque principal.
 - Adición del gráfico radar en resultados detallados y acceso permitido a los estudiantes a esta vista.
 - Se mantiene el titulo "Exploración de Personalidad" en todas las vistas del bloque.
