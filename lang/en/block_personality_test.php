@@ -1,7 +1,7 @@
 <?php
 $string['pluginname'] = 'Personality Exploration';
 $string['course_overview'] = 'Course Overview';
-$string['management_title'] = 'Personality Management';
+$string['management_title'] = 'Personality Exploration Management';
 $string['admin_dashboard_description'] = 'Personality Exploration Administration Panel. Here you can view detailed statistics, manage student responses and export data.';
 $string['redirect_accept_success'] = 'Congratulations, you can now view your results here.';
 $string['redirect_accept_exist'] = 'You have already completed the exploration, redirecting to course.';
