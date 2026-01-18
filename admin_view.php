@@ -33,7 +33,7 @@ if (!$DB->record_exists('block_instances', array('blockname' => 'personality_tes
 }
 
 // Friendly redirect for unauthorized users
-if (!has_capability('block/personality_test:viewreports', $context) && !is_siteadmin()) {
+if (!has_capability('block/personality_test:viewreports', $context)) {
     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
@@ -53,11 +53,8 @@ if ($action === 'delete' && $userid && confirm_sesskey()) {
     if ($confirm) {
         // Privacy check
         $targetuser = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-        if (!is_siteadmin() && (
-            !is_enrolled($context, $targetuser, 'block/personality_test:taketest', true)
-            || has_capability('block/personality_test:viewreports', $context, $userid)
-            || is_siteadmin($userid)
-        )) {
+        if (!is_enrolled($context, $targetuser, 'block/personality_test:taketest', true)
+            || has_capability('block/personality_test:viewreports', $context, $userid)) {
              redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
         }
         
