@@ -77,7 +77,7 @@ function block_personality_test_get_report_data($courseid) {
     require_login($course, false);
     
     // Check permissions
-    if (!has_capability('block/personality_test:viewreports', $context) && !is_siteadmin()) {
+    if (!has_capability('block/personality_test:viewreports', $context)) {
         return false;
     }
     
@@ -89,9 +89,6 @@ function block_personality_test_get_report_data($courseid) {
     $student_ids = array();
     foreach ($enrolled_ids as $candidateid) {
         $candidateid = (int)$candidateid;
-        if (is_siteadmin($candidateid)) {
-            continue;
-        }
         if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
             continue;
         }
