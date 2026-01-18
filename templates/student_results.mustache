@@ -5,26 +5,36 @@
             <i class="fa fa-check" style="position: absolute; top: -6px; right: -9px; font-size: 1.4em; background: white; border-radius: 50%; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.1); color: #00bf91;"></i>
         </div>
         <h6 class="mt-2 mb-1">{{#str}}test_completed, block_personality_test{{/str}}</h6>
-        <small class="text-muted">{{#str}}your_personality_type, block_personality_test{{/str}}</small>
+        <small class="text-muted">{{#str}}your_results_here, block_personality_test{{/str}}</small>
     </div>
     
+    {{#showdescriptions}}
     <div class="personality-description mb-3" style="background: #f8f9fa; padding: 10px 12px; border-radius: 5px; border-left: 3px solid #00bf91;">
         <small class="text-muted" style="line-height: 1.5;">
             <i class="fa fa-info-circle" style="color: #00bf91;"></i> 
             {{#str}}test_description, block_personality_test{{/str}}
         </small>
     </div>
+    {{/showdescriptions}}
     
     <div class="mb-3 text-center">
-        <h3 class="mb-2" style="color: #00bf91;"><strong>{{mbti_score}}</strong></h3>
-        <small class="text-muted">{{mbti_dimensions_str}}</small>
+        <!-- New ID Card Style -->
+        <div class="card border-0 shadow-sm" style="background-color: #f8f9fa;">
+            <div class="card-body p-3 d-flex align-items-center justify-content-center">
+                <i class="fa fa-id-card-o fa-2x mr-3" style="background: linear-gradient(135deg, #00dda9ff 0%, #00a07a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 15px;"></i>
+                <div class="text-left" style="text-align: left;">
+                    <h3 class="mb-0" style="color: #00bf91; line-height: 1;"><strong>{{mbti_score}}</strong></h3>
+                    <small class="text-muted d-block" style="line-height: 1.2;">{{mbti_dimensions_str}}</small>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <p class="mb-3" style="text-align: justify; line-height: 1.6;">
-        {{{mbti_description}}}
-    </p>
-    
-    <canvas id="{{chart_id}}" width="400" height="400"></canvas>
+    <div class="text-center">
+        <a href="{{summary_url}}" class="btn btn-sm" style="background: linear-gradient(135deg, #00dda9ff 0%, #00a07a 100%); border: none; color: #fff; width: 100%; font-weight: 500;">
+            <i class="fa fa-chart-bar"></i> {{#str}} see_detailed_results, block_personality_test {{/str}}
+        </a>
+    </div>
 </div>
 {{#js}}
 require(['jquery'], function($) {

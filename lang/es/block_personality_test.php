@@ -1,15 +1,13 @@
 <?php
 $string['pluginname'] = 'Exploración de Personalidad';
-$string['management_title'] = 'Gestión del Test de Personalidad';
+$string['management_title'] = 'Gestión - Exploración de Personalidad';
 $string['course_overview'] = 'Resumen del Curso';
-$string['admin_dashboard_description'] = 'Panel de administración del Test de Personalidad. Aquí puede ver estadísticas detalladas, gestionar respuestas de estudiantes y exportar datos.';
-$string['code_honor_text'] = '<p>Por favor, lea atentamente las instrucciones antes de comenzar el test.</p>';
-$string['accept_code_honor_text'] = 'Acepto';
-$string['redirect_accept_success'] = 'Enhorabuena, ahora puedes ver tus resultados en la barra lateral del curso.';
-$string['redirect_accept_exist'] = 'Ya ha completado el test, será redirigido al curso.';
+$string['admin_dashboard_description'] = 'Panel de Administración de la Exploración de Personalidad. Aquí puede ver estadísticas detalladas, gestionar respuestas de estudiantes y exportar datos.';
+$string['redirect_accept_success'] = 'Enhorabuena, ahora puedes ver tus resultados aquí.';
+$string['redirect_accept_exist'] = 'Ya ha completado la exploración, será redirigido al curso.';
 $string['accept_message'] = 'Personalidad detectada';
 $string['required_message'] = 'Por favor, realice la evaluación de personalidad para continuar';
-$string['personality_test_actived'] = 'Test de personalidad activado';
+$string['personality_test_actived'] = 'Exploración de personalidad activada';
 $string['personality_test_configempty'] = 'Por favor, configure este bloque';
 $string['submit_text'] = 'Continuar e ir al curso';
 $string['num_estudiantes'] = 'Estudiantes';
@@ -17,31 +15,35 @@ $string['yes'] = 'Sí';
 $string['no'] = 'No';
 $string['btn_previous'] = 'Anterior';
 $string['btn_next'] = 'Siguiente';
-$string['btn_finish'] = 'Finalizar Test';
+$string['btn_finish'] = 'Finalizar Exploración';
 $string['progress_saved'] = 'Progreso guardado exitosamente';
-$string['test_completed_redirect'] = 'Ya has completado este test';
+$string['test_completed_redirect'] = 'Ya has completado esta exploración';
 $string['page_of'] = 'Página {$a->current} de {$a->total}';
 $string['your_progress'] = 'Tu Progreso';
 $string['completed'] = 'completado';
-$string['continue_test'] = 'Continuar Test';
+$string['continue_test'] = 'Continuar Exploración';
 $string['all_answered_title'] = '¡Todas las Preguntas Respondidas!';
-$string['all_answered_message'] = 'Has respondido las 72 preguntas. ¡No olvides hacer clic en "Finalizar Test" para enviar tus respuestas y conocer tu tipo de personalidad!';
+$string['all_answered_message'] = 'Has respondido las 72 preguntas. ¡No olvides hacer clic en "Finalizar Exploración" para enviar tus respuestas y conocer tu tipo de personalidad!';
 $string['go_to_administration'] = 'Ir al Panel de Administración';
+$string['see_detailed_results'] = 'Ver Resultados Detallados';
 
 // Test in progress and remind strings
-$string['test_in_progress'] = 'Test en Progreso';
-$string['test_in_progress_message'] = '{$a} ha comenzado el test pero aún no lo ha completado.';
-$string['results_available_when_complete'] = 'Los resultados completos estarán disponibles cuando {$a} termine el test.';
-$string['remind_submit_test'] = 'Recuérdale al estudiante que haga clic en el botón "Finalizar Test" para ver los resultados.';
+$string['test_in_progress'] = 'Exploración en Progreso';
+$string['test_in_progress_message'] = '{$a} ha comenzado la exploración pero aún no la ha completado.';
+$string['results_available_when_complete'] = 'Los resultados completos estarán disponibles cuando {$a} termine la exploración.';
+$string['remind_submit_test'] = 'Recuérdale al estudiante que haga clic en el botón "Finalizar Exploración" para ver los resultados.';
 $string['questions'] = 'preguntas';
 $string['progress_label'] = 'Progreso';
 $string['has_answered'] = 'Ha respondido';
-$string['finish_test_now'] = 'Finalizar Test';
+$string['finish_test_now'] = 'Finalizar Exploración';
 $string['test_results'] = 'Tus Resultados';
-$string["personality_test_content"] = "Test de Personalidad";
-$string['personality_test:addinstance'] = 'Añadir un nuevo bloque de Test de Personalidad';
-$string['personality_test:myaddinstance'] = 'Añadir un nuevo bloque de Test de Personalidad a Mi Moodle';
+$string["personality_test_content"] = "Exploración de Personalidad";
+$string['personality_test:addinstance'] = 'Añadir un nuevo bloque de Exploración de Personalidad';
+$string['personality_test:myaddinstance'] = 'Añadir un nuevo bloque de Exploración de Personalidad a Mi Moodle';
 $string['total_participants'] = 'Total Estudiantes';
+
+$string['config_showdescriptions'] = 'Mostrar descripciones';
+$string['config_showdescriptions_help'] = 'Mostrar u ocultar los banners de descripción en el bloque.';
 
 // Question strings
 $string["personality_test:q1"] = "Se enorgullece de su objetividad, a pesar de que algunos lo acusan de ser frío e indiferente.";
@@ -125,14 +127,14 @@ $string['PDF'] = 'Descargar PDF';
 // --- Cadenas para el PDF y Gráficos ---
 
 // Títulos Generales PDF/Gráfico
-$string['pdf_report_title'] = 'Reporte del Test de Personalidad';
-$string['pdf_report_subject'] = 'Resultados del Test de Personalidad para el curso: {$a}';
+$string['pdf_report_title'] = 'Reporte de la Exploración de Personalidad';
+$string['pdf_report_subject'] = 'Resultados de la Exploración de Personalidad para el curso: {$a}';
 $string['summary_information'] = 'Información Resumen';
 $string['total_students_processed'] = 'Total de estudiantes procesados: {$a}';
 $string['generated_on'] = 'Generado el';
 $string['sin_datos_estudiantes_pdf'] = 'No hay datos de estudiantes para generar el PDF.';
 $string['sin_datos_estudiantes'] = 'Aún no hay resultados de estudiantes para mostrar.';
-$string['waiting_first_completion'] = 'Cuando al menos un test haya sido completado, los resultados y las gráficas estarán disponibles aquí.';
+$string['waiting_first_completion'] = 'Cuando al menos una exploración haya sido completada, los resultados y las gráficas estarán disponibles aquí.';
 
 // Tabla MBTI
 $string['titulo_distribucion_mbti'] = 'Distribución MBTI';
@@ -162,14 +164,14 @@ $string['Juicio'] = 'Juicio';
 $string['Percepcion'] = 'Percepción';
 
 // Errores
-$string['error_recuperando_resultados'] = 'Error al recuperar los resultados del test.';
+$string['error_recuperando_resultados'] = 'Error al recuperar los resultados de la exploración.';
 $string['error_puntuacion_invalida'] = 'Error: Puntuación MBTI inválida calculada.';
 
 // Sección administrativa
 $string['admin_manage_title'] = 'Administración - Exploración de Personalidad';
 $string['no_admin_access'] = 'No tienes acceso administrativo a este curso.';
 $string['total_students'] = 'Total de Estudiantes';
-$string['completed_tests'] = 'Tests Completados';
+$string['completed_tests'] = 'Exploraciones Completadas';
 $string['in_progress_tests'] = 'En Progreso';
 $string['completion_rate'] = 'Tasa de Finalización';
 $string['general_statistics'] = 'Estadísticas Generales';
@@ -177,7 +179,7 @@ $string['most_common_types'] = 'Tipos de Personalidad Más Comunes';
 $string['average_dimensions'] = 'Puntuaciones Promedio de Dimensiones';
 $string['no_data_available'] = 'No hay datos disponibles aún.';
 $string['no_participants'] = 'Aún no hay resultados disponibles';
-$string['no_participants_message'] = 'Ningún estudiante ha comenzado el test aún.';
+$string['no_participants_message'] = 'Ningún estudiante ha comenzado la exploración aún.';
 $string['participants_list'] = 'Respuestas de Estudiantes';
 $string['status'] = 'Estado';
 $string['completed_status'] = 'Completado';
@@ -198,20 +200,20 @@ $string['view_results'] = 'Ver Resultados';
 $string['delete_participation'] = 'Eliminar Participación';
 $string['back_to_course'] = 'Volver al Curso';
 $string['confirm_delete'] = 'Confirmar Eliminación';
-$string['confirm_delete_message'] = '¿Estás seguro de que quieres eliminar los resultados del test para {$a}? Esta acción no se puede deshacer.';
+$string['confirm_delete_message'] = '¿Estás seguro de que quieres eliminar los resultados de la exploración para {$a}? Esta acción no se puede deshacer.';
 $string['confirm_delete_yes'] = 'Sí, Eliminar';
 $string['cancel'] = 'Cancelar';
 $string['participation_deleted'] = 'La participación ha sido eliminada exitosamente.';
 
 // Página de resultados individuales
-$string['individual_results'] = 'Resultados Individuales';
-$string['no_test_results'] = 'No se encontraron resultados del test para este estudiante.';
+$string['individual_results'] = 'Resultados Individuales de la Exploración de Personalidad';
+$string['no_test_results'] = 'No se encontraron resultados de la exploración para este estudiante.';
 $string['back_to_admin'] = 'Volver al Panel de Administración';
 $string['personality_dimensions'] = 'Dimensiones de Personalidad';
 $string['summary_actions'] = 'Resumen y Acciones';
 $string['download_pdf'] = 'Exportar PDF';
 $string['delete_results'] = 'Eliminar Resultados';
-$string['confirm_delete_individual'] = '¿Estás seguro de que quieres eliminar estos resultados del test?';
+$string['confirm_delete_individual'] = '¿Estás seguro de que quieres eliminar estos resultados de la exploración?';
 $string['detailed_scores'] = 'Puntuaciones Detalladas';
 $string['dimension'] = 'Dimensión';
 $string['score'] = 'Puntuación';
@@ -223,7 +225,8 @@ $string['intuition'] = 'Intuición';
 $string['thinking'] = 'Pensamiento';
 $string['feeling'] = 'Sentimiento';
 $string['judging'] = 'Juicio';
-$string['perceptive'] = 'Percepción'; 
+$string['perceptive'] = 'Percepción';
+$string['radar_chart_title'] = 'Gráfico Radar de Dimensiones de Personalidad';
 
 // Descripciones detalladas de tipos MBTI
 $string['mbti_istj'] = 'La persona ISTJ se caracteriza por su sentido del deber, la responsabilidad y la disciplina. Tiende a actuar de forma lógica y ordenada, especialmente en situaciones que requieren estructura o planificación. En momentos de presión, mantiene la calma y busca soluciones prácticas, confiando en la experiencia y los hechos. Su fortaleza radica en su fiabilidad y compromiso, aunque puede mostrarse inflexible ante los cambios o las ideas poco convencionales. Necesita aprender a adaptarse con mayor soltura y a valorar también las perspectivas emocionales.';
@@ -262,26 +265,26 @@ $string['mbti_dimensions_enfj'] = 'Extraversión - Intuición - Sentimiento - Ju
 $string['mbti_dimensions_entj'] = 'Extraversión - Intuición - Pensamiento - Juicio'; 
 
 // Invitación al test
-$string['test_title'] = 'Test de Personalidad';
+$string['test_title'] = 'Exploración de Personalidad';
 $string['discover_your_personality'] = 'Descubre tu tipo de personalidad';
-$string['what_is_mbti'] = '¿Qué es el Test de Myers-Briggs (MBTI)?';
+$string['what_is_mbti'] = '¿Qué es el Indicador de Myers-Briggs (MBTI)?';
 $string['test_description'] = 'Una herramienta de introspección diseñada para revelar tus preferencias naturales en cuatro ejes fundamentales. Su objetivo es brindarte un perfil detallado sobre tus fortalezas, puntos ciegos y la forma en que interactúas con el mundo y las personas que te rodean.';
 $string['feature_72_questions'] = '72 preguntas rápidas';
 $string['feature_16_types'] = '16 tipos únicos de personalidad';
 $string['feature_instant_results'] = 'Resultados instantáneos con perfil detallado';
-$string['start_test'] = 'Iniciar Test';
-$string['test_completed'] = 'Test Completado';
-$string['your_personality_type'] = 'Tu Tipo de Personalidad';
+$string['start_test'] = 'Iniciar Exploración';
+$string['test_completed'] = 'Exploración de Personalidad Completada';
+$string['your_results_here'] = 'Mira tus resultados aquí';
 
 // Strings de página de test
 $string['test_page_title'] = 'Descubre Tu Tipo de Personalidad';
-$string['test_intro_p1'] = 'Este test te ayudará a identificar tu tipo de personalidad según el modelo Myers-Briggs, que analiza cuatro dimensiones clave: Extraversión/Introversión, Sensación/Intuición, Pensamiento/Sentimiento y Juicio/Percepción.';
+$string['test_intro_p1'] = 'Esta exploración te ayudará a identificar tu tipo de personalidad según el modelo Myers-Briggs, que analiza cuatro dimensiones clave: Extraversión/Introversión, Sensación/Intuición, Pensamiento/Sentimiento y Juicio/Percepción.';
 $string['test_intro_p2'] = 'Comprender tu tipo de personalidad te permitirá conocerte mejor, reconocer tus fortalezas y entender cómo interactúas con el mundo que te rodea.';
 $string['test_benefit_note'] = 'Nota:';
 $string['test_benefit_required'] = 'Todas las preguntas son obligatorias';
 $string['select_option'] = 'Selecciona';
 $string['participation_stats'] = 'Participación';
-$string['students_completed_test'] = '{$a->completed} de {$a->total} estudiantes han completado el test ({$a->percentage}%)';
+$string['students_completed_test'] = '{$a->completed} de {$a->total} estudiantes han completado la exploración ({$a->percentage}%)';
 
 // CSV Export Headers
 $string['csv_header_userid'] = 'ID Estudiante';
@@ -290,10 +293,9 @@ $string['csv_header_mbti_type'] = 'Tipo MBTI';
 $string['csv_header_last_action_date'] = 'Fecha de Última Acción';
 
 // Nombres de archivos exportables
-$string['export_filename'] = 'Test_Personalidad_MBTI';
-
+$string['export_filename'] = 'Exploracion_Personalidad_MBTI';
 // Security and validation strings
-$string['all_questions_required'] = 'Debes responder las 72 preguntas antes de finalizar el test. Has sido redirigido a la primera pregunta sin responder.';
+$string['all_questions_required'] = 'Debes responder las 72 preguntas antes de finalizar la exploración. Has sido redirigido a la primera pregunta sin responder.';
 
 // Redirect and acceptance messages
 $string['teachers_redirect_message'] = 'Los profesores son redirigidos al panel de administración.';

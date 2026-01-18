@@ -38,6 +38,7 @@ Este repositorio incluye:
   - Acceso a **vista individual** por estudiante.
   - Posibilidad de **eliminación** de resultados individuales.
   - Exportación **CSV** y **PDF** agregados por curso.
+- Opción para **mostrar/ocultar** las descripciones en el bloque principal **(oculto por defecto)**.
 - **Controles de privacidad**: acceso restringido por capacidades, matrícula y (en vista individual) reglas de grupo.
 
 ---
@@ -50,14 +51,14 @@ Este repositorio incluye:
 
 El recorrido comienza con una invitación clara y directa. Desde el bloque principal del curso, el estudiante puede visualizar su estado actual y acceder al test con un solo click, facilitando la participación sin fricciones.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/ce509265-b917-4d27-878c-aa221c368bc6" alt="Invitación al Test" width="528">
+  <img src="https://github.com/user-attachments/assets/c7ba3e79-0ce2-422c-b472-5d7140c87ae9" alt="Invitación al Test" width="528">
 </p>
 
 **Interfaz de Evaluación Optimizada**
 
 Se presenta un entorno de respuesta limpio y libre de distracciones. La interfaz ha sido diseñada para priorizar la legibilidad y la facilidad de uso, permitiendo que el estudiante se concentre totalmente en el proceso de autodescubrimiento.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/3ae455bd-394b-4d69-9a9f-fc653afd1247" alt="Formulario del Test" height="500">
+  <img src="https://github.com/user-attachments/assets/a2ad9fda-b5f6-4ae5-8e37-322cb649934a" alt="Formulario del Test" width="528">
 </p>
 
 **Asistencia y Validación en Tiempo Real**
@@ -73,7 +74,7 @@ Para garantizar la integridad de los datos, el sistema implementa una validació
 Entendemos que el tiempo es valioso. Si el estudiante debe interrumpir su sesión, el sistema guarda automáticamente su avance. Al regresar, el bloque muestra el porcentaje de progreso y permite reanudar el test exactamente donde se dejó, resaltando visualmente la siguiente pregunta a responder.
 	
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c485bcbb-59cf-42c5-b619-a08ba5d7539e" alt="Progreso del Test" height="350">
+  <img src="https://github.com/user-attachments/assets/e3b7f7e2-3085-4d42-8d84-48011ef8557c" alt="Progreso del Test" height="350">
   &nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/002b5f98-beee-453e-a044-1454d05130c8" alt="Continuar Test" height="350">
 </p>
@@ -82,15 +83,19 @@ Entendemos que el tiempo es valioso. Si el estudiante debe interrumpir su sesió
 Si el estudiante ha completado las 44 preguntas pero aún no ha procesado el envío, el bloque muestra una notificación clara y amigable, invitándolo a formalizar la entrega y conocer su tipo de personalidad.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/14b3dca2-a484-4100-8a71-c650ff97b607" alt="Confirmación de Test Completado" width="528">
+  <img src="https://github.com/user-attachments/assets/15915dfa-79ec-40f8-9d7d-9907e81ea15b" alt="Confirmación de Test Completado" width="528">
 </p>
 
 **Análisis de Perfil y Recomendaciones Personalizadas**
 
-Al concluir, el estudiante recibe un diagnóstico detallado de su tipo de personalidad. La presentación incluye un gráfico con una explicación clara, Además, se la da recomendaciones prácticas para su desarrollo personal.
+Al finalizar, el estudiante recibe una tarjeta donde puede ver su tipo MBTI con lo que signfica cada letra, junto con un acceso directo a sus resultados detallados donde podrá ver gráficos y la descripción de su tipo de personalidad.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/62243409-8ab2-4370-b5a0-2e8748786b0e" alt="Resultados del Estudiante" width="528">
+  <img src="https://github.com/user-attachments/assets/8e834577-93e5-46d2-be52-46411c27db71" alt="Resultados del Estudiante" width="528">
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1f7ac7d7-0073-4e6c-b6b5-444bfc88ed45" alt="Vista Detallada del Estudiante" width="600">
 </p>
 
 ### 2. Experiencia del Profesor
@@ -100,7 +105,7 @@ Al concluir, el estudiante recibe un diagnóstico detallado de su tipo de person
 El profesor cuenta con una vista ejecutiva desde el bloque, donde puede monitorizar métricas clave y gráficos de tendencia de forma inmediata, además de acceder a funciones avanzadas de exportación y administración.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f375b852-eccf-4797-a15a-b3242a5df2cb" alt="Bloque del Profesor" width="528">
+  <img src="https://github.com/user-attachments/assets/f3f8a30e-ac03-4657-b776-7052f09c2c6d" alt="Bloque del Profesor" width="528">
 </p>
 
 **Centro de Gestión y Analíticas**
@@ -108,18 +113,16 @@ El profesor cuenta con una vista ejecutiva desde el bloque, donde puede monitori
 Un panel de administración que centraliza el seguimiento grupal. Permite visualizar quiénes han completado el proceso, quiénes están en curso y gestionar los resultados colectivos para adaptar la estrategia pedagógica del aula.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/ed754ba4-b6dd-44b9-8a86-a4304c75b790" alt="Panel de Administración" width="800">
+  <img src="https://github.com/user-attachments/assets/7b014f1b-91d8-4ced-84e7-e89cd49d16d8" alt="Panel de Administración" width="800">
 </p>
 
 **Seguimiento Individualizado y Detallado**
 
-El docente puede profundizar en el perfil específico de cada estudiante. Esta vista permite comprender las necesidades particulares de cada alumno y las recomendaciones sugeridas por el sistema para brindar un apoyo docente más humano y dirigido.
+El docente puede profundizar en el perfil específico de cada estudiante. Esta vista permite conocer el tipo de personalidad y su descripción detallada.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/b4fc7f84-65ff-47bc-ab6a-14b6b2b69ed5" alt="Vista Detallada del Estudiante" width="600">
-</p>
-
+- **Nota:** Esta vista es la misma que la del estudiante, pero accesible por el profesor para cualquier alumno del curso.
 ---
+
 
 ## Sección técnica
 
@@ -183,7 +186,7 @@ Implementación técnica:
 El flujo del estudiante está diseñado para soportar progreso parcial:
 
 - Se crea/actualiza un registro con `is_completed = 0` mientras el test está en curso.
-- El autosave se ejecuta tras **2 segundos** de inactividad después de responder.
+- El autosave se ejecuta tras **400 milisegundos** de inactividad después de responder.
 - La navegación **Anterior/Siguiente** guarda progreso en el servidor.
 
 Reglas de integridad implementadas:

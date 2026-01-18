@@ -44,7 +44,7 @@ $existing_response = $DB->get_record('personality_test', array('user' => $USER->
 
 // If test is completed, redirect to results
 if ($existing_response && $existing_response->is_completed) {
-    redirect(new moodle_url('/course/view.php', array('id' => $courseid)), 
+    redirect(new moodle_url('/blocks/personality_test/view_individual.php', array('cid' => $courseid, 'userid' => $USER->id)), 
              get_string('test_completed_redirect', 'block_personality_test'), 
              null, \core\output\notification::NOTIFY_INFO);
 }
