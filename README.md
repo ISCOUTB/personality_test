@@ -51,7 +51,7 @@ Este repositorio incluye:
 
 El recorrido comienza con una invitación clara y directa. Desde el bloque principal del curso, el estudiante puede visualizar su estado actual y acceder al test con un solo click, facilitando la participación sin fricciones.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c7ba3e79-0ce2-422c-b472-5d7140c87ae9" alt="Invitación al Test" width="528">
+  <img src="https://github.com/user-attachments/assets/69118227-0b1b-4c4b-9551-a42fef48b5e6" alt="Invitación al Test" width="528">
 </p>
 
 **Interfaz de Evaluación Optimizada**
@@ -74,7 +74,7 @@ Para garantizar la integridad de los datos, el sistema implementa una validació
 Entendemos que el tiempo es valioso. Si el estudiante debe interrumpir su sesión, el sistema guarda automáticamente su avance. Al regresar, el bloque muestra el porcentaje de progreso y permite reanudar el test exactamente donde se dejó, resaltando visualmente la siguiente pregunta a responder.
 	
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/e3b7f7e2-3085-4d42-8d84-48011ef8557c" alt="Progreso del Test" height="350">
+  <img src="https://github.com/user-attachments/assets/26c6b6b9-cddd-42fd-b18a-4b6d950a4ec9" alt="Progreso del Test" height="350">
   &nbsp;&nbsp;
   <img src="https://github.com/user-attachments/assets/002b5f98-beee-453e-a044-1454d05130c8" alt="Continuar Test" height="350">
 </p>
@@ -83,7 +83,7 @@ Entendemos que el tiempo es valioso. Si el estudiante debe interrumpir su sesió
 Si el estudiante ha completado las 44 preguntas pero aún no ha procesado el envío, el bloque muestra una notificación clara y amigable, invitándolo a formalizar la entrega y conocer su tipo de personalidad.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/15915dfa-79ec-40f8-9d7d-9907e81ea15b" alt="Confirmación de Test Completado" width="528">
+  <img src="https://github.com/user-attachments/assets/b0966bc7-1e0f-48a3-b301-f02b777eb781" alt="Confirmación de Test Completado" width="528">
 </p>
 
 **Análisis de Perfil y Recomendaciones Personalizadas**
