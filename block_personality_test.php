@@ -99,9 +99,6 @@ class block_personality_test extends block_base
         $filtered_student_ids = array();
         foreach ($student_ids as $candidateid) {
             $candidateid = (int)$candidateid;
-            if (is_siteadmin($candidateid)) {
-                continue;
-            }
             if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
                 continue;
             }

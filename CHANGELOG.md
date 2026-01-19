@@ -2,6 +2,10 @@
 
 Todas las modificaciones importantes del proyecto se documentarán en este archivo.
 
+## [2.0.4] - 2026-01-18
+- Se eliminaron las comprobaciones redundantes de administrador (`is_siteadmin()`) en varias vistas clave, mejorando la detección correcta de roles locales (profesores vs estudiantes) y el sistema de permisos basado en capacidades.
+- Se agrega negrilla en el titulo del bloque para mejorar la visibilidad.
+
 ## [2.0.3] — 2026-01-18
 - Opción para mostrar/ocultar las descripciones en el bloque principal.
 - Adición del gráfico radar en resultados detallados y acceso permitido a los estudiantes a esta vista.

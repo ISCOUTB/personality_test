@@ -44,7 +44,7 @@ if ($userid) {
     $context = context_course::instance($course->id);
     require_login($course, false);
 
-    $canviewreports = has_capability('block/personality_test:viewreports', $context) || is_siteadmin();
+    $canviewreports = has_capability('block/personality_test:viewreports', $context);
     if (!$canviewreports && (int)$userid !== (int)$USER->id) {
         redirect(new moodle_url('/course/view.php', ['id' => $course->id]));
     }

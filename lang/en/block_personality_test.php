@@ -265,7 +265,7 @@ $string['mbti_dimensions_enfj'] = 'Extraversion - Intuition - Feeling - Judging'
 $string['mbti_dimensions_entj'] = 'Extraversion - Intuition - Thinking - Judging';
 
 // Test invitation
-$string['test_title'] = 'Personality ';
+$string['test_title'] = 'Personality Exploration';
 $string['discover_your_personality'] = 'Discover your personality type';
 $string['what_is_mbti'] = 'What is the Myers-Briggs Type Indicator (MBTI)?';
 $string['test_description'] = 'A self-reflective tool designed to reveal your natural preferences across four fundamental dimensions. Its goal is to provide you with a detailed profile of your strengths, blind spots, and how you interact with the world and the people around you.';
