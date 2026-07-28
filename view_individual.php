@@ -21,7 +21,7 @@ $test_result = $DB->get_record('personality_test', array('user' => $userid));
 
 // Verificar permisos y manejo de privacidad
 $is_own_results = ($USER->id == $userid);
-$can_view_reports = has_capability('block/personality_test:viewreports', $context);
+$can_view_reports = has_capability('block/personality_test:viewstudentdata', $context);
 
 // Acceso básico: Si no es propietario, ni profesor (con permisos), ni admin -> Redirigir
 if (!$is_own_results && !$can_view_reports) {
@@ -221,7 +221,7 @@ if ($test_result->is_completed == 0) {
         'download_url' => (new moodle_url('/blocks/personality_test/download_pdf.php', array('userid' => $userid, 'cid' => $courseid)))->out(false),
         'download_pdf_label' => get_string('download_pdf', 'block_personality_test'),
         // Permissions for delete action
-        'can_delete' => $can_view_reports,
+        'can_delete' => has_capability('block/personality_test:deletestudentdata', $context),
         'delete_url' => (new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid, 'action' => 'delete', 'userid' => $userid, 'sesskey' => sesskey())))->out(false),
         'confirm_delete_msg' => get_string('confirm_delete_individual', 'block_personality_test'),
         'delete_results_label' => get_string('delete_results', 'block_personality_test'),

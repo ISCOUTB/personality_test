@@ -2,6 +2,17 @@
 
 Todas las modificaciones importantes del proyecto se documentarán en este archivo.
 
+## [2.0.5] — 2026-07-28
+
+### Cambiado
+- El bloque muestra un lanzador compacto del panel administrativo a los usuarios autorizados, sin estadísticas ni resultados en la página del curso.
+- Se unificaron las plantillas de administración y de resultados individuales, incluidos los textos de acceso en español e inglés.
+
+### Seguridad
+- Se incorporaron las capacidades `viewstudentdata` y `deletestudentdata` para separar la consulta/exportación de la eliminación de respuestas.
+- Los datos de estudiantes dejaron de estar disponibles automáticamente para roles docentes.
+- Se eliminó la capacidad heredada e inactiva `viewreports`.
+
 ## [2.0.4] - 2026-01-18
 - Se eliminaron las comprobaciones redundantes de administrador (`is_siteadmin()`) en varias vistas clave, mejorando la detección correcta de roles locales (profesores vs estudiantes) y el sistema de permisos basado en capacidades.
 - Se agrega negrilla en el titulo del bloque para mejorar la visibilidad.

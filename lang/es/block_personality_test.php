@@ -1,4 +1,9 @@
 <?php
+$string['personality_test:viewstudentdata'] = 'Ver datos sensibles de estudiantes';
+$string['personality_test:deletestudentdata'] = 'Eliminar datos sensibles de estudiantes';
+$string['personality_test:taketest'] = 'Realizar la exploración de personalidad';
+$string['sensitive_data'] = 'Datos sensibles';
+$string['open_admin_panel'] = 'Abrir panel de administración';
 $string['pluginname'] = 'Exploración de Personalidad';
 $string['management_title'] = 'Gestión - Exploración de Personalidad';
 $string['course_overview'] = 'Resumen del Curso';

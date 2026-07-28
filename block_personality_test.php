@@ -99,7 +99,7 @@ class block_personality_test extends block_base
         $filtered_student_ids = array();
         foreach ($student_ids as $candidateid) {
             $candidateid = (int)$candidateid;
-            if (has_capability('block/personality_test:viewreports', $context, $candidateid)) {
+            if (has_capability('block/personality_test:viewstudentdata', $context, $candidateid)) {
                 continue;
             }
             $filtered_student_ids[] = $candidateid;
@@ -183,6 +183,21 @@ class block_personality_test extends block_base
         }
         
         $content->text = $OUTPUT->render_from_template('block_personality_test/teacher_dashboard', $template_data);
+        return $content;
+    }
+
+    private function get_secure_admin_content($COURSE) {
+        global $OUTPUT;
+
+        $content = new stdClass();
+        $content->text = $OUTPUT->render_from_template('block_personality_test/admin_launcher', [
+            'icon_html' => $this->get_personality_test_icon('4em', '', true),
+            'security_label' => get_string('sensitive_data', 'block_personality_test'),
+            'title' => get_string('management_title', 'block_personality_test'),
+            'admin_url' => (new moodle_url('/blocks/personality_test/admin_view.php', ['cid' => $COURSE->id]))->out(false),
+            'button_label' => get_string('open_admin_panel', 'block_personality_test'),
+        ]);
+        $content->footer = '';
         return $content;
     }
 
@@ -284,20 +299,10 @@ class block_personality_test extends block_base
 
         $context = context_course::instance($COURSE->id);
 
-        // Si el usuario tiene permiso de ver reportes, mostrar la vista del profesor/administración.
-        if (has_capability('block/personality_test:viewreports', $context)) {
-            $teacher_content = $this->_get_teacher_content($DB, $COURSE);
+        // Los resultados se consultan desde el panel protegido, sin métricas en el curso.
+        if (has_capability('block/personality_test:viewstudentdata', $context)) {
+            $teacher_content = $this->get_secure_admin_content($COURSE);
             $this->content = $teacher_content;
-            
-            // Agregar enlace a la vista administrativa
-            $admin_url = new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $COURSE->id));
-            $this->content->footer .= html_writer::div(
-                html_writer::link($admin_url,
-                    get_string('go_to_administration', 'block_personality_test'),
-                    array('class' => 'btn btn-sm mt-2', 'style' => 'background: linear-gradient(135deg, #00bf91 0%, #00a07a 100%); color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; border: none;')
-                ),
-                'text-center'
-            );
             return $this->content;
         }
 

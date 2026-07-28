@@ -24,21 +24,24 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 
-    'block/personality_test:viewreports' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-
     'block/personality_test:taketest' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'student' => CAP_ALLOW
         )
+    ),
+
+    // Los resultados de personalidad requieren una concesión explícita.
+    'block/personality_test:viewstudentdata' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE
+    ),
+
+    'block/personality_test:deletestudentdata' => array(
+        'riskbitmask' => RISK_DATALOSS | RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE
     ),
 );

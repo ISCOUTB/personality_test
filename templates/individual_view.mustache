@@ -104,10 +104,10 @@
                         <a href='{{download_url}}' class='btn mr-3' style='background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important; border: none; color: white;'>
                             <i class='fa fa-download'></i> {{download_pdf_label}}
                         </a>
-                        {{#can_view_reports}}
+                        {{#can_delete}}
                         <a href='{{delete_url}}' class='btn btn-danger' onclick='return confirm("{{confirm_delete_msg}}")'>
                             <i class='fa fa-trash'></i> {{delete_results_label}}
-                        {{/can_view_reports}}
+                        {{/can_delete}}
                         </a>
                     </div>
 

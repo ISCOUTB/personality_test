@@ -35,7 +35,7 @@ if (!$DB->record_exists('block_instances', array('blockname' => 'personality_tes
 }
 
 // If a user with reporting capability tries to open the student test view, redirect them to admin silently
-if (has_capability('block/personality_test:viewreports', $context) && !has_capability('block/personality_test:taketest', $context)) {
+if (has_capability('block/personality_test:viewstudentdata', $context) && !has_capability('block/personality_test:taketest', $context)) {
     redirect(new moodle_url('/blocks/personality_test/admin_view.php', array('cid' => $courseid)), get_string('teachers_redirect_message', 'block_personality_test'), null, \core\output\notification::NOTIFY_INFO);
 }
 

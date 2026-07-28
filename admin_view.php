@@ -33,7 +33,7 @@ if (!$DB->record_exists('block_instances', array('blockname' => 'personality_tes
 }
 
 // Friendly redirect for unauthorized users
-if (!has_capability('block/personality_test:viewreports', $context)) {
+if (!has_capability('block/personality_test:viewstudentdata', $context)) {
     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
@@ -48,13 +48,17 @@ $admin_url = new moodle_url('/blocks/personality_test/admin_view.php', array('ci
 $PAGE->set_url($admin_url);
 
 // Handle Delete Action
+if ($action === 'delete' && $userid && !has_capability('block/personality_test:deletestudentdata', $context)) {
+    redirect($admin_url);
+}
+
 if ($action === 'delete' && $userid && confirm_sesskey()) {
     $confirm = optional_param('confirm', 0, PARAM_INT);
     if ($confirm) {
         // Privacy check
         $targetuser = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
         if (!is_enrolled($context, $targetuser, 'block/personality_test:taketest', true)
-            || has_capability('block/personality_test:viewreports', $context, $userid)) {
+            || has_capability('block/personality_test:viewstudentdata', $context, $userid)) {
              redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
         }
         
@@ -64,7 +68,7 @@ if ($action === 'delete' && $userid && confirm_sesskey()) {
 }
 
 $title = get_string('admin_manage_title', 'block_personality_test');
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title($title . " : " . $course->fullname);
 $PAGE->set_heading($title . " : " . $course->fullname);
 $PAGE->requires->css('/blocks/personality_test/styles.css');
@@ -79,7 +83,8 @@ $data = [
     'csv_url' => (new moodle_url('/blocks/personality_test/download_csv.php', ['courseid' => $courseid, 'sesskey' => sesskey()]))->out(false),
     'pdf_url' => (new moodle_url('/blocks/personality_test/download_pdf.php', ['courseid' => $courseid, 'sesskey' => sesskey()]))->out(false),
     'course_url' => (new moodle_url('/course/view.php', ['id' => $courseid]))->out(false),
-    'search_term' => $search
+    'search_term' => $search,
+    'can_delete' => has_capability('block/personality_test:deletestudentdata', $context),
 ];
 
 // Handle Delete Confirmation
@@ -256,6 +261,7 @@ if ($participants) {
             'is_completed' => ($p->is_completed == 1),
             'created_at' => userdate($p->created_at, get_string('strftimedatetimeshort')),
             'view_url' => (new moodle_url('/blocks/personality_test/view_individual.php', ['cid' => $courseid, 'userid' => $p->user]))->out(false),
+            'can_delete' => has_capability('block/personality_test:deletestudentdata', $context),
             'delete_url' => (new moodle_url('/blocks/personality_test/admin_view.php', ['cid' => $courseid, 'action' => 'delete', 'userid' => $p->user, 'sesskey' => sesskey()]))->out(false)
         ];
         

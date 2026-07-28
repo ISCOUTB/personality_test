@@ -10,8 +10,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026011801; // YYYYMMDDXX (year, month, day, 2-digit version number).
+$plugin->version = 2026072800; // YYYYMMDDXX (year, month, day, 2-digit version number).
 $plugin->requires = 2022041900; // Moodle 4.0+
 $plugin->component = 'block_personality_test';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.0.4';
+$plugin->release = '2.0.5';
